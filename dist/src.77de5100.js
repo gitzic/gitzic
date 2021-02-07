@@ -558,7 +558,65 @@ var GithubTokenInfo = function GithubTokenInfo() {
 };
 
 exports.GithubTokenInfo = GithubTokenInfo;
-},{"async-jsx-html":"../node_modules/async-jsx-html/nodejs/mod.js"}],"view/Settings/Settings.tsx":[function(require,module,exports) {
+},{"async-jsx-html":"../node_modules/async-jsx-html/nodejs/mod.js"}],"storage/localStorage.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.storeGithubToken = exports.storeGithubRepo = exports.storeGithubUser = exports.getGithubToken = exports.getGithubRepo = exports.getGithubUser = void 0;
+var githubStorageKeys;
+
+(function (githubStorageKeys) {
+  githubStorageKeys["githubUser"] = "githubUser";
+  githubStorageKeys["githubToken"] = "githubToken";
+  githubStorageKeys["githubRepo"] = "githubRepo";
+})(githubStorageKeys || (githubStorageKeys = {}));
+
+function store(key, value) {
+  window.localStorage.setItem(key, value);
+}
+
+function get(key) {
+  return window.localStorage.getItem(key);
+}
+
+function getGithubUser() {
+  return get(githubStorageKeys.githubUser) || '';
+}
+
+exports.getGithubUser = getGithubUser;
+
+function getGithubRepo() {
+  return get(githubStorageKeys.githubRepo) || '';
+}
+
+exports.getGithubRepo = getGithubRepo;
+
+function getGithubToken() {
+  return get(githubStorageKeys.githubToken) || '';
+}
+
+exports.getGithubToken = getGithubToken;
+
+function storeGithubUser(val) {
+  store(githubStorageKeys.githubUser, val);
+}
+
+exports.storeGithubUser = storeGithubUser;
+
+function storeGithubRepo(val) {
+  store(githubStorageKeys.githubRepo, val);
+}
+
+exports.storeGithubRepo = storeGithubRepo;
+
+function storeGithubToken(val) {
+  store(githubStorageKeys.githubToken, val);
+}
+
+exports.storeGithubToken = storeGithubToken;
+},{}],"view/Settings/Settings.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -574,6 +632,8 @@ var eye_outline_1 = require("../../icons/eye-outline");
 
 var GithubTokenInfo_1 = require("./GithubTokenInfo");
 
+var localStorage_1 = require("../../storage/localStorage");
+
 var React = async_jsx_html_1.React;
 
 function Settings() {
@@ -581,16 +641,16 @@ function Settings() {
     id: "settings"
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Github user"), /*#__PURE__*/React.createElement("input", {
     id: "githubUser",
-    value: "",
+    value: localStorage_1.getGithubUser(),
     placeholder: "Enter github user"
   })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Github repo"), /*#__PURE__*/React.createElement("input", {
     id: "githubRepo",
-    value: "",
+    value: localStorage_1.getGithubRepo(),
     placeholder: "Enter github repo"
   })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Github token"), /*#__PURE__*/React.createElement("input", {
     id: "githubToken",
     type: "password",
-    value: "",
+    value: localStorage_1.getGithubToken(),
     placeholder: "Enter github token"
   }), /*#__PURE__*/React.createElement("button", {
     id: "githubTokenToggle"
@@ -604,7 +664,7 @@ function Settings() {
 }
 
 exports.Settings = Settings;
-},{"async-jsx-html":"../node_modules/async-jsx-html/nodejs/mod.js","../../icons/eye-off-outline":"icons/eye-off-outline.tsx","../../icons/eye-outline":"icons/eye-outline.tsx","./GithubTokenInfo":"view/Settings/GithubTokenInfo.tsx"}],"view/App.tsx":[function(require,module,exports) {
+},{"async-jsx-html":"../node_modules/async-jsx-html/nodejs/mod.js","../../icons/eye-off-outline":"icons/eye-off-outline.tsx","../../icons/eye-outline":"icons/eye-outline.tsx","./GithubTokenInfo":"view/Settings/GithubTokenInfo.tsx","../../storage/localStorage":"storage/localStorage.ts"}],"view/App.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -625,26 +685,51 @@ function App() {
 }
 
 exports.App = App;
-},{"async-jsx-html":"../node_modules/async-jsx-html/nodejs/mod.js","./Settings/Settings":"view/Settings/Settings.tsx"}],"view/Settings/settings.ts":[function(require,module,exports) {
+},{"async-jsx-html":"../node_modules/async-jsx-html/nodejs/mod.js","./Settings/Settings":"view/Settings/Settings.tsx"}],"utils/event.ts":[function(require,module,exports) {
+"use strict"; // export function evNumVal(fn: (nb: number) => void) {
+//     return ({ target: { value } }: Event) => {
+//         fn(Number(value));
+//     };
+// }
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.evStrVal = void 0; // export function evStrVal(fn: (val: string) => void) {
+//     return ({ target: { value } }: ChangeEvent<HTMLSelectElement>) => {
+//         fn(value);
+//     };
+// }
+
+function evStrVal(fn) {
+  return function (_a) {
+    var target = _a.target;
+    fn(target.value);
+  };
+}
+
+exports.evStrVal = evStrVal;
+},{}],"view/Settings/settings.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.initSettings = void 0;
-var elGithubUser;
-var elGithubRepo;
+
+var localStorage_1 = require("../../storage/localStorage");
+
+var event_1 = require("../../utils/event");
+
 var elGithubToken;
 var elGithubTokenToggle;
 
 function initSettings() {
-  elGithubUser = document.getElementById('githubUser');
-  elGithubRepo = document.getElementById('githubRepo');
+  document.getElementById('githubUser').addEventListener('change', event_1.evStrVal(localStorage_1.storeGithubUser));
+  document.getElementById('githubRepo').addEventListener('change', event_1.evStrVal(localStorage_1.storeGithubRepo));
   elGithubToken = document.getElementById('githubToken');
   elGithubTokenToggle = document.getElementById('githubTokenToggle');
-  elGithubUser.onchange = console.log;
-  elGithubRepo.onchange = console.log;
-  elGithubToken.onchange = console.log;
+  elGithubToken.addEventListener('change', event_1.evStrVal(localStorage_1.storeGithubToken));
   elGithubTokenToggle.onclick = showToken;
 }
 
@@ -661,7 +746,7 @@ function showToken() {
     document.getElementById('eye-on').style.display = 'none';
   }
 }
-},{}],"index.ts":[function(require,module,exports) {
+},{"../../storage/localStorage":"storage/localStorage.ts","../../utils/event":"utils/event.ts"}],"index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

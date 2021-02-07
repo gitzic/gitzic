@@ -2,6 +2,7 @@ import { React as fix, ElementNode } from 'async-jsx-html';
 import { EyeOffOutline } from '../../icons/eye-off-outline';
 import { EyeOutline } from '../../icons/eye-outline';
 import { GithubTokenInfo } from './GithubTokenInfo';
+import { getGithubRepo, getGithubToken, getGithubUser } from '../../storage/localStorage';
 
 const React = fix;
 
@@ -12,7 +13,7 @@ export function Settings(): ElementNode {
                 <label>Github user</label>
                 <input
                     id="githubUser"
-                    value=""
+                    value={getGithubUser()}
                     placeholder="Enter github user"
                 />
             </div>
@@ -20,7 +21,7 @@ export function Settings(): ElementNode {
                 <label>Github repo</label>
                 <input
                     id="githubRepo"
-                    value=""
+                    value={getGithubRepo()}
                     placeholder="Enter github repo"
                 />
             </div>
@@ -29,7 +30,7 @@ export function Settings(): ElementNode {
                 <input
                     id="githubToken"
                     type="password"
-                    value=""
+                    value={getGithubToken()}
                     placeholder="Enter github token"
                 />
                 <button id="githubTokenToggle">

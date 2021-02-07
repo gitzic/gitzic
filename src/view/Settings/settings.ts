@@ -1,17 +1,25 @@
-let elGithubUser: HTMLElement;
-let elGithubRepo: HTMLElement;
+import {
+    storeGithubRepo,
+    storeGithubToken,
+    storeGithubUser,
+} from '../../storage/localStorage';
+import { evStrVal } from '../../utils/event';
+
 let elGithubToken: HTMLElement;
 let elGithubTokenToggle: HTMLElement;
 
 export function initSettings() {
-    elGithubUser = document.getElementById('githubUser');
-    elGithubRepo = document.getElementById('githubRepo');
+    document
+        .getElementById('githubUser')
+        .addEventListener('change', evStrVal(storeGithubUser));
+
+    document
+        .getElementById('githubRepo')
+        .addEventListener('change', evStrVal(storeGithubRepo));
+
     elGithubToken = document.getElementById('githubToken');
     elGithubTokenToggle = document.getElementById('githubTokenToggle');
-
-    elGithubUser.onchange = console.log;
-    elGithubRepo.onchange = console.log;
-    elGithubToken.onchange = console.log;
+    elGithubToken.addEventListener('change', evStrVal(storeGithubToken));
     elGithubTokenToggle.onclick = showToken;
 }
 
@@ -20,7 +28,6 @@ function showToken() {
         elGithubToken.setAttribute('type', 'text');
         document.getElementById('eye-off').style.display = 'none';
         document.getElementById('eye-on').style.display = 'inline';
-
     } else {
         elGithubToken.setAttribute('type', 'password');
         document.getElementById('eye-off').style.display = 'inline';
