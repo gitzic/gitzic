@@ -29,6 +29,7 @@ function showToken() {
     } else {
         elGithubToken.setAttribute('type', 'password');
     }
-    document.getElementById('eye-off').classList.toggle('hide');
-    document.getElementById('eye-on').classList.toggle('hide');
+    elGithubTokenToggle.childNodes.forEach((el) =>
+        (el as HTMLElement).classList?.toggle('hide'),
+    );
 }

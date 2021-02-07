@@ -742,8 +742,11 @@ function showToken() {
     elGithubToken.setAttribute('type', 'password');
   }
 
-  document.getElementById('eye-off').classList.toggle('hide');
-  document.getElementById('eye-on').classList.toggle('hide');
+  elGithubTokenToggle.childNodes.forEach(function (el) {
+    var _a;
+
+    return (_a = el.classList) === null || _a === void 0 ? void 0 : _a.toggle('hide');
+  });
 }
 },{"../../storage/localStorage":"storage/localStorage.ts","../../utils/event":"utils/event.ts"}],"index.ts":[function(require,module,exports) {
 "use strict";

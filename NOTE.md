@@ -4,6 +4,7 @@
 
 - toggle html attribute
 - toggle class sibling
+--- document.querySelectorAll('#settings button .icon').forEach(el => el.classList.toggle('hide'));
 
 ## URL
 
