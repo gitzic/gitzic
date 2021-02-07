@@ -122,7 +122,7 @@ self.addEventListener('message', function (_a) {
   var data = _a.data;
   self.postMessage('WORKER STARTED: ' + data.msg);
 }, false);
-var count = 0;
+var count = 1;
 setInterval(function () {
   self.postMessage('count: ' + count++);
 }, 1000);

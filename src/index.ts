@@ -1,26 +1,25 @@
-console.log('hello world yo');
+import { ActionWorker, MsgWorker } from './interface';
+import { initMIDI, midi } from './midi';
 
-document.getElementById('hi').onclick = sayHI;
+const worker = new Worker('sequencerWorker.ts');
 
-function sayHI() {
-    worker.postMessage({ cmd: 'start', msg: 'Hi' });
-}
+const msg: MsgWorker = {
+    action: ActionWorker.save,
+    sequences: [
+        { id: '1', trigger: 0, data: [0x90, 50, 90] },
+        { id: '2', trigger: 1, data: [0x80, 50, 0] },
+        { id: '3', trigger: 6, data: [0x90, 60, 90] },
+        { id: '4', trigger: 8, data: [0x80, 60, 0] },
+        { id: '5', trigger: 14, data: [0x90, 70, 90] },
+        { id: '6', trigger: 15, data: [0x80, 70, 0] },
+    ],
+};
+worker.postMessage(msg);
 
-function stop() {
-    // worker.terminate() from this script would also stop the worker.
-    worker.postMessage({ cmd: 'stop', msg: 'Bye' });
-}
-
-function unknownCmd() {
-    worker.postMessage({ cmd: 'foobard', msg: '???' });
-}
-
-var worker = new Worker('doWork2.ts');
-
-worker.addEventListener(
-    'message',
-    function (e) {
-        document.getElementById('result').textContent = e.data;
-    },
-    false,
-);
+initMIDI();
+worker.addEventListener('message', function ({ data }) {
+    // console.log('data', data);
+    midi.outputs.forEach((midiOutput) => {
+        midiOutput.send(data.data);
+    });
+}, false);

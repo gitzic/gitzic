@@ -130,51 +130,7 @@ var ActionWorker;
   ActionWorker[ActionWorker["save"] = 0] = "save";
   ActionWorker[ActionWorker["remove"] = 1] = "remove";
 })(ActionWorker = exports.ActionWorker || (exports.ActionWorker = {}));
-},{}],"midi.ts":[function(require,module,exports) {
-"use strict"; // import { event, eventKey } from './event';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.initMIDI = exports.midi = void 0; // export function addListenerMidiSuccess(
-//     fn: (midiAccess: WebMidi.MIDIAccess) => void,
-// ) {
-//     event.addListener(eventKey.onMIDISuccess, fn);
-// }
-
-function onMIDISuccess(midiAccess) {
-  exports.midi = midiAccess; // event.emit(eventKey.onMIDISuccess, midi);
-
-  exports.midi.inputs.forEach(function (midiInput) {
-    console.log('midiInput', midiInput.name, midiInput);
-    midiInput.onmidimessage = onMIDIMessage;
-  });
-} // export function addListenerMidiError(fn: (error: any) => void) {
-//     event.addListener(eventKey.onMIDIError, fn);
-// }
-
-
-function onMIDIError(error) {
-  // event.emit(eventKey.onMIDIError, error);
-  console.error("No access to MIDI devices or your browser doesn't support WebMIDI API.", error);
-}
-
-function onMIDIMessage(_a) {
-  var data = _a.data; // console.log('MIDI data', data);
-}
-
-function initMIDI() {
-  if (!navigator.requestMIDIAccess) {
-    onMIDIError(new Error('This browser does not support MIDIAccess'));
-  } else {
-    navigator.requestMIDIAccess({
-      sysex: false
-    }).then(onMIDISuccess, onMIDIError);
-  }
-}
-
-exports.initMIDI = initMIDI;
-},{}],"index.ts":[function(require,module,exports) {
+},{}],"sequencerWorker.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -183,47 +139,66 @@ Object.defineProperty(exports, "__esModule", {
 
 var interface_1 = require("./interface");
 
-var midi_1 = require("./midi");
+var ms = 150;
+var counter = 0;
+var stepsCount = 16;
+var list = [];
 
-var worker = new Worker("/sequencerWorker.34566a39.js");
-var msg = {
-  action: interface_1.ActionWorker.save,
-  sequences: [{
-    id: '1',
-    trigger: 0,
-    data: [0x90, 50, 90]
-  }, {
-    id: '2',
-    trigger: 1,
-    data: [0x80, 50, 0]
-  }, {
-    id: '3',
-    trigger: 6,
-    data: [0x90, 60, 90]
-  }, {
-    id: '4',
-    trigger: 8,
-    data: [0x80, 60, 0]
-  }, {
-    id: '5',
-    trigger: 14,
-    data: [0x90, 70, 90]
-  }, {
-    id: '6',
-    trigger: 15,
-    data: [0x80, 70, 0]
-  }]
-};
-worker.postMessage(msg);
-midi_1.initMIDI();
-worker.addEventListener('message', function (_a) {
-  var data = _a.data; // console.log('data', data);
+for (var n = 0; n < stepsCount; n++) {
+  list[n] = [];
+}
 
-  midi_1.midi.outputs.forEach(function (midiOutput) {
-    midiOutput.send(data.data);
-  });
+self.addEventListener('message', function (_a) {
+  var data = _a.data;
+
+  if (data.action === interface_1.ActionWorker.save) {
+    saveSequences(data.sequences);
+  } else if (data.action === interface_1.ActionWorker.remove) {
+    removeSequences(data.sequences);
+  }
 }, false);
-},{"./interface":"interface.ts","./midi":"midi.ts","./sequencerWorker.ts":[["sequencerWorker.34566a39.js","sequencerWorker.ts"],"sequencerWorker.34566a39.js.map","sequencerWorker.ts"]}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+
+function findSequence(sequence) {
+  for (var trigger = 0; trigger < list.length; trigger++) {
+    var index = list[trigger].findIndex(function (_a) {
+      var id = _a.id;
+      return id === sequence.id;
+    });
+
+    if (index !== -1) {
+      return {
+        trigger: trigger,
+        index: index
+      };
+    }
+  }
+}
+
+function saveSequences(sequences) {
+  sequences.forEach(function (sequence) {
+    var pos = findSequence(sequence);
+
+    if (pos) {
+      if (pos.trigger !== sequence.trigger) {
+        list[pos.trigger].splice(pos.index, 1);
+      }
+
+      list[sequence.trigger][pos.index] = sequence;
+    } else {
+      list[sequence.trigger].push(sequence);
+    }
+  });
+}
+
+function removeSequences(sequences) {}
+
+setInterval(function () {
+  counter = (counter + 1) % stepsCount;
+  list[counter].forEach(function (sequence) {
+    self.postMessage(sequence);
+  });
+}, ms);
+},{"./interface":"interface.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -427,5 +402,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","index.ts"], null)
-//# sourceMappingURL=/src.77de5100.js.map
+},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","sequencerWorker.ts"], null)
+//# sourceMappingURL=/sequencerWorker.34566a39.js.map

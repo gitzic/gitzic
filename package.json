@@ -22,6 +22,7 @@
         "typescript": "^4.1.3"
     },
     "dependencies": {
+        "@types/webmidi": "^2.0.4",
         "waaclock": "^0.5.3"
     }
 }
