@@ -1,0 +1,27 @@
+{
+    "name": "gitzic",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "dev": "parcel src/index.html",
+        "build": "parcel build src/index.html"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/gitzic/gitzic.git"
+    },
+    "author": "alexandre.piel@gmail.com",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/gitzic/gitzic/issues"
+    },
+    "homepage": "https://github.com/gitzic/gitzic#readme",
+    "devDependencies": {
+        "parcel-bundler": "^1.12.4",
+        "typescript": "^4.1.3"
+    },
+    "dependencies": {
+        "waaclock": "^0.5.3"
+    }
+}
