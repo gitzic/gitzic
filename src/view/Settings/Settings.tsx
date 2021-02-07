@@ -2,7 +2,11 @@ import { React as fix, ElementNode } from 'async-jsx-html';
 import { EyeOffOutline } from '../../icons/eye-off-outline';
 import { EyeOutline } from '../../icons/eye-outline';
 import { GithubTokenInfo } from './GithubTokenInfo';
-import { getGithubRepo, getGithubToken, getGithubUser } from '../../storage/localStorage';
+import {
+    getGithubRepo,
+    getGithubToken,
+    getGithubUser,
+} from '../../storage/localStorage';
 
 const React = fix;
 
@@ -34,11 +38,8 @@ export function Settings(): ElementNode {
                     placeholder="Enter github token"
                 />
                 <button id="githubTokenToggle">
-                    <EyeOffOutline style="height: 10px;" id="eye-off" />
-                    <EyeOutline
-                        style="height: 10px; display: none;"
-                        id="eye-on"
-                    />
+                    <EyeOffOutline classnames="icon" id="eye-off" />
+                    <EyeOutline classnames="icon hide" id="eye-on" />
                 </button>
             </div>
             <GithubTokenInfo />

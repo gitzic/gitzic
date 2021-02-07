@@ -26,11 +26,9 @@ export function initSettings() {
 function showToken() {
     if (elGithubToken.getAttribute('type') === 'password') {
         elGithubToken.setAttribute('type', 'text');
-        document.getElementById('eye-off').style.display = 'none';
-        document.getElementById('eye-on').style.display = 'inline';
     } else {
         elGithubToken.setAttribute('type', 'password');
-        document.getElementById('eye-off').style.display = 'inline';
-        document.getElementById('eye-on').style.display = 'none';
     }
+    document.getElementById('eye-off').classList.toggle('hide');
+    document.getElementById('eye-on').classList.toggle('hide');
 }

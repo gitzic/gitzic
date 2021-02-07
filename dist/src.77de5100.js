@@ -655,10 +655,10 @@ function Settings() {
   }), /*#__PURE__*/React.createElement("button", {
     id: "githubTokenToggle"
   }, /*#__PURE__*/React.createElement(eye_off_outline_1.EyeOffOutline, {
-    style: "height: 10px;",
+    classnames: "icon",
     id: "eye-off"
   }), /*#__PURE__*/React.createElement(eye_outline_1.EyeOutline, {
-    style: "height: 10px; display: none;",
+    classnames: "icon hide",
     id: "eye-on"
   }))), /*#__PURE__*/React.createElement(GithubTokenInfo_1.GithubTokenInfo, null));
 }
@@ -738,13 +738,12 @@ exports.initSettings = initSettings;
 function showToken() {
   if (elGithubToken.getAttribute('type') === 'password') {
     elGithubToken.setAttribute('type', 'text');
-    document.getElementById('eye-off').style.display = 'none';
-    document.getElementById('eye-on').style.display = 'inline';
   } else {
     elGithubToken.setAttribute('type', 'password');
-    document.getElementById('eye-off').style.display = 'inline';
-    document.getElementById('eye-on').style.display = 'none';
   }
+
+  document.getElementById('eye-off').classList.toggle('hide');
+  document.getElementById('eye-on').classList.toggle('hide');
 }
 },{"../../storage/localStorage":"storage/localStorage.ts","../../utils/event":"utils/event.ts"}],"index.ts":[function(require,module,exports) {
 "use strict";

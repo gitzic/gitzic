@@ -10,3 +10,11 @@ body {
     text-align: justify;
     margin: 5;
 }
+
+button .icon {
+    height: 10px;
+}
+
+.hide {
+    display: none;
+}

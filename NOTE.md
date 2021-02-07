@@ -2,6 +2,9 @@
 
 ## Todo
 
+- toggle html attribute
+- toggle class sibling
+
 ## URL
 
 - https://github.com/Theodeus/tuna

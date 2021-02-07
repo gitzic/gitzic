@@ -11,5 +11,13 @@ body {
     margin: 5;
 }
 
+button .icon {
+    height: 10px;
+}
+
+.hide {
+    display: none;
+}
+
 
 /*# sourceMappingURL=/src.9ad09f98.css.map */
