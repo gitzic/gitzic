@@ -1,10 +1,12 @@
 import { ActionWorker, MsgWorker } from './interface';
 import { initMIDI, midi } from './midi';
-import { App } from './template/App';
+import { App } from './view/App';
+import { initSettings } from './view/Settings/settings';
 
 // init html
 App().render().then((html) => {
     document.getElementById('app').innerHTML = html as string;
+    initSettings();
 });
 
 const worker = new Worker('sequencerWorker.ts');

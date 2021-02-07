@@ -28,12 +28,16 @@ export function Settings(): ElementNode {
                 <label>Github token</label>
                 <input
                     id="githubToken"
+                    type="password"
                     value=""
                     placeholder="Enter github token"
                 />
-                <button>
-                    <EyeOffOutline style="height: 10px;" id="yoy" />
-                    <EyeOutline style="height: 10px;" />
+                <button id="githubTokenToggle">
+                    <EyeOffOutline style="height: 10px;" id="eye-off" />
+                    <EyeOutline
+                        style="height: 10px; display: none;"
+                        id="eye-on"
+                    />
                 </button>
             </div>
             <GithubTokenInfo />

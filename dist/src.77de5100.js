@@ -527,7 +527,7 @@ function EyeOutline(_a) {
 }
 
 exports.EyeOutline = EyeOutline;
-},{"async-jsx-html":"../node_modules/async-jsx-html/nodejs/mod.js"}],"template/Settings/GithubTokenInfo.tsx":[function(require,module,exports) {
+},{"async-jsx-html":"../node_modules/async-jsx-html/nodejs/mod.js"}],"view/Settings/GithubTokenInfo.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -558,7 +558,7 @@ var GithubTokenInfo = function GithubTokenInfo() {
 };
 
 exports.GithubTokenInfo = GithubTokenInfo;
-},{"async-jsx-html":"../node_modules/async-jsx-html/nodejs/mod.js"}],"template/Settings/Settings.tsx":[function(require,module,exports) {
+},{"async-jsx-html":"../node_modules/async-jsx-html/nodejs/mod.js"}],"view/Settings/Settings.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -589,18 +589,22 @@ function Settings() {
     placeholder: "Enter github repo"
   })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Github token"), /*#__PURE__*/React.createElement("input", {
     id: "githubToken",
+    type: "password",
     value: "",
     placeholder: "Enter github token"
-  }), /*#__PURE__*/React.createElement("button", null, /*#__PURE__*/React.createElement(eye_off_outline_1.EyeOffOutline, {
+  }), /*#__PURE__*/React.createElement("button", {
+    id: "githubTokenToggle"
+  }, /*#__PURE__*/React.createElement(eye_off_outline_1.EyeOffOutline, {
     style: "height: 10px;",
-    id: "yoy"
+    id: "eye-off"
   }), /*#__PURE__*/React.createElement(eye_outline_1.EyeOutline, {
-    style: "height: 10px;"
+    style: "height: 10px; display: none;",
+    id: "eye-on"
   }))), /*#__PURE__*/React.createElement(GithubTokenInfo_1.GithubTokenInfo, null));
 }
 
 exports.Settings = Settings;
-},{"async-jsx-html":"../node_modules/async-jsx-html/nodejs/mod.js","../../icons/eye-off-outline":"icons/eye-off-outline.tsx","../../icons/eye-outline":"icons/eye-outline.tsx","./GithubTokenInfo":"template/Settings/GithubTokenInfo.tsx"}],"template/App.tsx":[function(require,module,exports) {
+},{"async-jsx-html":"../node_modules/async-jsx-html/nodejs/mod.js","../../icons/eye-off-outline":"icons/eye-off-outline.tsx","../../icons/eye-outline":"icons/eye-outline.tsx","./GithubTokenInfo":"view/Settings/GithubTokenInfo.tsx"}],"view/App.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -621,7 +625,43 @@ function App() {
 }
 
 exports.App = App;
-},{"async-jsx-html":"../node_modules/async-jsx-html/nodejs/mod.js","./Settings/Settings":"template/Settings/Settings.tsx"}],"index.ts":[function(require,module,exports) {
+},{"async-jsx-html":"../node_modules/async-jsx-html/nodejs/mod.js","./Settings/Settings":"view/Settings/Settings.tsx"}],"view/Settings/settings.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.initSettings = void 0;
+var elGithubUser;
+var elGithubRepo;
+var elGithubToken;
+var elGithubTokenToggle;
+
+function initSettings() {
+  elGithubUser = document.getElementById('githubUser');
+  elGithubRepo = document.getElementById('githubRepo');
+  elGithubToken = document.getElementById('githubToken');
+  elGithubTokenToggle = document.getElementById('githubTokenToggle');
+  elGithubUser.onchange = console.log;
+  elGithubRepo.onchange = console.log;
+  elGithubToken.onchange = console.log;
+  elGithubTokenToggle.onclick = showToken;
+}
+
+exports.initSettings = initSettings;
+
+function showToken() {
+  if (elGithubToken.getAttribute('type') === 'password') {
+    elGithubToken.setAttribute('type', 'text');
+    document.getElementById('eye-off').style.display = 'none';
+    document.getElementById('eye-on').style.display = 'inline';
+  } else {
+    elGithubToken.setAttribute('type', 'password');
+    document.getElementById('eye-off').style.display = 'inline';
+    document.getElementById('eye-on').style.display = 'none';
+  }
+}
+},{}],"index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -632,11 +672,14 @@ var interface_1 = require("./interface");
 
 var midi_1 = require("./midi");
 
-var App_1 = require("./template/App"); // init html
+var App_1 = require("./view/App");
+
+var settings_1 = require("./view/Settings/settings"); // init html
 
 
 App_1.App().render().then(function (html) {
   document.getElementById('app').innerHTML = html;
+  settings_1.initSettings();
 });
 var worker = new Worker("/sequencerWorker.34566a39.js");
 var msg = {
@@ -676,7 +719,7 @@ worker.addEventListener('message', function (_a) {
     midiOutput.send(data.data);
   });
 }, false);
-},{"./interface":"interface.ts","./midi":"midi.ts","./template/App":"template/App.tsx","./sequencerWorker.ts":[["sequencerWorker.34566a39.js","sequencerWorker.ts"],"sequencerWorker.34566a39.js.map","sequencerWorker.ts"]}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./interface":"interface.ts","./midi":"midi.ts","./view/App":"view/App.tsx","./view/Settings/settings":"view/Settings/settings.ts","./sequencerWorker.ts":[["sequencerWorker.34566a39.js","sequencerWorker.ts"],"sequencerWorker.34566a39.js.map","sequencerWorker.ts"]}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
