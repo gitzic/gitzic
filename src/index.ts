@@ -1,5 +1,11 @@
 import { ActionWorker, MsgWorker } from './interface';
 import { initMIDI, midi } from './midi';
+import { App } from './template/App';
+
+// init html
+App().render().then((html) => {
+    document.getElementById('app').innerHTML = html as string;
+});
 
 const worker = new Worker('sequencerWorker.ts');
 

@@ -23,6 +23,7 @@
     },
     "dependencies": {
         "@types/webmidi": "^2.0.4",
+        "async-jsx-html": "^1.2.3",
         "waaclock": "^0.5.3"
     }
 }
