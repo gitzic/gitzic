@@ -1,28 +1,28 @@
-// import { event, eventKey } from './event';
+import { event, eventKey } from './event';
 
 export let midi: WebMidi.MIDIAccess;
 
-// export function addListenerMidiSuccess(
-//     fn: (midiAccess: WebMidi.MIDIAccess) => void,
-// ) {
-//     event.addListener(eventKey.onMIDISuccess, fn);
-// }
+export function addListenerMidiSuccess(
+    fn: (midiAccess: WebMidi.MIDIAccess) => void,
+) {
+    event.addListener(eventKey.onMIDISuccess, fn);
+}
 
 function onMIDISuccess(midiAccess: WebMidi.MIDIAccess) {
     midi = midiAccess;
-    // event.emit(eventKey.onMIDISuccess, midi);
+    event.emit(eventKey.onMIDISuccess, midi);
     midi.inputs.forEach((midiInput) => {
         console.log('midiInput', midiInput.name, midiInput);
         midiInput.onmidimessage = onMIDIMessage;
     });
 }
 
-// export function addListenerMidiError(fn: (error: any) => void) {
-//     event.addListener(eventKey.onMIDIError, fn);
-// }
+export function addListenerMidiError(fn: (error: any) => void) {
+    event.addListener(eventKey.onMIDIError, fn);
+}
 
 function onMIDIError(error: any) {
-    // event.emit(eventKey.onMIDIError, error);
+    event.emit(eventKey.onMIDIError, error);
     console.error(
         "No access to MIDI devices or your browser doesn't support WebMIDI API.",
         error,

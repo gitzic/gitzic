@@ -1,13 +1,16 @@
+import { loadSequences } from './git';
 import { ActionWorker, MsgWorker } from './interface';
-import { initMIDI, midi } from './midi';
+import { initApp } from './view/app';
 import { App } from './view/App';
-import { initSettings } from './view/Settings/settings';
+import { init, midi } from './Zic';
 
 // init html
-App().render().then((html) => {
-    document.getElementById('app').innerHTML = html as string;
-    initSettings();
-});
+App()
+    .render()
+    .then((html) => {
+        document.getElementById('app').innerHTML = html as string;
+        initApp();
+    });
 
 const worker = new Worker('sequencerWorker.ts');
 
@@ -24,10 +27,16 @@ const msg: MsgWorker = {
 };
 worker.postMessage(msg);
 
-initMIDI();
-worker.addEventListener('message', function ({ data }) {
-    // console.log('data', data);
-    midi.outputs.forEach((midiOutput) => {
-        midiOutput.send(data.data);
-    });
-}, false);
+init();
+loadSequences();
+
+worker.addEventListener(
+    'message',
+    function ({ data }) {
+        // console.log('data', data);
+        midi.outputs.forEach((midiOutput) => {
+            midiOutput.send(data.data);
+        });
+    },
+    false,
+);

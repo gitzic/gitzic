@@ -26,6 +26,7 @@
         "@types/webmidi": "^2.0.4",
         "async-jsx-html": "^1.2.5",
         "axios": "^0.21.1",
+        "eventemitter3": "^4.0.7",
         "waaclock": "^0.5.3"
     }
 }

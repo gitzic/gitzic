@@ -16,10 +16,35 @@ export function evStrVal(fn: (val: string) => void) {
     };
 }
 
-export function toggleChildClass(parent: HTMLElement, classname: string) {
-    return parent.childNodes.forEach((el) =>
-        (el as HTMLElement).classList?.toggle(classname),
+export function applyToChild(
+    parent: HTMLElement,
+    fn: (el: HTMLElement, index?: number) => void,
+) {
+    return parent.childNodes.forEach((el, index) =>
+        fn(el as HTMLElement, index),
     );
+}
+
+export function toggleChildClass(parent: HTMLElement, classname: string) {
+    return applyToChild(parent, (el) => el.classList.toggle(classname));
+}
+
+export function addChildClass(parent: HTMLElement, classname: string) {
+    return applyToChild(parent, (el) => el.classList.add(classname));
+}
+
+export function removeChildClass(parent: HTMLElement, classname: string) {
+    return applyToChild(parent, (el) => el.classList.remove(classname));
+}
+
+export function toggleSiblingClass(el: HTMLElement, classname: string) {
+    if (el.classList.contains(classname)) {
+        addChildClass(el.parentElement, classname);
+        el.classList.remove(classname);
+    } else {
+        removeChildClass(el.parentElement, classname);
+        el.classList.add(classname);
+    }
 }
 
 export function toggleAttr(

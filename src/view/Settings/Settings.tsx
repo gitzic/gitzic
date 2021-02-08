@@ -12,7 +12,7 @@ const React = fix;
 
 export function Settings(): ElementNode {
     return (
-        <div id="settings">
+        <div>
             <div>
                 <label>Github user</label>
                 <input
