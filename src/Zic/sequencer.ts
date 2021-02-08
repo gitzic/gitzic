@@ -36,7 +36,7 @@ export function setBpm(newBpm: number) {
     sequencer.tempo.bpm = between(newBpm, 10, 300);
     sequencer.tempo.ms = 60000 / (sequencer.tempo.bpm * MAX_STEPS_PER_BEAT);
     // interval = setInterval(loop, sequencer.tempo.ms);
-    event.emit(eventKey.onBPMchange, sequencer.tempo);
+    // event.emit(eventKey.onBPMchange, sequencer.tempo);
 }
 
 // function loop() {

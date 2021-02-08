@@ -1,4 +1,4 @@
-import { event, eventKey } from './event';
+import { emitSequencesChange, emitSequenceChange } from './event';
 
 export interface SequenceData {
     name: string;
@@ -46,7 +46,7 @@ export function findIndexNote(id: number, note: Note) {
 export function setOutputId(id: number) {
     return (outputId: string) => {
         sequences[id].outputId = outputId;
-        event.emit(eventKey.onSeqChange, sequences);
+        // event.emit(eventKey.onSeqChange, sequences);
     };
 }
 
@@ -104,17 +104,14 @@ export function setDisplayNote(id: number) {
     };
 }
 
-export function addListenerSeqChange(fn: (seq: SequenceData[]) => void) {
-    event.addListener(eventKey.onSeqChange, fn);
-}
 
 export function setSequences(newSequences: SequenceData[]) {
     sequences = newSequences;
-    event.emit(eventKey.onSeqChange, sequences);
+    emitSequencesChange(sequences);
 }
 
 export function addNew() {
-    sequences.push({
+    const sequence = {
         name: new Date().toLocaleString([], {
             hour: '2-digit',
             minute: '2-digit',
@@ -130,8 +127,9 @@ export function addNew() {
         stepsPerBeat: 4,
         displayedNotes: [],
         notes: [],
-    });
-    event.emit(eventKey.onSeqChange, sequences);
+    };
+    sequences.push(sequence);
+    emitSequenceChange(sequence);
 }
 
 export let sequences: SequenceData[] = [];

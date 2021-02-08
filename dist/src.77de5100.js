@@ -5513,7 +5513,7 @@ var __importDefault = this && this.__importDefault || function (mod) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.eventKey = exports.event = void 0;
+exports.emitSequenceChange = exports.onSequenceChange = exports.emitSequencesChange = exports.onSequencesChange = exports.eventKey = exports.event = void 0;
 
 var eventemitter3_1 = __importDefault(require("eventemitter3"));
 
@@ -5524,16 +5524,41 @@ var eventKey;
   eventKey["onMIDISuccess"] = "onMIDISuccess";
   eventKey["onMIDIError"] = "onMIDIError";
   eventKey["onBPMchange"] = "onBPMchange";
-  eventKey["onSeqChange"] = "onSeqChange";
+  eventKey["onSequencesChange"] = "onSequencesChange";
+  eventKey["onSequenceChange"] = "onSequenceChange";
   eventKey["onTrackChange"] = "onTrackChange";
-})(eventKey = exports.eventKey || (exports.eventKey = {})); // ToDo move listenner in an array
+})(eventKey = exports.eventKey || (exports.eventKey = {}));
+
+function onSequencesChange(fn) {
+  exports.event.addListener(eventKey.onSequencesChange, fn);
+}
+
+exports.onSequencesChange = onSequencesChange;
+
+function emitSequencesChange(sequences) {
+  exports.event.emit(eventKey.onSequencesChange, sequences);
+}
+
+exports.emitSequencesChange = emitSequencesChange;
+
+function onSequenceChange(fn) {
+  exports.event.addListener(eventKey.onSequenceChange, fn);
+}
+
+exports.onSequenceChange = onSequenceChange;
+
+function emitSequenceChange(sequence) {
+  exports.event.emit(eventKey.onSequenceChange, sequence);
+}
+
+exports.emitSequenceChange = emitSequenceChange;
 },{"eventemitter3":"../node_modules/eventemitter3/index.js"}],"Zic/sequence.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.initSequences = exports.sequences = exports.addNew = exports.setSequences = exports.addListenerSeqChange = exports.setDisplayNote = exports.setNote = exports.setName = exports.setStepsPerBeat = exports.setBeatCount = exports.setOutputChannel = exports.setOutputId = exports.findIndexNote = exports.isNoteOff = exports.isNoteOn = exports.getCurrentNotes = void 0;
+exports.initSequences = exports.sequences = exports.addNew = exports.setSequences = exports.setDisplayNote = exports.setNote = exports.setName = exports.setStepsPerBeat = exports.setBeatCount = exports.setOutputChannel = exports.setOutputId = exports.findIndexNote = exports.isNoteOff = exports.isNoteOn = exports.getCurrentNotes = void 0;
 
 var event_1 = require("./event");
 
@@ -5574,8 +5599,7 @@ exports.findIndexNote = findIndexNote;
 
 function setOutputId(id) {
   return function (outputId) {
-    exports.sequences[id].outputId = outputId;
-    event_1.event.emit(event_1.eventKey.onSeqChange, exports.sequences);
+    exports.sequences[id].outputId = outputId; // event.emit(eventKey.onSeqChange, sequences);
   };
 }
 
@@ -5646,21 +5670,15 @@ function setDisplayNote(id) {
 
 exports.setDisplayNote = setDisplayNote;
 
-function addListenerSeqChange(fn) {
-  event_1.event.addListener(event_1.eventKey.onSeqChange, fn);
-}
-
-exports.addListenerSeqChange = addListenerSeqChange;
-
 function setSequences(newSequences) {
   exports.sequences = newSequences;
-  event_1.event.emit(event_1.eventKey.onSeqChange, exports.sequences);
+  event_1.emitSequencesChange(exports.sequences);
 }
 
 exports.setSequences = setSequences;
 
 function addNew() {
-  exports.sequences.push({
+  var sequence = {
     name: new Date().toLocaleString([], {
       hour: '2-digit',
       minute: '2-digit',
@@ -5676,8 +5694,9 @@ function addNew() {
     stepsPerBeat: 4,
     displayedNotes: [],
     notes: []
-  });
-  event_1.event.emit(event_1.eventKey.onSeqChange, exports.sequences);
+  };
+  exports.sequences.push(sequence);
+  event_1.emitSequenceChange(sequence);
 }
 
 exports.addNew = addNew;
@@ -6039,7 +6058,182 @@ exports.activeTrack = 0; // export function addListenerTrackschange(fn: (tracks:
 //     }
 //     event.emit(eventKey.onTrackChange, tracks);
 // }
-},{}],"view/Tracks/tracks.ts":[function(require,module,exports) {
+},{}],"Zic/midi.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.initMIDI = exports.addListenerMidiError = exports.addListenerMidiSuccess = exports.midi = void 0;
+
+var event_1 = require("./event");
+
+function addListenerMidiSuccess(fn) {
+  event_1.event.addListener(event_1.eventKey.onMIDISuccess, fn);
+}
+
+exports.addListenerMidiSuccess = addListenerMidiSuccess;
+
+function onMIDISuccess(midiAccess) {
+  exports.midi = midiAccess;
+  event_1.event.emit(event_1.eventKey.onMIDISuccess, exports.midi);
+  exports.midi.inputs.forEach(function (midiInput) {
+    console.log('midiInput', midiInput.name, midiInput);
+    midiInput.onmidimessage = onMIDIMessage;
+  });
+}
+
+function addListenerMidiError(fn) {
+  event_1.event.addListener(event_1.eventKey.onMIDIError, fn);
+}
+
+exports.addListenerMidiError = addListenerMidiError;
+
+function onMIDIError(error) {
+  event_1.event.emit(event_1.eventKey.onMIDIError, error);
+  console.error("No access to MIDI devices or your browser doesn't support WebMIDI API.", error);
+}
+
+function onMIDIMessage(_a) {
+  var data = _a.data; // console.log('MIDI data', data);
+}
+
+function initMIDI() {
+  if (!navigator.requestMIDIAccess) {
+    onMIDIError(new Error('This browser does not support MIDIAccess'));
+  } else {
+    navigator.requestMIDIAccess({
+      sysex: false
+    }).then(onMIDISuccess, onMIDIError);
+  }
+}
+
+exports.initMIDI = initMIDI;
+},{"./event":"Zic/event.ts"}],"Zic/utils.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.between = void 0;
+
+function between(val, minVal, maxVal) {
+  return Math.min(Math.max(val, minVal), maxVal);
+}
+
+exports.between = between;
+},{}],"Zic/sequencer.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.setBpm = exports.addListenerBPMchange = exports.initSequencer = exports.sequencer = exports.STEP_TICK = exports.MAX_STEPS_PER_BEAT = void 0;
+
+var event_1 = require("./event");
+
+var utils_1 = require("./utils");
+
+exports.MAX_STEPS_PER_BEAT = 8;
+exports.STEP_TICK = 1 / exports.MAX_STEPS_PER_BEAT;
+var interval;
+exports.sequencer = {
+  tempo: {
+    bpm: 100,
+    ms: 150
+  }
+};
+
+function initSequencer() {
+  setBpm(exports.sequencer.tempo.bpm);
+}
+
+exports.initSequencer = initSequencer;
+
+function addListenerBPMchange(fn) {
+  event_1.event.addListener(event_1.eventKey.onBPMchange, fn);
+}
+
+exports.addListenerBPMchange = addListenerBPMchange;
+
+function setBpm(newBpm) {
+  exports.sequencer.tempo.bpm = utils_1.between(newBpm, 10, 300);
+  exports.sequencer.tempo.ms = 60000 / (exports.sequencer.tempo.bpm * exports.MAX_STEPS_PER_BEAT); // interval = setInterval(loop, sequencer.tempo.ms);
+  // event.emit(eventKey.onBPMchange, sequencer.tempo);
+}
+
+exports.setBpm = setBpm; // function loop() {
+//     sequences.forEach((sequence, id) => {
+//         const newStep = sequence.currentStep + STEP_TICK;
+//         sequence.currentStep = newStep >= sequence.beatCount ? 0 : newStep;
+//         event.emit(eventKey.onSeqChange, sequences);
+//         if (tracks[activeTrack].sequences.includes(id)) {
+//             const notes = getCurrentNotes(id);
+//             // console.log('notes', notes);
+//             notes.forEach((note) => {
+//                 // console.log('note', isNoteOn(note), note);
+//                 if (isNoteOn(id, note)) {
+//                     midi?.outputs
+//                         .get(sequence.outputId)
+//                         ?.send([
+//                             0x90 + sequence.outputChannel,
+//                             note.midi,
+//                             note.velocity,
+//                         ]);
+//                     // console.log(note.midi, note.velocity);
+//                 } else {
+//                     midi?.outputs
+//                         .get(sequence.outputId)
+//                         ?.send([0x80 + sequence.outputChannel, note.midi, 0]);
+//                 }
+//             });
+//         }
+//     });
+// }
+},{"./event":"Zic/event.ts","./utils":"Zic/utils.ts"}],"Zic/index.ts":[function(require,module,exports) {
+"use strict";
+
+var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  Object.defineProperty(o, k2, {
+    enumerable: true,
+    get: function get() {
+      return m[k];
+    }
+  });
+} : function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  o[k2] = m[k];
+});
+
+var __exportStar = this && this.__exportStar || function (m, exports) {
+  for (var p in m) {
+    if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+  }
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.init = void 0;
+
+var midi_1 = require("./midi");
+
+var sequencer_1 = require("./sequencer");
+
+__exportStar(require("./midi"), exports);
+
+__exportStar(require("./event"), exports);
+
+__exportStar(require("./sequencer"), exports);
+
+function init() {
+  midi_1.initMIDI();
+  sequencer_1.initSequencer();
+}
+
+exports.init = init;
+},{"./midi":"Zic/midi.ts","./sequencer":"Zic/sequencer.ts","./event":"Zic/event.ts"}],"view/Tracks/tracks.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6049,26 +6243,30 @@ exports.initTracks = void 0;
 
 var track_1 = require("../../Zic/track");
 
-var sequence_1 = require("../../Zic/sequence");
-
 var dom_1 = require("../../utils/dom");
 
+var Zic_1 = require("../../Zic");
+
 function initTracks() {
-  sequence_1.addListenerSeqChange(displaySequences);
+  Zic_1.onSequencesChange(displaySequences);
+  Zic_1.onSequenceChange(displaySequence);
 }
 
 exports.initTracks = initTracks;
 
-function displaySequences() {
-  var elTracks = dom_1.elById('tracks');
-  elTracks.innerHTML = '';
+function displaySequences(sequences) {
+  dom_1.elById('tracks').innerHTML = '';
   track_1.tracks[track_1.activeTrack].availableSequences.forEach(function (sequenceId) {
-    var seq = sequence_1.sequences[sequenceId]; // console.log('name', name);
-
-    elTracks.innerHTML += "<div>" + sequenceId + ": " + (seq === null || seq === void 0 ? void 0 : seq.name) + "</div>";
+    displaySequence(sequences[sequenceId]);
   });
 }
-},{"../../Zic/track":"Zic/track.ts","../../Zic/sequence":"Zic/sequence.ts","../../utils/dom":"utils/dom.ts"}],"view/app.ts":[function(require,module,exports) {
+
+function displaySequence(_a) {
+  var name = _a.name; // should first check if sequence is already in, else replace
+
+  dom_1.elById('tracks').innerHTML += "<div>" + name + "</div>";
+}
+},{"../../Zic/track":"Zic/track.ts","../../utils/dom":"utils/dom.ts","../../Zic":"Zic/index.ts"}],"view/app.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6581,183 +6779,7 @@ function App() {
 }
 
 exports.App = App;
-},{"async-jsx-html":"../node_modules/async-jsx-html/nodejs/mod.js","./Settings/Settings":"view/Settings/Settings.tsx","./Tracks/Tracks":"view/Tracks/Tracks.tsx"}],"Zic/midi.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.initMIDI = exports.addListenerMidiError = exports.addListenerMidiSuccess = exports.midi = void 0;
-
-var event_1 = require("./event");
-
-function addListenerMidiSuccess(fn) {
-  event_1.event.addListener(event_1.eventKey.onMIDISuccess, fn);
-}
-
-exports.addListenerMidiSuccess = addListenerMidiSuccess;
-
-function onMIDISuccess(midiAccess) {
-  exports.midi = midiAccess;
-  event_1.event.emit(event_1.eventKey.onMIDISuccess, exports.midi);
-  exports.midi.inputs.forEach(function (midiInput) {
-    console.log('midiInput', midiInput.name, midiInput);
-    midiInput.onmidimessage = onMIDIMessage;
-  });
-}
-
-function addListenerMidiError(fn) {
-  event_1.event.addListener(event_1.eventKey.onMIDIError, fn);
-}
-
-exports.addListenerMidiError = addListenerMidiError;
-
-function onMIDIError(error) {
-  event_1.event.emit(event_1.eventKey.onMIDIError, error);
-  console.error("No access to MIDI devices or your browser doesn't support WebMIDI API.", error);
-}
-
-function onMIDIMessage(_a) {
-  var data = _a.data; // console.log('MIDI data', data);
-}
-
-function initMIDI() {
-  if (!navigator.requestMIDIAccess) {
-    onMIDIError(new Error('This browser does not support MIDIAccess'));
-  } else {
-    navigator.requestMIDIAccess({
-      sysex: false
-    }).then(onMIDISuccess, onMIDIError);
-  }
-}
-
-exports.initMIDI = initMIDI;
-},{"./event":"Zic/event.ts"}],"Zic/utils.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.between = void 0;
-
-function between(val, minVal, maxVal) {
-  return Math.min(Math.max(val, minVal), maxVal);
-}
-
-exports.between = between;
-},{}],"Zic/sequencer.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.setBpm = exports.addListenerBPMchange = exports.initSequencer = exports.sequencer = exports.STEP_TICK = exports.MAX_STEPS_PER_BEAT = void 0;
-
-var event_1 = require("./event");
-
-var utils_1 = require("./utils");
-
-exports.MAX_STEPS_PER_BEAT = 8;
-exports.STEP_TICK = 1 / exports.MAX_STEPS_PER_BEAT;
-var interval;
-exports.sequencer = {
-  tempo: {
-    bpm: 100,
-    ms: 150
-  }
-};
-
-function initSequencer() {
-  setBpm(exports.sequencer.tempo.bpm);
-}
-
-exports.initSequencer = initSequencer;
-
-function addListenerBPMchange(fn) {
-  event_1.event.addListener(event_1.eventKey.onBPMchange, fn);
-}
-
-exports.addListenerBPMchange = addListenerBPMchange;
-
-function setBpm(newBpm) {
-  exports.sequencer.tempo.bpm = utils_1.between(newBpm, 10, 300);
-  exports.sequencer.tempo.ms = 60000 / (exports.sequencer.tempo.bpm * exports.MAX_STEPS_PER_BEAT); // interval = setInterval(loop, sequencer.tempo.ms);
-
-  event_1.event.emit(event_1.eventKey.onBPMchange, exports.sequencer.tempo);
-}
-
-exports.setBpm = setBpm; // function loop() {
-//     sequences.forEach((sequence, id) => {
-//         const newStep = sequence.currentStep + STEP_TICK;
-//         sequence.currentStep = newStep >= sequence.beatCount ? 0 : newStep;
-//         event.emit(eventKey.onSeqChange, sequences);
-//         if (tracks[activeTrack].sequences.includes(id)) {
-//             const notes = getCurrentNotes(id);
-//             // console.log('notes', notes);
-//             notes.forEach((note) => {
-//                 // console.log('note', isNoteOn(note), note);
-//                 if (isNoteOn(id, note)) {
-//                     midi?.outputs
-//                         .get(sequence.outputId)
-//                         ?.send([
-//                             0x90 + sequence.outputChannel,
-//                             note.midi,
-//                             note.velocity,
-//                         ]);
-//                     // console.log(note.midi, note.velocity);
-//                 } else {
-//                     midi?.outputs
-//                         .get(sequence.outputId)
-//                         ?.send([0x80 + sequence.outputChannel, note.midi, 0]);
-//                 }
-//             });
-//         }
-//     });
-// }
-},{"./event":"Zic/event.ts","./utils":"Zic/utils.ts"}],"Zic/index.ts":[function(require,module,exports) {
-"use strict";
-
-var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
-  if (k2 === undefined) k2 = k;
-  Object.defineProperty(o, k2, {
-    enumerable: true,
-    get: function get() {
-      return m[k];
-    }
-  });
-} : function (o, m, k, k2) {
-  if (k2 === undefined) k2 = k;
-  o[k2] = m[k];
-});
-
-var __exportStar = this && this.__exportStar || function (m, exports) {
-  for (var p in m) {
-    if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-  }
-};
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.init = void 0;
-
-var midi_1 = require("./midi");
-
-var sequencer_1 = require("./sequencer");
-
-__exportStar(require("./midi"), exports);
-
-__exportStar(require("./event"), exports);
-
-__exportStar(require("./sequencer"), exports);
-
-function init() {
-  midi_1.initMIDI();
-  sequencer_1.initSequencer();
-}
-
-exports.init = init;
-},{"./midi":"Zic/midi.ts","./sequencer":"Zic/sequencer.ts","./event":"Zic/event.ts"}],"index.ts":[function(require,module,exports) {
+},{"async-jsx-html":"../node_modules/async-jsx-html/nodejs/mod.js","./Settings/Settings":"view/Settings/Settings.tsx","./Tracks/Tracks":"view/Tracks/Tracks.tsx"}],"index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
