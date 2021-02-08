@@ -3,6 +3,7 @@ import { ActionWorker, MsgWorker } from './interface';
 import { initApp } from './view/app';
 import { App } from './view/App';
 import { init, midi } from './Zic';
+import { initSequences } from './Zic/sequence';
 
 // init html
 App()
@@ -10,6 +11,7 @@ App()
     .then((html) => {
         document.getElementById('app').innerHTML = html as string;
         initApp();
+        initSequences();
     });
 
 const worker = new Worker('sequencerWorker.ts');

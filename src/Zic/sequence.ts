@@ -53,28 +53,28 @@ export function setOutputId(id: number) {
 export function setOutputChannel(id: number) {
     return (channel: number) => {
         sequences[id].outputChannel = channel;
-        event.emit(eventKey.onSeqChange, sequences);
+        // event.emit(eventKey.onSeqChange, sequences);
     };
 }
 
 export function setBeatCount(id: number) {
     return (count: number) => {
         sequences[id].beatCount = count;
-        event.emit(eventKey.onSeqChange, sequences);
+        // event.emit(eventKey.onSeqChange, sequences);
     };
 }
 
 export function setStepsPerBeat(id: number) {
     return (count: number) => {
         sequences[id].stepsPerBeat = count;
-        event.emit(eventKey.onSeqChange, sequences);
+        // event.emit(eventKey.onSeqChange, sequences);
     };
 }
 
 export function setName(id: number) {
     return (name: string) => {
         sequences[id].name = name;
-        event.emit(eventKey.onSeqChange, sequences);
+        // event.emit(eventKey.onSeqChange, sequences);
     };
 }
 
@@ -93,7 +93,7 @@ export function setNote(id: number) {
         sequences[id].notes.sort((a, b) => a.time - b.time);
         // console.log('note', note);
         // console.log('sequences', sequences);
-        event.emit(eventKey.onSeqChange, sequences);
+        // event.emit(eventKey.onSeqChange, sequences);
     };
 }
 
@@ -104,9 +104,12 @@ export function setDisplayNote(id: number) {
     };
 }
 
+export function addListenerSeqChange(fn: (seq: SequenceData[]) => void) {
+    event.addListener(eventKey.onSeqChange, fn);
+}
+
 export function setSequences(newSequences: SequenceData[]) {
     sequences = newSequences;
-    console.log('sequences', sequences);
     event.emit(eventKey.onSeqChange, sequences);
 }
 
@@ -133,4 +136,6 @@ export function addNew() {
 
 export let sequences: SequenceData[] = [];
 
-!sequences.length && addNew();
+export function initSequences() {
+    !sequences.length && addNew();
+}

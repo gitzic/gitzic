@@ -5533,7 +5533,7 @@ var eventKey;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.sequences = exports.addNew = exports.setSequences = exports.setDisplayNote = exports.setNote = exports.setName = exports.setStepsPerBeat = exports.setBeatCount = exports.setOutputChannel = exports.setOutputId = exports.findIndexNote = exports.isNoteOff = exports.isNoteOn = exports.getCurrentNotes = void 0;
+exports.initSequences = exports.sequences = exports.addNew = exports.setSequences = exports.addListenerSeqChange = exports.setDisplayNote = exports.setNote = exports.setName = exports.setStepsPerBeat = exports.setBeatCount = exports.setOutputChannel = exports.setOutputId = exports.findIndexNote = exports.isNoteOff = exports.isNoteOn = exports.getCurrentNotes = void 0;
 
 var event_1 = require("./event");
 
@@ -5583,8 +5583,7 @@ exports.setOutputId = setOutputId;
 
 function setOutputChannel(id) {
   return function (channel) {
-    exports.sequences[id].outputChannel = channel;
-    event_1.event.emit(event_1.eventKey.onSeqChange, exports.sequences);
+    exports.sequences[id].outputChannel = channel; // event.emit(eventKey.onSeqChange, sequences);
   };
 }
 
@@ -5592,8 +5591,7 @@ exports.setOutputChannel = setOutputChannel;
 
 function setBeatCount(id) {
   return function (count) {
-    exports.sequences[id].beatCount = count;
-    event_1.event.emit(event_1.eventKey.onSeqChange, exports.sequences);
+    exports.sequences[id].beatCount = count; // event.emit(eventKey.onSeqChange, sequences);
   };
 }
 
@@ -5601,8 +5599,7 @@ exports.setBeatCount = setBeatCount;
 
 function setStepsPerBeat(id) {
   return function (count) {
-    exports.sequences[id].stepsPerBeat = count;
-    event_1.event.emit(event_1.eventKey.onSeqChange, exports.sequences);
+    exports.sequences[id].stepsPerBeat = count; // event.emit(eventKey.onSeqChange, sequences);
   };
 }
 
@@ -5610,8 +5607,7 @@ exports.setStepsPerBeat = setStepsPerBeat;
 
 function setName(id) {
   return function (name) {
-    exports.sequences[id].name = name;
-    event_1.event.emit(event_1.eventKey.onSeqChange, exports.sequences);
+    exports.sequences[id].name = name; // event.emit(eventKey.onSeqChange, sequences);
   };
 }
 
@@ -5635,8 +5631,7 @@ function setNote(id) {
       return a.time - b.time;
     }); // console.log('note', note);
     // console.log('sequences', sequences);
-
-    event_1.event.emit(event_1.eventKey.onSeqChange, exports.sequences);
+    // event.emit(eventKey.onSeqChange, sequences);
   };
 }
 
@@ -5651,9 +5646,14 @@ function setDisplayNote(id) {
 
 exports.setDisplayNote = setDisplayNote;
 
+function addListenerSeqChange(fn) {
+  event_1.event.addListener(event_1.eventKey.onSeqChange, fn);
+}
+
+exports.addListenerSeqChange = addListenerSeqChange;
+
 function setSequences(newSequences) {
   exports.sequences = newSequences;
-  console.log('sequences', exports.sequences);
   event_1.event.emit(event_1.eventKey.onSeqChange, exports.sequences);
 }
 
@@ -5682,7 +5682,12 @@ function addNew() {
 
 exports.addNew = addNew;
 exports.sequences = [];
-!exports.sequences.length && addNew();
+
+function initSequences() {
+  !exports.sequences.length && addNew();
+}
+
+exports.initSequences = initSequences;
 },{"./event":"Zic/event.ts"}],"git.ts":[function(require,module,exports) {
 "use strict";
 
@@ -6049,15 +6054,20 @@ var sequence_1 = require("../../Zic/sequence");
 var dom_1 = require("../../utils/dom");
 
 function initTracks() {
+  sequence_1.addListenerSeqChange(displaySequences);
+}
+
+exports.initTracks = initTracks;
+
+function displaySequences() {
   var elTracks = dom_1.elById('tracks');
+  elTracks.innerHTML = '';
   track_1.tracks[track_1.activeTrack].availableSequences.forEach(function (sequenceId) {
     var seq = sequence_1.sequences[sequenceId]; // console.log('name', name);
 
     elTracks.innerHTML += "<div>" + sequenceId + ": " + (seq === null || seq === void 0 ? void 0 : seq.name) + "</div>";
   });
 }
-
-exports.initTracks = initTracks;
 },{"../../Zic/track":"Zic/track.ts","../../Zic/sequence":"Zic/sequence.ts","../../utils/dom":"utils/dom.ts"}],"view/app.ts":[function(require,module,exports) {
 "use strict";
 
@@ -6641,7 +6651,7 @@ exports.between = between;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.addListenerSeqChange = exports.setBpm = exports.addListenerBPMchange = exports.initSequencer = exports.sequencer = exports.STEP_TICK = exports.MAX_STEPS_PER_BEAT = void 0;
+exports.setBpm = exports.addListenerBPMchange = exports.initSequencer = exports.sequencer = exports.STEP_TICK = exports.MAX_STEPS_PER_BEAT = void 0;
 
 var event_1 = require("./event");
 
@@ -6676,13 +6686,7 @@ function setBpm(newBpm) {
   event_1.event.emit(event_1.eventKey.onBPMchange, exports.sequencer.tempo);
 }
 
-exports.setBpm = setBpm;
-
-function addListenerSeqChange(fn) {
-  event_1.event.addListener(event_1.eventKey.onSeqChange, fn);
-}
-
-exports.addListenerSeqChange = addListenerSeqChange; // function loop() {
+exports.setBpm = setBpm; // function loop() {
 //     sequences.forEach((sequence, id) => {
 //         const newStep = sequence.currentStep + STEP_TICK;
 //         sequence.currentStep = newStep >= sequence.beatCount ? 0 : newStep;
@@ -6768,12 +6772,15 @@ var app_1 = require("./view/app");
 
 var App_1 = require("./view/App");
 
-var Zic_1 = require("./Zic"); // init html
+var Zic_1 = require("./Zic");
+
+var sequence_1 = require("./Zic/sequence"); // init html
 
 
 App_1.App().render().then(function (html) {
   document.getElementById('app').innerHTML = html;
   app_1.initApp();
+  sequence_1.initSequences();
 });
 var worker = new Worker("/sequencerWorker.34566a39.js");
 var msg = {
@@ -6814,7 +6821,7 @@ worker.addEventListener('message', function (_a) {
     midiOutput.send(data.data);
   });
 }, false);
-},{"./git":"git.ts","./interface":"interface.ts","./view/app":"view/app.ts","./view/App":"view/App.tsx","./Zic":"Zic/index.ts","./sequencerWorker.ts":[["sequencerWorker.34566a39.js","sequencerWorker.ts"],"sequencerWorker.34566a39.js.map","sequencerWorker.ts"]}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./git":"git.ts","./interface":"interface.ts","./view/app":"view/app.ts","./view/App":"view/App.tsx","./Zic":"Zic/index.ts","./Zic/sequence":"Zic/sequence.ts","./sequencerWorker.ts":[["sequencerWorker.34566a39.js","sequencerWorker.ts"],"sequencerWorker.34566a39.js.map","sequencerWorker.ts"]}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;

@@ -39,10 +39,6 @@ export function setBpm(newBpm: number) {
     event.emit(eventKey.onBPMchange, sequencer.tempo);
 }
 
-export function addListenerSeqChange(fn: (seq: SequenceData[]) => void) {
-    event.addListener(eventKey.onSeqChange, fn);
-}
-
 // function loop() {
 //     sequences.forEach((sequence, id) => {
 //         const newStep = sequence.currentStep + STEP_TICK;
