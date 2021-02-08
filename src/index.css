@@ -53,12 +53,12 @@ button .icon {
     box-shadow: none;
 }
 
-#tracks {
+#track {
     display: flex;
     align-content: stretch;
 }
 
-.track {
+#track .sequence {
     cursor: pointer;
     border-radius: 5px;
     padding: 10px;
@@ -67,6 +67,6 @@ button .icon {
         rgb(0 0 0 / 14%) 0px 2px 2px 0px, rgb(0 0 0 / 12%) 0px 1px 5px 0px;
 }
 
-.track.active {
+#track .sequence.active {
     background-color: rgb(255 236 236);
 }

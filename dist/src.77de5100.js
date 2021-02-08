@@ -5951,20 +5951,7 @@ function saveSequences() {
 }
 
 exports.saveSequences = saveSequences;
-},{"./storage/GitHubStorage":"storage/GitHubStorage.ts","path":"../node_modules/path-browserify/index.js","./Zic/sequence":"Zic/sequence.ts"}],"interface.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.ActionWorker = void 0;
-var ActionWorker;
-
-(function (ActionWorker) {
-  ActionWorker[ActionWorker["save"] = 0] = "save";
-  ActionWorker[ActionWorker["remove"] = 1] = "remove";
-})(ActionWorker = exports.ActionWorker || (exports.ActionWorker = {}));
-},{}],"utils/dom.ts":[function(require,module,exports) {
+},{"./storage/GitHubStorage":"storage/GitHubStorage.ts","path":"../node_modules/path-browserify/index.js","./Zic/sequence":"Zic/sequence.ts"}],"utils/dom.ts":[function(require,module,exports) {
 "use strict"; // export function evNumVal(fn: (nb: number) => void) {
 //     return ({ target: { value } }: Event) => {
 //         fn(Number(value));
@@ -6088,48 +6075,19 @@ function showToken() {
   dom_1.toggleAttr(elGithubToken, 'type', 'password', 'text');
   dom_1.toggleChildClass(elGithubTokenToggle, 'hide');
 }
-},{"../../storage/localStorage":"storage/localStorage.ts","../../utils/dom":"utils/dom.ts"}],"Zic/track.ts":[function(require,module,exports) {
+},{"../../storage/localStorage":"storage/localStorage.ts","../../utils/dom":"utils/dom.ts"}],"interface.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.activeTrack = exports.tracks = exports.defaultTracks = void 0; // export const defaultTracks = [{ sequences: [] }];
+exports.ActionWorker = void 0;
+var ActionWorker;
 
-exports.defaultTracks = [{
-  sequences: [{
-    id: 0,
-    outputId: 'yoyo'
-  }, {
-    id: 1,
-    outputId: 'yoyo'
-  }, {
-    id: 2,
-    outputId: 'yoyo'
-  }, {
-    id: 3,
-    outputId: 'yoyo'
-  }, {
-    id: 4,
-    outputId: 'yoyo'
-  }]
-}];
-exports.tracks = exports.defaultTracks;
-exports.activeTrack = 0; // export function addListenerTrackschange(fn: (tracks: Track[]) => void) {
-//     event.addListener(eventKey.onTrackChange, fn);
-// }
-// export function getSequenceInTrack(trackId: number, sequenceId: number) {
-//     return tracks[trackId].sequences.findIndex((val) => val === sequenceId);
-// }
-// export function toggleSequence(trackId: number, sequenceId: number) {
-//     const index = getSequenceInTrack(trackId, sequenceId);
-//     if (index === -1) {
-//         tracks[trackId].sequences.push(sequenceId);
-//     } else {
-//         tracks[trackId].sequences.splice(index, 1);
-//     }
-//     event.emit(eventKey.onTrackChange, tracks);
-// }
+(function (ActionWorker) {
+  ActionWorker[ActionWorker["save"] = 0] = "save";
+  ActionWorker[ActionWorker["remove"] = 1] = "remove";
+})(ActionWorker = exports.ActionWorker || (exports.ActionWorker = {}));
 },{}],"Zic/midi.ts":[function(require,module,exports) {
 "use strict";
 
@@ -6181,7 +6139,109 @@ function initMIDI() {
 }
 
 exports.initMIDI = initMIDI;
-},{"./event":"Zic/event.ts"}],"Zic/utils.ts":[function(require,module,exports) {
+},{"./event":"Zic/event.ts"}],"Zic/track.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.activeTrack = exports.tracks = exports.defaultTracks = exports.activateSequence = void 0;
+
+var interface_1 = require("../interface");
+
+var midi_1 = require("./midi");
+
+var worker = new Worker("/sequencerWorker.cf97582d.js");
+worker.addEventListener('message', function (_a) {
+  var data = _a.data; // console.log('data', data);
+
+  midi_1.midi.outputs.forEach(function (midiOutput) {
+    midiOutput.send(data.data);
+  });
+}, false); // const msg: MsgWorker = {
+//     action: ActionWorker.save,
+//     sequences: [
+//         { id: '1', trigger: 0, data: [0x90, 50, 90] },
+//         { id: '2', trigger: 1, data: [0x80, 50, 0] },
+//         { id: '3', trigger: 6, data: [0x90, 60, 90] },
+//         { id: '4', trigger: 8, data: [0x80, 60, 0] },
+//         { id: '5', trigger: 14, data: [0x90, 70, 90] },
+//         { id: '6', trigger: 15, data: [0x80, 70, 0] },
+//     ],
+// };
+// worker.postMessage(msg);
+
+function activateSequence(sequence) {
+  console.log('activateSequence', sequence); // ToDo: here need to activate sequence in track... but for the moment just push to midi
+
+  var msgSequences = sequence.notes.flatMap(function (_a) {
+    var velocity = _a.velocity,
+        note = _a.midi,
+        duration = _a.duration,
+        time = _a.time,
+        slide = _a.slide; // ToDo: need to use slide
+
+    var noteOn = {
+      id: "midi-on-" + note + "-" + time,
+      trigger: time * sequence.stepsPerBeat,
+      data: [0x90
+      /* ToDo channel */
+      , note, velocity]
+    };
+    var noteOff = {
+      id: "midi-off-" + note + "-" + time,
+      trigger: (time + duration) * sequence.stepsPerBeat,
+      data: [0x80
+      /* ToDo channel */
+      , note, 0]
+    };
+    return [noteOn, noteOff];
+  });
+  var msg = {
+    action: interface_1.ActionWorker.save,
+    sequences: msgSequences
+  };
+  worker.postMessage(msg);
+}
+
+exports.activateSequence = activateSequence; // export const defaultTracks = [{ sequences: [] }];
+
+exports.defaultTracks = [{
+  sequences: [// ToDo: here put real id -> string uuid
+  {
+    id: 0,
+    outputId: 'yoyo'
+  }, {
+    id: 1,
+    outputId: 'yoyo'
+  }, {
+    id: 2,
+    outputId: 'yoyo'
+  }, {
+    id: 3,
+    outputId: 'yoyo'
+  }, {
+    id: 4,
+    outputId: 'yoyo'
+  }]
+}];
+exports.tracks = exports.defaultTracks;
+exports.activeTrack = 0; // export function addListenerTrackschange(fn: (tracks: Track[]) => void) {
+//     event.addListener(eventKey.onTrackChange, fn);
+// }
+// export function getSequenceInTrack(trackId: number, sequenceId: number) {
+//     return tracks[trackId].sequences.findIndex((val) => val === sequenceId);
+// }
+// export function toggleSequence(trackId: number, sequenceId: number) {
+//     const index = getSequenceInTrack(trackId, sequenceId);
+//     if (index === -1) {
+//         tracks[trackId].sequences.push(sequenceId);
+//     } else {
+//         tracks[trackId].sequences.splice(index, 1);
+//     }
+//     event.emit(eventKey.onTrackChange, tracks);
+// }
+},{"../interface":"interface.ts","./midi":"Zic/midi.ts","./sequencerWorker.ts":[["sequencerWorker.cf97582d.js","Zic/sequencerWorker.ts"],"sequencerWorker.cf97582d.js.map","Zic/sequencerWorker.ts"]}],"Zic/utils.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6588,26 +6648,26 @@ exports.React = {
 };
 exports.default = exports.React;
 
-},{"./jsx":"../node_modules/async-jsx-html/nodejs/jsx.js","./node/ElementNode":"../node_modules/async-jsx-html/nodejs/node/ElementNode.js","./node/ComponentNode":"../node_modules/async-jsx-html/nodejs/node/ComponentNode.js"}],"view/Tracks/Track.tsx":[function(require,module,exports) {
+},{"./jsx":"../node_modules/async-jsx-html/nodejs/jsx.js","./node/ElementNode":"../node_modules/async-jsx-html/nodejs/node/ElementNode.js","./node/ComponentNode":"../node_modules/async-jsx-html/nodejs/node/ComponentNode.js"}],"view/Tracks/Sequence.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Track = void 0;
+exports.Sequence = void 0;
 
 var async_jsx_html_1 = require("async-jsx-html");
 
 var React = async_jsx_html_1.React;
 
-function Track(_a) {
+function Sequence(_a) {
   var name = _a.name;
   return /*#__PURE__*/React.createElement("div", {
-    class: "track"
+    class: "sequence"
   }, name);
 }
 
-exports.Track = Track;
+exports.Sequence = Sequence;
 },{"async-jsx-html":"../node_modules/async-jsx-html/nodejs/mod.js"}],"view/Tracks/tracks.ts":[function(require,module,exports) {
 "use strict";
 
@@ -6765,7 +6825,7 @@ var dom_1 = require("../../utils/dom");
 
 var Zic_1 = require("../../Zic");
 
-var Track_1 = require("./Track");
+var Sequence_1 = require("./Sequence");
 
 function initTracks() {
   Zic_1.onSequencesChange(displaySequences);
@@ -6775,9 +6835,10 @@ function initTracks() {
 exports.initTracks = initTracks;
 
 function displaySequences(sequences) {
-  dom_1.elById('tracks').innerHTML = '';
+  dom_1.elById('track').innerHTML = '';
   track_1.tracks[track_1.activeTrack].sequences.forEach(function (_a) {
-    var id = _a.id;
+    var id = _a.id; // ToDo: here should find by id!
+
     addSequence(sequences[id]);
   });
 }
@@ -6790,15 +6851,19 @@ function addSequence(sequence) {
         case 0:
           return [4
           /*yield*/
-          , Track_1.Track(sequence).render()];
+          , Sequence_1.Sequence(sequence).render()];
 
         case 1:
           html = _a.sent();
-          el = dom_1.elFromHtml(html); // should first check if sequence is already in, else replace
+          el = dom_1.elFromHtml(html); // ToDo: should first check if sequence is already in, else replace
 
-          dom_1.elById('tracks').append(el);
+          dom_1.elById('track').append(el);
           el.addEventListener('click', function () {
-            el.classList.toggle('active');
+            var active = el.classList.toggle('active');
+
+            if (active) {
+              track_1.activateSequence(sequence);
+            }
           });
           return [2
           /*return*/
@@ -6807,7 +6872,7 @@ function addSequence(sequence) {
     });
   });
 }
-},{"../../Zic/track":"Zic/track.ts","../../utils/dom":"utils/dom.ts","../../Zic":"Zic/index.ts","./Track":"view/Tracks/Track.tsx"}],"view/app.ts":[function(require,module,exports) {
+},{"../../Zic/track":"Zic/track.ts","../../utils/dom":"utils/dom.ts","../../Zic":"Zic/index.ts","./Sequence":"view/Tracks/Sequence.tsx"}],"view/app.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7008,7 +7073,9 @@ var React = async_jsx_html_1.React;
 function Tracks() {
   return /*#__PURE__*/React.createElement("div", {
     id: "tracks"
-  });
+  }, /*#__PURE__*/React.createElement("div", {
+    id: "track"
+  }));
 }
 
 exports.Tracks = Tracks;
@@ -7046,8 +7113,6 @@ Object.defineProperty(exports, "__esModule", {
 
 var git_1 = require("./git");
 
-var interface_1 = require("./interface");
-
 var app_1 = require("./view/app");
 
 var App_1 = require("./view/App");
@@ -7062,46 +7127,9 @@ App_1.App().render().then(function (html) {
   app_1.initApp();
   sequence_1.initSequences();
 });
-var worker = new Worker("/sequencerWorker.34566a39.js");
-var msg = {
-  action: interface_1.ActionWorker.save,
-  sequences: [{
-    id: '1',
-    trigger: 0,
-    data: [0x90, 50, 90]
-  }, {
-    id: '2',
-    trigger: 1,
-    data: [0x80, 50, 0]
-  }, {
-    id: '3',
-    trigger: 6,
-    data: [0x90, 60, 90]
-  }, {
-    id: '4',
-    trigger: 8,
-    data: [0x80, 60, 0]
-  }, {
-    id: '5',
-    trigger: 14,
-    data: [0x90, 70, 90]
-  }, {
-    id: '6',
-    trigger: 15,
-    data: [0x80, 70, 0]
-  }]
-};
-worker.postMessage(msg);
 Zic_1.init();
 git_1.loadSequences();
-worker.addEventListener('message', function (_a) {
-  var data = _a.data; // console.log('data', data);
-
-  Zic_1.midi.outputs.forEach(function (midiOutput) {
-    midiOutput.send(data.data);
-  });
-}, false);
-},{"./git":"git.ts","./interface":"interface.ts","./view/app":"view/app.ts","./view/App":"view/App.tsx","./Zic":"Zic/index.ts","./Zic/sequence":"Zic/sequence.ts","./sequencerWorker.ts":[["sequencerWorker.34566a39.js","sequencerWorker.ts"],"sequencerWorker.34566a39.js.map","sequencerWorker.ts"]}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./git":"git.ts","./view/app":"view/app.ts","./view/App":"view/App.tsx","./Zic":"Zic/index.ts","./Zic/sequence":"Zic/sequence.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;

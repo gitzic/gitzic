@@ -1,4 +1,4 @@
-import { ActionWorker, MsgWorker, SequenceWorker } from './interface';
+import { ActionWorker, MsgWorker, SequenceWorker } from '../interface';
 
 const ms = 150;
 let counter = 0;
