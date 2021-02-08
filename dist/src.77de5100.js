@@ -5163,7 +5163,34 @@ function (_super) {
 }(Storage_1.Storage);
 
 exports.GitHubStorage = GitHubStorage;
-},{"path":"../node_modules/path-browserify/index.js","axios":"../node_modules/axios/index.js","./Storage":"storage/Storage.ts","../error":"error.ts","./localStorage":"storage/localStorage.ts","buffer":"../node_modules/buffer/index.js"}],"../node_modules/eventemitter3/index.js":[function(require,module,exports) {
+},{"path":"../node_modules/path-browserify/index.js","axios":"../node_modules/axios/index.js","./Storage":"storage/Storage.ts","../error":"error.ts","./localStorage":"storage/localStorage.ts","buffer":"../node_modules/buffer/index.js"}],"utils/utils.ts":[function(require,module,exports) {
+"use strict";
+
+var __spreadArrays = this && this.__spreadArrays || function () {
+  for (var s = 0, i = 0, il = arguments.length; i < il; i++) {
+    s += arguments[i].length;
+  }
+
+  for (var r = Array(s), k = 0, i = 0; i < il; i++) {
+    for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++) {
+      r[k] = a[j];
+    }
+  }
+
+  return r;
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.uuid = void 0;
+
+function uuid() {
+  return __spreadArrays([new Date().getTime()], window.crypto.getRandomValues(new Uint32Array(2))).join('-');
+}
+
+exports.uuid = uuid;
+},{}],"../node_modules/eventemitter3/index.js":[function(require,module,exports) {
 'use strict';
 
 var has = Object.prototype.hasOwnProperty
@@ -5513,7 +5540,7 @@ var __importDefault = this && this.__importDefault || function (mod) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.emitSequenceChange = exports.onSequenceChange = exports.emitSequencesChange = exports.onSequencesChange = exports.eventKey = exports.event = void 0;
+exports.emitSequenceAdd = exports.onSequenceAdd = exports.emitSequencesChange = exports.onSequencesChange = exports.eventKey = exports.event = void 0;
 
 var eventemitter3_1 = __importDefault(require("eventemitter3"));
 
@@ -5525,7 +5552,7 @@ var eventKey;
   eventKey["onMIDIError"] = "onMIDIError";
   eventKey["onBPMchange"] = "onBPMchange";
   eventKey["onSequencesChange"] = "onSequencesChange";
-  eventKey["onSequenceChange"] = "onSequenceChange";
+  eventKey["onSequenceAdd"] = "onSequenceAdd";
   eventKey["onTrackChange"] = "onTrackChange";
 })(eventKey = exports.eventKey || (exports.eventKey = {}));
 
@@ -5541,24 +5568,42 @@ function emitSequencesChange(sequences) {
 
 exports.emitSequencesChange = emitSequencesChange;
 
-function onSequenceChange(fn) {
-  exports.event.addListener(eventKey.onSequenceChange, fn);
+function onSequenceAdd(fn) {
+  exports.event.addListener(eventKey.onSequenceAdd, fn);
 }
 
-exports.onSequenceChange = onSequenceChange;
+exports.onSequenceAdd = onSequenceAdd;
 
-function emitSequenceChange(sequence) {
-  exports.event.emit(eventKey.onSequenceChange, sequence);
+function emitSequenceAdd(sequence) {
+  exports.event.emit(eventKey.onSequenceAdd, sequence);
 }
 
-exports.emitSequenceChange = emitSequenceChange;
+exports.emitSequenceAdd = emitSequenceAdd;
 },{"eventemitter3":"../node_modules/eventemitter3/index.js"}],"Zic/sequence.ts":[function(require,module,exports) {
 "use strict";
+
+var __assign = this && this.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+
+      for (var p in s) {
+        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      }
+    }
+
+    return t;
+  };
+
+  return __assign.apply(this, arguments);
+};
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.initSequences = exports.sequences = exports.addNew = exports.setSequences = exports.setDisplayNote = exports.setNote = exports.setName = exports.setStepsPerBeat = exports.setBeatCount = exports.setOutputChannel = exports.setOutputId = exports.findIndexNote = exports.isNoteOff = exports.isNoteOn = exports.getCurrentNotes = void 0;
+
+var utils_1 = require("../utils/utils");
 
 var event_1 = require("./event");
 
@@ -5671,7 +5716,14 @@ function setDisplayNote(id) {
 exports.setDisplayNote = setDisplayNote;
 
 function setSequences(newSequences) {
-  exports.sequences = newSequences;
+  // sequences = newSequences;
+  // the time uuid is not set, ensure it
+  // to be remove
+  exports.sequences = newSequences.map(function (s) {
+    return __assign({
+      id: utils_1.uuid()
+    }, s);
+  });
   event_1.emitSequencesChange(exports.sequences);
 }
 
@@ -5679,6 +5731,7 @@ exports.setSequences = setSequences;
 
 function addNew() {
   var sequence = {
+    id: utils_1.uuid(),
     name: new Date().toLocaleString([], {
       hour: '2-digit',
       minute: '2-digit',
@@ -5696,7 +5749,7 @@ function addNew() {
     notes: []
   };
   exports.sequences.push(sequence);
-  event_1.emitSequenceChange(sequence);
+  event_1.emitSequenceAdd(sequence);
 }
 
 exports.addNew = addNew;
@@ -5707,7 +5760,7 @@ function initSequences() {
 }
 
 exports.initSequences = initSequences;
-},{"./event":"Zic/event.ts"}],"git.ts":[function(require,module,exports) {
+},{"../utils/utils":"utils/utils.ts","./event":"Zic/event.ts"}],"git.ts":[function(require,module,exports) {
 "use strict";
 
 var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
@@ -6233,78 +6286,7 @@ function init() {
 }
 
 exports.init = init;
-},{"./midi":"Zic/midi.ts","./sequencer":"Zic/sequencer.ts","./event":"Zic/event.ts"}],"view/Tracks/tracks.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.initTracks = void 0;
-
-var track_1 = require("../../Zic/track");
-
-var dom_1 = require("../../utils/dom");
-
-var Zic_1 = require("../../Zic");
-
-function initTracks() {
-  Zic_1.onSequencesChange(displaySequences);
-  Zic_1.onSequenceChange(displaySequence);
-}
-
-exports.initTracks = initTracks;
-
-function displaySequences(sequences) {
-  dom_1.elById('tracks').innerHTML = '';
-  track_1.tracks[track_1.activeTrack].availableSequences.forEach(function (sequenceId) {
-    displaySequence(sequences[sequenceId]);
-  });
-}
-
-function displaySequence(_a) {
-  var name = _a.name; // should first check if sequence is already in, else replace
-
-  dom_1.elById('tracks').innerHTML += "<div>" + name + "</div>";
-}
-},{"../../Zic/track":"Zic/track.ts","../../utils/dom":"utils/dom.ts","../../Zic":"Zic/index.ts"}],"view/app.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.initApp = void 0;
-
-var dom_1 = require("../utils/dom");
-
-var settings_1 = require("./Settings/settings");
-
-var tracks_1 = require("./Tracks/tracks");
-
-function showTab(btnIndex) {
-  dom_1.applyToChild(dom_1.elById('tabs-views'), function (tab, tabIndex) {
-    if (btnIndex === tabIndex) {
-      tab.classList.add('active');
-    } else {
-      tab.classList.remove('active');
-    }
-  });
-}
-
-function initApp() {
-  dom_1.elById('tabs-menu').children[0].classList.add('active');
-  showTab(0);
-  dom_1.applyToChild(dom_1.elById('tabs-menu'), function (btn, btnIndex) {
-    btn.onclick = function () {
-      dom_1.toggleSiblingClass(btn, 'active');
-      showTab(btnIndex);
-    };
-  });
-  settings_1.initSettings();
-  tracks_1.initTracks();
-}
-
-exports.initApp = initApp;
-},{"../utils/dom":"utils/dom.ts","./Settings/settings":"view/Settings/settings.ts","./Tracks/tracks":"view/Tracks/tracks.ts"}],"../node_modules/async-jsx-html/nodejs/constants.js":[function(require,module,exports) {
+},{"./midi":"Zic/midi.ts","./sequencer":"Zic/sequencer.ts","./event":"Zic/event.ts"}],"../node_modules/async-jsx-html/nodejs/constants.js":[function(require,module,exports) {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NODE_TYPE = void 0;
@@ -6587,7 +6569,259 @@ exports.React = {
 };
 exports.default = exports.React;
 
-},{"./jsx":"../node_modules/async-jsx-html/nodejs/jsx.js","./node/ElementNode":"../node_modules/async-jsx-html/nodejs/node/ElementNode.js","./node/ComponentNode":"../node_modules/async-jsx-html/nodejs/node/ComponentNode.js"}],"icons/eye-off-outline.tsx":[function(require,module,exports) {
+},{"./jsx":"../node_modules/async-jsx-html/nodejs/jsx.js","./node/ElementNode":"../node_modules/async-jsx-html/nodejs/node/ElementNode.js","./node/ComponentNode":"../node_modules/async-jsx-html/nodejs/node/ComponentNode.js"}],"view/Tracks/Track.tsx":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Track = void 0;
+
+var async_jsx_html_1 = require("async-jsx-html");
+
+var React = async_jsx_html_1.React;
+
+function Track(_a) {
+  var name = _a.name;
+  return /*#__PURE__*/React.createElement("div", {
+    class: "track"
+  }, name);
+}
+
+exports.Track = Track;
+},{"async-jsx-html":"../node_modules/async-jsx-html/nodejs/mod.js"}],"view/Tracks/tracks.ts":[function(require,module,exports) {
+"use strict";
+
+var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
+  function adopt(value) {
+    return value instanceof P ? value : new P(function (resolve) {
+      resolve(value);
+    });
+  }
+
+  return new (P || (P = Promise))(function (resolve, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function rejected(value) {
+      try {
+        step(generator["throw"](value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function step(result) {
+      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+    }
+
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
+};
+
+var __generator = this && this.__generator || function (thisArg, body) {
+  var _ = {
+    label: 0,
+    sent: function sent() {
+      if (t[0] & 1) throw t[1];
+      return t[1];
+    },
+    trys: [],
+    ops: []
+  },
+      f,
+      y,
+      t,
+      g;
+  return g = {
+    next: verb(0),
+    "throw": verb(1),
+    "return": verb(2)
+  }, typeof Symbol === "function" && (g[Symbol.iterator] = function () {
+    return this;
+  }), g;
+
+  function verb(n) {
+    return function (v) {
+      return step([n, v]);
+    };
+  }
+
+  function step(op) {
+    if (f) throw new TypeError("Generator is already executing.");
+
+    while (_) {
+      try {
+        if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+        if (y = 0, t) op = [op[0] & 2, t.value];
+
+        switch (op[0]) {
+          case 0:
+          case 1:
+            t = op;
+            break;
+
+          case 4:
+            _.label++;
+            return {
+              value: op[1],
+              done: false
+            };
+
+          case 5:
+            _.label++;
+            y = op[1];
+            op = [0];
+            continue;
+
+          case 7:
+            op = _.ops.pop();
+
+            _.trys.pop();
+
+            continue;
+
+          default:
+            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+              _ = 0;
+              continue;
+            }
+
+            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+              _.label = op[1];
+              break;
+            }
+
+            if (op[0] === 6 && _.label < t[1]) {
+              _.label = t[1];
+              t = op;
+              break;
+            }
+
+            if (t && _.label < t[2]) {
+              _.label = t[2];
+
+              _.ops.push(op);
+
+              break;
+            }
+
+            if (t[2]) _.ops.pop();
+
+            _.trys.pop();
+
+            continue;
+        }
+
+        op = body.call(thisArg, _);
+      } catch (e) {
+        op = [6, e];
+        y = 0;
+      } finally {
+        f = t = 0;
+      }
+    }
+
+    if (op[0] & 5) throw op[1];
+    return {
+      value: op[0] ? op[1] : void 0,
+      done: true
+    };
+  }
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.initTracks = void 0;
+
+var track_1 = require("../../Zic/track");
+
+var dom_1 = require("../../utils/dom");
+
+var Zic_1 = require("../../Zic");
+
+var Track_1 = require("./Track");
+
+function initTracks() {
+  Zic_1.onSequencesChange(displaySequences);
+  Zic_1.onSequenceAdd(addSequence);
+}
+
+exports.initTracks = initTracks;
+
+function displaySequences(sequences) {
+  dom_1.elById('tracks').innerHTML = '';
+  track_1.tracks[track_1.activeTrack].availableSequences.forEach(function (sequenceId) {
+    addSequence(sequences[sequenceId]);
+  });
+}
+
+function addSequence(sequence) {
+  return __awaiter(this, void 0, void 0, function () {
+    var html;
+    return __generator(this, function (_a) {
+      switch (_a.label) {
+        case 0:
+          return [4
+          /*yield*/
+          , Track_1.Track(sequence).render()];
+
+        case 1:
+          html = _a.sent(); // should first check if sequence is already in, else replace
+
+          dom_1.elById('tracks').innerHTML += html;
+          return [2
+          /*return*/
+          ];
+      }
+    });
+  });
+}
+},{"../../Zic/track":"Zic/track.ts","../../utils/dom":"utils/dom.ts","../../Zic":"Zic/index.ts","./Track":"view/Tracks/Track.tsx"}],"view/app.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.initApp = void 0;
+
+var dom_1 = require("../utils/dom");
+
+var settings_1 = require("./Settings/settings");
+
+var tracks_1 = require("./Tracks/tracks");
+
+function showTab(btnIndex) {
+  dom_1.applyToChild(dom_1.elById('tabs-views'), function (tab, tabIndex) {
+    if (btnIndex === tabIndex) {
+      tab.classList.add('active');
+    } else {
+      tab.classList.remove('active');
+    }
+  });
+}
+
+function initApp() {
+  dom_1.elById('tabs-menu').children[0].classList.add('active');
+  showTab(0);
+  dom_1.applyToChild(dom_1.elById('tabs-menu'), function (btn, btnIndex) {
+    btn.onclick = function () {
+      dom_1.toggleSiblingClass(btn, 'active');
+      showTab(btnIndex);
+    };
+  });
+  settings_1.initSettings();
+  tracks_1.initTracks();
+}
+
+exports.initApp = initApp;
+},{"../utils/dom":"utils/dom.ts","./Settings/settings":"view/Settings/settings.ts","./Tracks/tracks":"view/Tracks/tracks.ts"}],"icons/eye-off-outline.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

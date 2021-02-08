@@ -1,6 +1,8 @@
-import { emitSequencesChange, emitSequenceChange } from './event';
+import { uuid } from '../utils/utils';
+import { emitSequencesChange, emitSequenceAdd } from './event';
 
 export interface SequenceData {
+    id: string;
     name: string;
     outputId: string;
     outputChannel: number;
@@ -104,14 +106,17 @@ export function setDisplayNote(id: number) {
     };
 }
 
-
 export function setSequences(newSequences: SequenceData[]) {
-    sequences = newSequences;
+    // sequences = newSequences;
+    // the time uuid is not set, ensure it
+    // to be remove
+    sequences = newSequences.map((s) => ({ id: uuid(), ...s }));
     emitSequencesChange(sequences);
 }
 
 export function addNew() {
     const sequence = {
+        id: uuid(),
         name: new Date().toLocaleString([], {
             hour: '2-digit',
             minute: '2-digit',
@@ -129,7 +134,7 @@ export function addNew() {
         notes: [],
     };
     sequences.push(sequence);
-    emitSequenceChange(sequence);
+    emitSequenceAdd(sequence);
 }
 
 export let sequences: SequenceData[] = [];
