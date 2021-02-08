@@ -472,7 +472,7 @@ var React = async_jsx_html_1.React;
 function EyeOffOutline(_a) {
   var style = _a.style,
       id = _a.id,
-      classnames = _a.classnames;
+      classnames = _a.class;
   return /*#__PURE__*/React.createElement("svg", {
     xmlns: "http://www.w3.org/2000/svg",
     viewBox: "0 0 512 512",
@@ -502,7 +502,7 @@ var React = async_jsx_html_1.React;
 function EyeOutline(_a) {
   var style = _a.style,
       id = _a.id,
-      classnames = _a.classnames;
+      classnames = _a.class;
   return /*#__PURE__*/React.createElement("svg", {
     xmlns: "http://www.w3.org/2000/svg",
     viewBox: "0 0 512 512",
@@ -656,10 +656,10 @@ function Settings() {
   }), /*#__PURE__*/React.createElement("button", {
     id: "githubTokenToggle"
   }, /*#__PURE__*/React.createElement(eye_off_outline_1.EyeOffOutline, {
-    classnames: "icon",
+    class: "icon",
     id: "eye-off"
   }), /*#__PURE__*/React.createElement(eye_outline_1.EyeOutline, {
-    classnames: "icon hide",
+    class: "icon hide",
     id: "eye-on"
   }))), /*#__PURE__*/React.createElement(GithubTokenInfo_1.GithubTokenInfo, null));
 }

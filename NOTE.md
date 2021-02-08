@@ -2,7 +2,6 @@
 
 ## Todo
 
-- toggle html attribute
 - toggle class sibling
 
 - try to fix properly jsx-html `const React = fix;`

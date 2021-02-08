@@ -4,10 +4,10 @@ const React = fix;
 interface Props {
     style?: Object;
     id?: string;
-    classnames?: string;
+    class?: string;
 }
 
-export function EyeOutline({ style, id, classnames }: Props): ElementNode {
+export function EyeOutline({ style, id, class: classnames }: Props): ElementNode {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"

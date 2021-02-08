@@ -38,8 +38,8 @@ export function Settings(): ElementNode {
                     placeholder="Enter github token"
                 />
                 <button id="githubTokenToggle">
-                    <EyeOffOutline classnames="icon" id="eye-off" />
-                    <EyeOutline classnames="icon hide" id="eye-on" />
+                    <EyeOffOutline class="icon" id="eye-off" />
+                    <EyeOutline class="icon hide" id="eye-on" />
                 </button>
             </div>
             <GithubTokenInfo />
