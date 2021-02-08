@@ -3,33 +3,24 @@ import {
     storeGithubToken,
     storeGithubUser,
 } from '../../storage/localStorage';
-import { evStrVal } from '../../utils/event';
+import { elById, evStrVal, toggleAttr, toggleChildClass } from '../../utils/dom';
 
 let elGithubToken: HTMLElement;
 let elGithubTokenToggle: HTMLElement;
 
 export function initSettings() {
-    document
-        .getElementById('githubUser')
-        .addEventListener('change', evStrVal(storeGithubUser));
+    // use addEventListener to have multiple subscriber
+    //elById('githubUser').addEventListener('change', evStrVal(storeGithubUser));
+    elById('githubUser').onchange = evStrVal(storeGithubUser);
+    elById('githubRepo').onchange = evStrVal(storeGithubRepo);
 
-    document
-        .getElementById('githubRepo')
-        .addEventListener('change', evStrVal(storeGithubRepo));
-
-    elGithubToken = document.getElementById('githubToken');
-    elGithubTokenToggle = document.getElementById('githubTokenToggle');
-    elGithubToken.addEventListener('change', evStrVal(storeGithubToken));
+    elGithubToken = elById('githubToken');
+    elGithubTokenToggle = elById('githubTokenToggle');
+    elGithubToken.onchange = evStrVal(storeGithubToken);
     elGithubTokenToggle.onclick = showToken;
 }
 
 function showToken() {
-    if (elGithubToken.getAttribute('type') === 'password') {
-        elGithubToken.setAttribute('type', 'text');
-    } else {
-        elGithubToken.setAttribute('type', 'password');
-    }
-    elGithubTokenToggle.childNodes.forEach((el) =>
-        (el as HTMLElement).classList?.toggle('hide'),
-    );
+    toggleAttr(elGithubToken, 'type', 'password', 'text');
+    toggleChildClass(elGithubTokenToggle, 'hide');
 }

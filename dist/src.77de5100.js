@@ -455,6 +455,7 @@ exports.React = {
         return jsx_1.jsx(element, Object.assign(Object.assign({}, props), { children }), ...children);
     }
 };
+exports.default = exports.React;
 
 },{"./jsx":"../node_modules/async-jsx-html/nodejs/jsx.js","./node/ElementNode":"../node_modules/async-jsx-html/nodejs/node/ElementNode.js","./node/ComponentNode":"../node_modules/async-jsx-html/nodejs/node/ComponentNode.js"}],"icons/eye-off-outline.tsx":[function(require,module,exports) {
 "use strict";
@@ -685,7 +686,7 @@ function App() {
 }
 
 exports.App = App;
-},{"async-jsx-html":"../node_modules/async-jsx-html/nodejs/mod.js","./Settings/Settings":"view/Settings/Settings.tsx"}],"utils/event.ts":[function(require,module,exports) {
+},{"async-jsx-html":"../node_modules/async-jsx-html/nodejs/mod.js","./Settings/Settings":"view/Settings/Settings.tsx"}],"utils/dom.ts":[function(require,module,exports) {
 "use strict"; // export function evNumVal(fn: (nb: number) => void) {
 //     return ({ target: { value } }: Event) => {
 //         fn(Number(value));
@@ -695,7 +696,7 @@ exports.App = App;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.evStrVal = void 0; // export function evStrVal(fn: (val: string) => void) {
+exports.elById = exports.toggleAttr = exports.toggleChildClass = exports.evStrVal = void 0; // export function evStrVal(fn: (val: string) => void) {
 //     return ({ target: { value } }: ChangeEvent<HTMLSelectElement>) => {
 //         fn(value);
 //     };
@@ -709,6 +710,32 @@ function evStrVal(fn) {
 }
 
 exports.evStrVal = evStrVal;
+
+function toggleChildClass(parent, classname) {
+  return parent.childNodes.forEach(function (el) {
+    var _a;
+
+    return (_a = el.classList) === null || _a === void 0 ? void 0 : _a.toggle(classname);
+  });
+}
+
+exports.toggleChildClass = toggleChildClass;
+
+function toggleAttr(el, name, val1, val2) {
+  if (el.getAttribute(name) === val1) {
+    el.setAttribute(name, val2);
+  } else {
+    el.setAttribute(name, val1);
+  }
+}
+
+exports.toggleAttr = toggleAttr;
+
+function elById(id) {
+  return document.getElementById(id);
+}
+
+exports.elById = elById;
 },{}],"view/Settings/settings.ts":[function(require,module,exports) {
 "use strict";
 
@@ -719,36 +746,29 @@ exports.initSettings = void 0;
 
 var localStorage_1 = require("../../storage/localStorage");
 
-var event_1 = require("../../utils/event");
+var dom_1 = require("../../utils/dom");
 
 var elGithubToken;
 var elGithubTokenToggle;
 
 function initSettings() {
-  document.getElementById('githubUser').addEventListener('change', event_1.evStrVal(localStorage_1.storeGithubUser));
-  document.getElementById('githubRepo').addEventListener('change', event_1.evStrVal(localStorage_1.storeGithubRepo));
-  elGithubToken = document.getElementById('githubToken');
-  elGithubTokenToggle = document.getElementById('githubTokenToggle');
-  elGithubToken.addEventListener('change', event_1.evStrVal(localStorage_1.storeGithubToken));
+  // use addEventListener to have multiple subscriber
+  //elById('githubUser').addEventListener('change', evStrVal(storeGithubUser));
+  dom_1.elById('githubUser').onchange = dom_1.evStrVal(localStorage_1.storeGithubUser);
+  dom_1.elById('githubRepo').onchange = dom_1.evStrVal(localStorage_1.storeGithubRepo);
+  elGithubToken = dom_1.elById('githubToken');
+  elGithubTokenToggle = dom_1.elById('githubTokenToggle');
+  elGithubToken.onchange = dom_1.evStrVal(localStorage_1.storeGithubToken);
   elGithubTokenToggle.onclick = showToken;
 }
 
 exports.initSettings = initSettings;
 
 function showToken() {
-  if (elGithubToken.getAttribute('type') === 'password') {
-    elGithubToken.setAttribute('type', 'text');
-  } else {
-    elGithubToken.setAttribute('type', 'password');
-  }
-
-  elGithubTokenToggle.childNodes.forEach(function (el) {
-    var _a;
-
-    return (_a = el.classList) === null || _a === void 0 ? void 0 : _a.toggle('hide');
-  });
+  dom_1.toggleAttr(elGithubToken, 'type', 'password', 'text');
+  dom_1.toggleChildClass(elGithubTokenToggle, 'hide');
 }
-},{"../../storage/localStorage":"storage/localStorage.ts","../../utils/event":"utils/event.ts"}],"index.ts":[function(require,module,exports) {
+},{"../../storage/localStorage":"storage/localStorage.ts","../../utils/dom":"utils/dom.ts"}],"index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -834,7 +854,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "41995" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "42767" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

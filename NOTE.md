@@ -4,7 +4,8 @@
 
 - toggle html attribute
 - toggle class sibling
---- document.querySelectorAll('#settings button .icon').forEach(el => el.classList.toggle('hide'));
+
+- try to fix properly jsx-html `const React = fix;`
 
 ## URL
 
