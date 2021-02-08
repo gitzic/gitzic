@@ -19,7 +19,7 @@ export const defaultTracks = [
 ];
 
 export const tracks: Track[] = defaultTracks;
-const activeTrack = 0;
+export const activeTrack = 0;
 
 
 // export function addListenerTrackschange(fn: (tracks: Track[]) => void) {

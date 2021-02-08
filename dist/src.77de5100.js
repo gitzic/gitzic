@@ -6003,7 +6003,38 @@ function showToken() {
   dom_1.toggleAttr(elGithubToken, 'type', 'password', 'text');
   dom_1.toggleChildClass(elGithubTokenToggle, 'hide');
 }
-},{"../../storage/localStorage":"storage/localStorage.ts","../../utils/dom":"utils/dom.ts"}],"view/Tracks/tracks.ts":[function(require,module,exports) {
+},{"../../storage/localStorage":"storage/localStorage.ts","../../utils/dom":"utils/dom.ts"}],"Zic/track.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.activeTrack = exports.tracks = exports.defaultTracks = void 0; // export const defaultTracks = [{ sequences: [] }];
+
+exports.defaultTracks = [{
+  availableSequences: [0, 1, 2, 3, 4],
+  activeSequences: [{
+    id: 0,
+    outputId: 'yoyo'
+  }]
+}];
+exports.tracks = exports.defaultTracks;
+exports.activeTrack = 0; // export function addListenerTrackschange(fn: (tracks: Track[]) => void) {
+//     event.addListener(eventKey.onTrackChange, fn);
+// }
+// export function getSequenceInTrack(trackId: number, sequenceId: number) {
+//     return tracks[trackId].sequences.findIndex((val) => val === sequenceId);
+// }
+// export function toggleSequence(trackId: number, sequenceId: number) {
+//     const index = getSequenceInTrack(trackId, sequenceId);
+//     if (index === -1) {
+//         tracks[trackId].sequences.push(sequenceId);
+//     } else {
+//         tracks[trackId].sequences.splice(index, 1);
+//     }
+//     event.emit(eventKey.onTrackChange, tracks);
+// }
+},{}],"view/Tracks/tracks.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6011,10 +6042,23 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.initTracks = void 0;
 
-function initTracks() {}
+var track_1 = require("../../Zic/track");
+
+var sequence_1 = require("../../Zic/sequence");
+
+var dom_1 = require("../../utils/dom");
+
+function initTracks() {
+  var elTracks = dom_1.elById('tracks');
+  track_1.tracks[track_1.activeTrack].availableSequences.forEach(function (sequenceId) {
+    var seq = sequence_1.sequences[sequenceId]; // console.log('name', name);
+
+    elTracks.innerHTML += "<div>" + sequenceId + ": " + (seq === null || seq === void 0 ? void 0 : seq.name) + "</div>";
+  });
+}
 
 exports.initTracks = initTracks;
-},{}],"view/app.ts":[function(require,module,exports) {
+},{"../../Zic/track":"Zic/track.ts","../../Zic/sequence":"Zic/sequence.ts","../../utils/dom":"utils/dom.ts"}],"view/app.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6496,7 +6540,9 @@ var async_jsx_html_1 = require("async-jsx-html");
 var React = async_jsx_html_1.React;
 
 function Tracks() {
-  return /*#__PURE__*/React.createElement("div", null, "yoyo tracks");
+  return /*#__PURE__*/React.createElement("div", {
+    id: "tracks"
+  });
 }
 
 exports.Tracks = Tracks;
