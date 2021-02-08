@@ -29,12 +29,8 @@ button .icon {
     margin: 10px;
 }
 
-#tabs-views > div {
+#tabs-views > div:not(.active) {
     display: none;
-}
-
-#tabs-views > div.active {
-    display: initial;
 }
 
 #tabs-menu {
@@ -57,13 +53,22 @@ button .icon {
     box-shadow: none;
 }
 
+#tracks {
+    display: flex;
+    align-content: stretch;
+}
+
 .track {
-    float: left;
     cursor: pointer;
-    border: 1px solid var(--light-border);
-    border-radius: 10px;
+    border-radius: 5px;
     padding: 10px;
     margin: 5px;
+    box-shadow: rgb(0 0 0 / 20%) 0px 3px 1px -2px,
+        rgb(0 0 0 / 14%) 0px 2px 2px 0px, rgb(0 0 0 / 12%) 0px 1px 5px 0px;
+}
+
+.track.active {
+    background-color: rgb(255 236 236);
 }
 
 

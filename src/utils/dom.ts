@@ -63,3 +63,9 @@ export function toggleAttr(
 export function elById(id: string) {
     return document.getElementById(id);
 }
+
+export function elFromHtml(html: string) {
+    var template = document.createElement('template');
+    template.innerHTML = html.trim();
+    return template.content.firstChild as HTMLElement;
+}

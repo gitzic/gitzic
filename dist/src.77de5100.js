@@ -5974,7 +5974,7 @@ var ActionWorker;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.elById = exports.toggleAttr = exports.toggleSiblingClass = exports.removeChildClass = exports.addChildClass = exports.toggleChildClass = exports.applyToChild = exports.evStrVal = void 0; // export function evStrVal(fn: (val: string) => void) {
+exports.elFromHtml = exports.elById = exports.toggleAttr = exports.toggleSiblingClass = exports.removeChildClass = exports.addChildClass = exports.toggleChildClass = exports.applyToChild = exports.evStrVal = void 0; // export function evStrVal(fn: (val: string) => void) {
 //     return ({ target: { value } }: ChangeEvent<HTMLSelectElement>) => {
 //         fn(value);
 //     };
@@ -6048,6 +6048,14 @@ function elById(id) {
 }
 
 exports.elById = elById;
+
+function elFromHtml(html) {
+  var template = document.createElement('template');
+  template.innerHTML = html.trim();
+  return template.content.firstChild;
+}
+
+exports.elFromHtml = elFromHtml;
 },{}],"view/Settings/settings.ts":[function(require,module,exports) {
 "use strict";
 
@@ -6089,9 +6097,20 @@ Object.defineProperty(exports, "__esModule", {
 exports.activeTrack = exports.tracks = exports.defaultTracks = void 0; // export const defaultTracks = [{ sequences: [] }];
 
 exports.defaultTracks = [{
-  availableSequences: [0, 1, 2, 3, 4],
-  activeSequences: [{
+  sequences: [{
     id: 0,
+    outputId: 'yoyo'
+  }, {
+    id: 1,
+    outputId: 'yoyo'
+  }, {
+    id: 2,
+    outputId: 'yoyo'
+  }, {
+    id: 3,
+    outputId: 'yoyo'
+  }, {
+    id: 4,
     outputId: 'yoyo'
   }]
 }];
@@ -6757,14 +6776,15 @@ exports.initTracks = initTracks;
 
 function displaySequences(sequences) {
   dom_1.elById('tracks').innerHTML = '';
-  track_1.tracks[track_1.activeTrack].availableSequences.forEach(function (sequenceId) {
-    addSequence(sequences[sequenceId]);
+  track_1.tracks[track_1.activeTrack].sequences.forEach(function (_a) {
+    var id = _a.id;
+    addSequence(sequences[id]);
   });
 }
 
 function addSequence(sequence) {
   return __awaiter(this, void 0, void 0, function () {
-    var html;
+    var html, el;
     return __generator(this, function (_a) {
       switch (_a.label) {
         case 0:
@@ -6773,9 +6793,13 @@ function addSequence(sequence) {
           , Track_1.Track(sequence).render()];
 
         case 1:
-          html = _a.sent(); // should first check if sequence is already in, else replace
+          html = _a.sent();
+          el = dom_1.elFromHtml(html); // should first check if sequence is already in, else replace
 
-          dom_1.elById('tracks').innerHTML += html;
+          dom_1.elById('tracks').append(el);
+          el.addEventListener('click', function () {
+            el.classList.toggle('active');
+          });
           return [2
           /*return*/
           ];

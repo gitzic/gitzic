@@ -3,6 +3,10 @@ import { SequenceData } from '../../Zic/sequence';
 
 const React = fix;
 
-export function Track({name}: SequenceData): ElementNode {
-    return <div class="track">{name}</div>;
+export function Track({ name }: SequenceData): ElementNode {
+    return (
+        <div class="track">
+            {name}
+        </div>
+    );
 }

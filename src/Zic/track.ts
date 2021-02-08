@@ -1,26 +1,28 @@
-import { event, eventKey } from './event';
-
-interface ActiveSequence {
+interface AvailableSequence {
     id: number;
     outputId: string;
+    active?: boolean;
 }
 
 export interface Track {
-    activeSequences: ActiveSequence[];
-    availableSequences: number[];
+    sequences: AvailableSequence[];
 }
 
 // export const defaultTracks = [{ sequences: [] }];
 export const defaultTracks = [
     {
-        availableSequences: [0, 1, 2, 3, 4],
-        activeSequences: [{ id: 0, outputId: 'yoyo' }],
+        sequences: [
+            { id: 0, outputId: 'yoyo' },
+            { id: 1, outputId: 'yoyo' },
+            { id: 2, outputId: 'yoyo' },
+            { id: 3, outputId: 'yoyo' },
+            { id: 4, outputId: 'yoyo' },
+        ],
     },
 ];
 
 export const tracks: Track[] = defaultTracks;
 export const activeTrack = 0;
-
 
 // export function addListenerTrackschange(fn: (tracks: Track[]) => void) {
 //     event.addListener(eventKey.onTrackChange, fn);
