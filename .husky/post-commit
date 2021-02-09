@@ -1,0 +1,8 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+npm run build
+git add ./app
+if git commit -m "build app" ; then
+    echo "app built"
+fi
