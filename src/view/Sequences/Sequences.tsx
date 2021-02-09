@@ -1,5 +1,4 @@
 import { React as fix, ElementNode } from 'async-jsx-html';
-import { Loading } from '../../icons/loading';
 import { SequenceEdit } from './SequenceEdit';
 const React = fix;
 
@@ -13,7 +12,6 @@ export function Sequences(): ElementNode {
                 <button class="sequence-edit">Edit</button>
                 <button id="sequence-save">Save</button>
             </div>
-            <Loading />
             <SequenceEdit />
         </div>
     );
