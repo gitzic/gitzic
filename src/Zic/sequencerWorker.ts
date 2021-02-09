@@ -1,8 +1,14 @@
-import { ActionWorker, MsgWorker, SequenceWorker } from '../interface';
+import {
+    ActionWorker,
+    MAX_STEPS_PER_BEAT,
+    MsgWorker,
+    SequenceWorker,
+    TriggerWorker,
+} from '../interface';
 
-const ms = 150;
+const ms = 75;
 let counter = 0;
-const stepsCount = 16;
+const stepsCount = MAX_STEPS_PER_BEAT * 4;
 const list: SequenceWorker[][] = [];
 for (let n = 0; n < stepsCount; n++) {
     list[n] = [];
@@ -45,9 +51,17 @@ function saveSequences(sequences: SequenceWorker[]) {
 
 function removeSequences(sequences: SequenceWorker[]) {}
 
+function post(msg: TriggerWorker) {
+    (self as any).postMessage(msg);
+}
+
 setInterval(() => {
     counter = (counter + 1) % stepsCount;
-    list[counter].forEach((sequence) => {
-        (self as any).postMessage(sequence);
+    list[counter].forEach(({ on, off, duration, slide, ...msg }) => {
+        post({ ...msg, data: on });
+        setTimeout(
+            () => post({ ...msg, data: off }),
+            ms * (duration + (slide ? 5 : 0)),
+        );
     });
 }, ms);

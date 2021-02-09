@@ -6046,13 +6046,18 @@ function showToken() {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.ActionWorker = void 0;
+exports.ActionWorker = exports.STEP_TICK = exports.MAX_STEPS_PER_BEAT = void 0;
+var MAX_STEPS_PER_BEAT = 8;
+exports.MAX_STEPS_PER_BEAT = MAX_STEPS_PER_BEAT;
+var STEP_TICK = 1 / MAX_STEPS_PER_BEAT;
+exports.STEP_TICK = STEP_TICK;
 var ActionWorker;
+exports.ActionWorker = ActionWorker;
 
 (function (ActionWorker) {
   ActionWorker[ActionWorker["save"] = 0] = "save";
   ActionWorker[ActionWorker["remove"] = 1] = "remove";
-})(ActionWorker = exports.ActionWorker || (exports.ActionWorker = {}));
+})(ActionWorker || (exports.ActionWorker = ActionWorker = {}));
 },{}],"Zic/midi.ts":[function(require,module,exports) {
 "use strict";
 
@@ -6119,7 +6124,8 @@ var _midi = require("./midi");
 
 var worker = new Worker("/sequencerWorker.cf97582d.js");
 worker.addEventListener('message', function (_a) {
-  var data = _a.data; // console.log('data', data);
+  var data = _a.data;
+  console.log('data', data.data); // const {  } = data as TriggerWorker;
 
   _midi.midi.outputs.forEach(function (midiOutput) {
     midiOutput.send(data.data);
@@ -6140,32 +6146,29 @@ worker.addEventListener('message', function (_a) {
 function activateSequence(sequence) {
   console.log('activateSequence', sequence); // ToDo: here need to activate sequence in track... but for the moment just push to midi
 
-  var msgSequences = sequence.notes.flatMap(function (_a) {
+  var sequencesWorker = sequence.notes.flatMap(function (_a) {
     var velocity = _a.velocity,
         note = _a.midi,
         duration = _a.duration,
         time = _a.time,
-        slide = _a.slide; // ToDo: need to use slide
-
-    var noteOn = {
-      id: "midi-on-" + note + "-" + time,
-      trigger: time * sequence.stepsPerBeat,
-      data: [0x90
+        slide = _a.slide;
+    return {
+      id: "midi-" + sequence.id + "-" + note + "-" + time,
+      outputId: 'td3',
+      trigger: time * _interface.MAX_STEPS_PER_BEAT,
+      duration: duration * _interface.MAX_STEPS_PER_BEAT,
+      slide: slide,
+      on: [0x90
       /* ToDo channel */
-      , note, velocity]
-    };
-    var noteOff = {
-      id: "midi-off-" + note + "-" + time,
-      trigger: (time + duration) * sequence.stepsPerBeat,
-      data: [0x80
+      , note, velocity],
+      off: [0x80
       /* ToDo channel */
       , note, 0]
     };
-    return [noteOn, noteOff];
   });
   var msg = {
     action: _interface.ActionWorker.save,
-    sequences: msgSequences
+    sequences: sequencesWorker
   };
   worker.postMessage(msg);
 } // export const defaultTracks = [{ sequences: [] }];
@@ -6229,41 +6232,37 @@ exports.between = between;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.setBpm = exports.addListenerBPMchange = exports.initSequencer = exports.sequencer = exports.STEP_TICK = exports.MAX_STEPS_PER_BEAT = void 0;
+exports.initSequencer = initSequencer;
+exports.addListenerBPMchange = addListenerBPMchange;
+exports.setBpm = setBpm;
+exports.sequencer = void 0;
 
-var event_1 = require("./event");
+var _event = require("./event");
 
-var utils_1 = require("./utils");
+var _utils = require("./utils");
 
-exports.MAX_STEPS_PER_BEAT = 8;
-exports.STEP_TICK = 1 / exports.MAX_STEPS_PER_BEAT;
 var interval;
-exports.sequencer = {
+var sequencer = {
   tempo: {
     bpm: 100,
     ms: 150
   }
 };
+exports.sequencer = sequencer;
 
 function initSequencer() {
-  setBpm(exports.sequencer.tempo.bpm);
+  setBpm(sequencer.tempo.bpm);
 }
-
-exports.initSequencer = initSequencer;
 
 function addListenerBPMchange(fn) {
-  event_1.event.addListener(event_1.eventKey.onBPMchange, fn);
+  _event.event.addListener(_event.eventKey.onBPMchange, fn);
 }
-
-exports.addListenerBPMchange = addListenerBPMchange;
 
 function setBpm(newBpm) {
-  exports.sequencer.tempo.bpm = utils_1.between(newBpm, 10, 300);
-  exports.sequencer.tempo.ms = 60000 / (exports.sequencer.tempo.bpm * exports.MAX_STEPS_PER_BEAT); // interval = setInterval(loop, sequencer.tempo.ms);
+  sequencer.tempo.bpm = (0, _utils.between)(newBpm, 10, 300); // sequencer.tempo.ms = 60000 / (sequencer.tempo.bpm * MAX_STEPS_PER_BEAT);
+  // interval = setInterval(loop, sequencer.tempo.ms);
   // event.emit(eventKey.onBPMchange, sequencer.tempo);
-}
-
-exports.setBpm = setBpm; // function loop() {
+} // function loop() {
 //     sequences.forEach((sequence, id) => {
 //         const newStep = sequence.currentStep + STEP_TICK;
 //         sequence.currentStep = newStep >= sequence.beatCount ? 0 : newStep;
@@ -7033,21 +7032,19 @@ exports.Settings = Settings;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Tracks = void 0;
+exports.Tracks = Tracks;
 
-var async_jsx_html_1 = require("async-jsx-html");
+var _asyncJsxHtml = require("async-jsx-html");
 
-var React = async_jsx_html_1.React;
+var React = _asyncJsxHtml.React;
 
 function Tracks() {
-  return /*#__PURE__*/React.createElement("div", {
+  return React.createElement("div", {
     id: "tracks"
-  }, /*#__PURE__*/React.createElement("div", {
+  }, React.createElement("div", {
     id: "track"
   }));
 }
-
-exports.Tracks = Tracks;
 },{"async-jsx-html":"../node_modules/async-jsx-html/nodejs/mod.js"}],"view/App.tsx":[function(require,module,exports) {
 "use strict";
 
@@ -7122,7 +7119,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "35279" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "43829" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

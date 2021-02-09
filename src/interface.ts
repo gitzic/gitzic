@@ -1,3 +1,6 @@
+export const MAX_STEPS_PER_BEAT = 8;
+export const STEP_TICK = 1 / MAX_STEPS_PER_BEAT;
+
 export enum ActionWorker {
     save,
     remove,
@@ -10,7 +13,16 @@ export interface MsgWorker {
 
 export interface SequenceWorker {
     id: string;
+    outputId: string;
     trigger: number;
-    parent?: string;
+    duration: number;
+    slide?: boolean;
+    on: any;
+    off: any;
+}
+
+export interface TriggerWorker {
+    id: string;
+    outputId: string;
     data: any;
 }

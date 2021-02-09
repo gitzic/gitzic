@@ -3,9 +3,6 @@ import { midi } from './midi';
 import { getCurrentNotes, isNoteOn, SequenceData, sequences } from './sequence';
 import { between } from './utils';
 
-export const MAX_STEPS_PER_BEAT = 8;
-export const STEP_TICK = 1 / MAX_STEPS_PER_BEAT;
-
 let interval: NodeJS.Timeout;
 
 export interface Tempo {
@@ -34,7 +31,7 @@ export function addListenerBPMchange(fn: (tempo: Tempo) => void) {
 
 export function setBpm(newBpm: number) {
     sequencer.tempo.bpm = between(newBpm, 10, 300);
-    sequencer.tempo.ms = 60000 / (sequencer.tempo.bpm * MAX_STEPS_PER_BEAT);
+    // sequencer.tempo.ms = 60000 / (sequencer.tempo.bpm * MAX_STEPS_PER_BEAT);
     // interval = setInterval(loop, sequencer.tempo.ms);
     // event.emit(eventKey.onBPMchange, sequencer.tempo);
 }

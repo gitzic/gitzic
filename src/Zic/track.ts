@@ -1,4 +1,10 @@
-import { ActionWorker, MsgWorker } from '../interface';
+import {
+    ActionWorker,
+    MsgWorker,
+    SequenceWorker,
+    MAX_STEPS_PER_BEAT,
+    TriggerWorker,
+} from '../interface';
 import { midi } from './midi';
 import { SequenceData } from './sequence';
 
@@ -7,7 +13,8 @@ const worker = new Worker('sequencerWorker.ts');
 worker.addEventListener(
     'message',
     function ({ data }) {
-        // console.log('data', data);
+        console.log('data', data.data);
+        // const {  } = data as TriggerWorker;
         midi.outputs.forEach((midiOutput) => {
             midiOutput.send(data.data);
         });
@@ -32,27 +39,25 @@ export function activateSequence(sequence: SequenceData) {
     console.log('activateSequence', sequence);
     // ToDo: here need to activate sequence in track... but for the moment just push to midi
 
-    const msgSequences = sequence.notes.flatMap(({ velocity, midi: note, duration, time, slide }) => {
-        // ToDo: need to use slide
-        const noteOn = {
-            id: `midi-on-${note}-${time}`, // ToDo: think of id
-            trigger: time * sequence.stepsPerBeat, // ToDo: not sure cause maybe mixed 1/8 1/4... between sequence from the track
-            data: [0x90 /* ToDo channel */, note, velocity],
-        };
-        const noteOff = {
-            id: `midi-off-${note}-${time}`, // ToDo: think of id
-            trigger: (time + duration) * sequence.stepsPerBeat, // ToDo: not sure cause maybe mixed 1/8 1/4... between sequence from the track
-            data: [0x80 /* ToDo channel */, note, 0],
-        };
-        return [noteOn, noteOff];
-    });
+    const sequencesWorker: SequenceWorker[] = sequence.notes.flatMap(
+        ({ velocity, midi: note, duration, time, slide }) => {
+            return {
+                id: `midi-${sequence.id}-${note}-${time}`,
+                outputId: 'td3', // ToDo: to be defined
+                trigger: time * MAX_STEPS_PER_BEAT,
+                duration: duration * MAX_STEPS_PER_BEAT,
+                slide,
+                on: [0x90 /* ToDo channel */, note, velocity],
+                off: [0x80 /* ToDo channel */, note, 0],
+            };
+        },
+    );
 
     const msg: MsgWorker = {
         action: ActionWorker.save,
-        sequences: msgSequences,
+        sequences: sequencesWorker,
     };
     worker.postMessage(msg);
-    
 }
 
 interface AvailableSequence {

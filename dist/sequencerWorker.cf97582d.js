@@ -123,25 +123,55 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.ActionWorker = void 0;
+exports.ActionWorker = exports.STEP_TICK = exports.MAX_STEPS_PER_BEAT = void 0;
+var MAX_STEPS_PER_BEAT = 8;
+exports.MAX_STEPS_PER_BEAT = MAX_STEPS_PER_BEAT;
+var STEP_TICK = 1 / MAX_STEPS_PER_BEAT;
+exports.STEP_TICK = STEP_TICK;
 var ActionWorker;
+exports.ActionWorker = ActionWorker;
 
 (function (ActionWorker) {
   ActionWorker[ActionWorker["save"] = 0] = "save";
   ActionWorker[ActionWorker["remove"] = 1] = "remove";
-})(ActionWorker = exports.ActionWorker || (exports.ActionWorker = {}));
+})(ActionWorker || (exports.ActionWorker = ActionWorker = {}));
 },{}],"Zic/sequencerWorker.ts":[function(require,module,exports) {
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+var _interface = require("../interface");
 
-var interface_1 = require("../interface");
+var __assign = void 0 && (void 0).__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
 
-var ms = 150;
+      for (var p in s) {
+        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      }
+    }
+
+    return t;
+  };
+
+  return __assign.apply(this, arguments);
+};
+
+var __rest = void 0 && (void 0).__rest || function (s, e) {
+  var t = {};
+
+  for (var p in s) {
+    if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+  }
+
+  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
+  }
+  return t;
+};
+
+var ms = 75;
 var counter = 0;
-var stepsCount = 16;
+var stepsCount = _interface.MAX_STEPS_PER_BEAT * 4;
 var list = [];
 
 for (var n = 0; n < stepsCount; n++) {
@@ -151,9 +181,9 @@ for (var n = 0; n < stepsCount; n++) {
 self.addEventListener('message', function (_a) {
   var data = _a.data;
 
-  if (data.action === interface_1.ActionWorker.save) {
+  if (data.action === _interface.ActionWorker.save) {
     saveSequences(data.sequences);
-  } else if (data.action === interface_1.ActionWorker.remove) {
+  } else if (data.action === _interface.ActionWorker.remove) {
     removeSequences(data.sequences);
   }
 }, false);
@@ -192,10 +222,27 @@ function saveSequences(sequences) {
 
 function removeSequences(sequences) {}
 
+function post(msg) {
+  self.postMessage(msg);
+}
+
 setInterval(function () {
   counter = (counter + 1) % stepsCount;
-  list[counter].forEach(function (sequence) {
-    self.postMessage(sequence);
+  list[counter].forEach(function (_a) {
+    var on = _a.on,
+        off = _a.off,
+        duration = _a.duration,
+        slide = _a.slide,
+        msg = __rest(_a, ["on", "off", "duration", "slide"]);
+
+    post(__assign(__assign({}, msg), {
+      data: on
+    }));
+    setTimeout(function () {
+      return post(__assign(__assign({}, msg), {
+        data: off
+      }));
+    }, ms * (duration + (slide ? 5 : 0)));
   });
 }, ms);
 },{"../interface":"interface.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
@@ -226,7 +273,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "35279" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "43829" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
