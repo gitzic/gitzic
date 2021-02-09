@@ -13,11 +13,13 @@ function showTab(btnIndex: number) {
 }
 
 export function initApp() {
-    elById('tabs-menu').children[0].classList.add('active');
-    showTab(0);
+    const tab = Number(sessionStorage.getItem('activeTab')) || 0;
+    elById('tabs-menu').children[tab].classList.add('active');
+    showTab(tab);
 
     applyToChild(elById('tabs-menu'), (btn, btnIndex) => {
         btn.onclick = () => {
+            sessionStorage.setItem('activeTab', btnIndex.toString());
             toggleSiblingClass(btn, 'active');
             showTab(btnIndex);
         };
