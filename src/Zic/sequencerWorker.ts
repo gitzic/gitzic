@@ -2,14 +2,14 @@ import {
     ActionWorker,
     MAX_STEPS_PER_BEAT,
     MsgWorker,
-    SequenceWorker,
-    TriggerWorker,
+    DataInWorker,
+    DataOutWorker,
 } from '../interface';
 
 const ms = 75;
 let counter = 0;
 const stepsCount = MAX_STEPS_PER_BEAT * 4;
-const list: SequenceWorker[][] = [];
+const list: DataInWorker[][] = [];
 for (let n = 0; n < stepsCount; n++) {
     list[n] = [];
 }
@@ -18,15 +18,15 @@ self.addEventListener(
     'message',
     ({ data }: { data: MsgWorker }) => {
         if (data.action === ActionWorker.save) {
-            saveSequences(data.sequences);
+            saveSequences(data.data);
         } else if (data.action === ActionWorker.remove) {
-            removeSequences(data.sequences);
+            removeSequences(data.data);
         }
     },
     false,
 );
 
-function findSequence(sequence: SequenceWorker) {
+function findSequence(sequence: DataInWorker) {
     for (let trigger = 0; trigger < list.length; trigger++) {
         const index = list[trigger].findIndex(({ id }) => id === sequence.id);
         if (index !== -1) {
@@ -35,7 +35,7 @@ function findSequence(sequence: SequenceWorker) {
     }
 }
 
-function saveSequences(sequences: SequenceWorker[]) {
+function saveSequences(sequences: DataInWorker[]) {
     sequences.forEach((sequence) => {
         const pos = findSequence(sequence);
         if (pos) {
@@ -49,9 +49,9 @@ function saveSequences(sequences: SequenceWorker[]) {
     });
 }
 
-function removeSequences(sequences: SequenceWorker[]) {}
+function removeSequences(sequences: DataInWorker[]) {}
 
-function post(msg: TriggerWorker) {
+function post(msg: DataOutWorker) {
     (self as any).postMessage(msg);
 }
 

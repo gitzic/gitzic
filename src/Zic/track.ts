@@ -1,9 +1,9 @@
 import {
     ActionWorker,
     MsgWorker,
-    SequenceWorker,
+    DataInWorker,
     MAX_STEPS_PER_BEAT,
-    TriggerWorker,
+    DataOutWorker,
 } from '../interface';
 import { midi } from './midi';
 import { SequenceData } from './sequence';
@@ -13,8 +13,7 @@ const worker = new Worker('sequencerWorker.ts');
 worker.addEventListener(
     'message',
     function ({ data }) {
-        console.log('data', data.data);
-        // const {  } = data as TriggerWorker;
+        // const {  } = data as DataOutWorker;
         midi.outputs.forEach((midiOutput) => {
             midiOutput.send(data.data);
         });
@@ -39,7 +38,7 @@ export function activateSequence(sequence: SequenceData) {
     console.log('activateSequence', sequence);
     // ToDo: here need to activate sequence in track... but for the moment just push to midi
 
-    const sequencesWorker: SequenceWorker[] = sequence.notes.flatMap(
+    const data: DataInWorker[] = sequence.notes.flatMap(
         ({ velocity, midi: note, duration, time, slide }) => {
             return {
                 id: `midi-${sequence.id}-${note}-${time}`,
@@ -55,7 +54,7 @@ export function activateSequence(sequence: SequenceData) {
 
     const msg: MsgWorker = {
         action: ActionWorker.save,
-        sequences: sequencesWorker,
+        data,
     };
     worker.postMessage(msg);
 }

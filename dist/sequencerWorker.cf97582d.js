@@ -182,9 +182,9 @@ self.addEventListener('message', function (_a) {
   var data = _a.data;
 
   if (data.action === _interface.ActionWorker.save) {
-    saveSequences(data.sequences);
+    saveSequences(data.data);
   } else if (data.action === _interface.ActionWorker.remove) {
-    removeSequences(data.sequences);
+    removeSequences(data.data);
   }
 }, false);
 

@@ -6124,8 +6124,7 @@ var _midi = require("./midi");
 
 var worker = new Worker("/sequencerWorker.cf97582d.js");
 worker.addEventListener('message', function (_a) {
-  var data = _a.data;
-  console.log('data', data.data); // const {  } = data as TriggerWorker;
+  var data = _a.data; // const {  } = data as DataOutWorker;
 
   _midi.midi.outputs.forEach(function (midiOutput) {
     midiOutput.send(data.data);
@@ -6146,7 +6145,7 @@ worker.addEventListener('message', function (_a) {
 function activateSequence(sequence) {
   console.log('activateSequence', sequence); // ToDo: here need to activate sequence in track... but for the moment just push to midi
 
-  var sequencesWorker = sequence.notes.flatMap(function (_a) {
+  var data = sequence.notes.flatMap(function (_a) {
     var velocity = _a.velocity,
         note = _a.midi,
         duration = _a.duration,
@@ -6168,7 +6167,7 @@ function activateSequence(sequence) {
   });
   var msg = {
     action: _interface.ActionWorker.save,
-    sequences: sequencesWorker
+    data: data
   };
   worker.postMessage(msg);
 } // export const defaultTracks = [{ sequences: [] }];
