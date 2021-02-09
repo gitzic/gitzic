@@ -1,5 +1,5 @@
 import { loadSequences, saveSequences } from '../../git';
-import { elById, elFromHtml } from '../../utils/dom';
+import { elByClass, elById, elFromHtml, evEach } from '../../utils/dom';
 import { onSequenceAdd, onSequencesChange } from '../../Zic';
 import { SequenceData } from '../../Zic/sequence';
 
@@ -9,6 +9,10 @@ export function initSequences() {
     elById('sequences-reload').onclick = btnLoading(loadSequences);
     // ToDo: in a later point we might save a single sequence
     elById('sequence-save').onclick = btnLoading(saveSequences, 'Saving');
+
+    evEach(elByClass('sequence-edit'), 'click', () =>
+        elById('sequence-edit-modal').classList.toggle('hide'),
+    );
 }
 
 function btnLoading(fn: () => Promise<void>, text = 'Loading') {

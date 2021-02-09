@@ -1,4 +1,6 @@
 import { React as fix, ElementNode } from 'async-jsx-html';
+import { Loading } from '../../icons/loading';
+import { SequenceEdit } from './SequenceEdit';
 const React = fix;
 
 export function Sequences(): ElementNode {
@@ -8,85 +10,11 @@ export function Sequences(): ElementNode {
                 <button id="sequences-reload">Reload</button>
                 <button id="sequence-new">New</button>
                 <select id="sequence-selector"></select>
-                <button id="sequence-edit">Edit</button>
+                <button class="sequence-edit">Edit</button>
                 <button id="sequence-save">Save</button>
             </div>
-            <div class="modal hide">
-                <div class="modal-body">
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                    Helo
-                    <br />
-                </div>
-            </div>
+            <Loading />
+            <SequenceEdit />
         </div>
     );
 }

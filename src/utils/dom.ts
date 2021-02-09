@@ -16,6 +16,14 @@ export function evStrVal(fn: (val: string) => void) {
     };
 }
 
+export function evEach(
+    elements: HTMLElement[],
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+) {
+    elements.forEach((el) => el.addEventListener(type, listener));
+}
+
 export function applyToChild(
     parent: HTMLElement,
     fn: (el: HTMLElement, index?: number) => void,
@@ -62,6 +70,12 @@ export function toggleAttr(
 
 export function elById(id: string) {
     return document.getElementById(id);
+}
+
+export function elByClass(classname: string) {
+    return Array.from(
+        document.getElementsByClassName(classname),
+    ) as HTMLElement[];
 }
 
 export function elFromHtml(html: string) {

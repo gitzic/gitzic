@@ -12,7 +12,7 @@ export function App(): ElementNode {
                 <Sequences />
                 <Settings />
             </div>
-            <div id="tabs-menu">
+            <div id="tabs-menu" class="tabs">
                 <button>Tracks</button>
                 <button>Sequences</button>
                 <button>Settings</button>

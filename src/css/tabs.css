@@ -6,18 +6,18 @@
     display: none;
 }
 
-#tabs-menu {
+.tabs {
     display: flex;
     position: fixed;
     width: 100%;
     bottom: 0;
 }
 
-#tabs-menu .active {
+.tabs .active {
     border-bottom: 3px solid rgb(95, 182, 206);
 }
 
-#tabs-menu button {
+.tabs button {
     width: 100%;
     height: 30px;
     background: #fff;
