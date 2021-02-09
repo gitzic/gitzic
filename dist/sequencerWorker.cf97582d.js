@@ -222,7 +222,12 @@ function saveSequence(notes) {
   });
 }
 
-function removeSequences(sequences) {}
+function removeSequences(notes) {
+  notes.forEach(function (note) {
+    var pos = findSequence(note);
+    pos && list[pos.trigger].splice(pos.index, 1);
+  });
+}
 
 function post(msg) {
   self.postMessage(msg);

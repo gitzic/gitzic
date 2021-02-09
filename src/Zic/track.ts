@@ -21,27 +21,15 @@ worker.addEventListener(
     false,
 );
 
-// const msg: MsgWorker = {
-//     action: ActionWorker.save,
-//     sequences: [
-//         { id: '1', trigger: 0, data: [0x90, 50, 90] },
-//         { id: '2', trigger: 1, data: [0x80, 50, 0] },
-//         { id: '3', trigger: 6, data: [0x90, 60, 90] },
-//         { id: '4', trigger: 8, data: [0x80, 60, 0] },
-//         { id: '5', trigger: 14, data: [0x90, 70, 90] },
-//         { id: '6', trigger: 15, data: [0x80, 70, 0] },
-//     ],
-// };
-// worker.postMessage(msg);
-
-export function activateSequence(sequence: SequenceData) {
-    console.log('activateSequence', sequence);
+function sendActionToWorker(action: ActionWorker, sequence: SequenceData) {
+    console.log('sendActionToWorker', sequence);
     // ToDo: here need to activate sequence in track... but for the moment just push to midi
 
-    const notes: NoteInWorker[] = sequence.notes.flatMap(
+    const notes: NoteInWorker[] = sequence.notes.map(
         ({ velocity, midi: note, duration, time, slide }) => {
             return {
                 id: `midi-${sequence.id}-${note}-${time}`,
+                // ToDo: we could actually skip all the following for stop note
                 outputId: 'td3', // ToDo: to be defined
                 trigger: time * MAX_STEPS_PER_BEAT,
                 duration: duration * MAX_STEPS_PER_BEAT,
@@ -53,10 +41,18 @@ export function activateSequence(sequence: SequenceData) {
     );
 
     const msg: MsgWorker = {
-        action: ActionWorker.save,
+        action,
         notes,
     };
     worker.postMessage(msg);
+}
+
+export function stopSequence(sequence: SequenceData) {
+    sendActionToWorker(ActionWorker.remove, sequence);
+}
+
+export function activateSequence(sequence: SequenceData) {
+    sendActionToWorker(ActionWorker.save, sequence);
 }
 
 interface AvailableSequence {

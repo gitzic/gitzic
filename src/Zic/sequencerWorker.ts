@@ -16,7 +16,7 @@ for (let n = 0; n < stepsCount; n++) {
 
 self.addEventListener(
     'message',
-    ({ data: { action, notes} }: { data: MsgWorker }) => {
+    ({ data: { action, notes } }: { data: MsgWorker }) => {
         if (action === ActionWorker.save) {
             saveSequence(notes);
         } else if (action === ActionWorker.remove) {
@@ -49,7 +49,12 @@ function saveSequence(notes: NoteInWorker[]) {
     });
 }
 
-function removeSequences(sequences: NoteInWorker[]) {}
+function removeSequences(notes: NoteInWorker[]) {
+    notes.forEach((note) => {
+        const pos = findSequence(note);
+        pos && list[pos.trigger].splice(pos.index, 1);
+    });
+}
 
 function post(msg: DataOutWorker) {
     (self as any).postMessage(msg);

@@ -1,4 +1,9 @@
-import { tracks, activeTrack, activateSequence } from '../../Zic/track';
+import {
+    tracks,
+    activeTrack,
+    activateSequence,
+    stopSequence,
+} from '../../Zic/track';
 import { elById, elFromHtml } from '../../utils/dom';
 import { onSequenceAdd, onSequencesChange } from '../../Zic';
 import { SequenceData } from '../../Zic/sequence';
@@ -26,6 +31,8 @@ async function addSequence(sequence: SequenceData) {
         const active = el.classList.toggle('active');
         if (active) {
             activateSequence(sequence);
+        } else {
+            stopSequence(sequence);
         }
     });
 }

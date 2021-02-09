@@ -6115,6 +6115,7 @@ exports.initMIDI = initMIDI;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.stopSequence = stopSequence;
 exports.activateSequence = activateSequence;
 exports.activeTrack = exports.tracks = exports.defaultTracks = void 0;
 
@@ -6129,23 +6130,12 @@ worker.addEventListener('message', function (_a) {
   _midi.midi.outputs.forEach(function (midiOutput) {
     midiOutput.send(data.data);
   });
-}, false); // const msg: MsgWorker = {
-//     action: ActionWorker.save,
-//     sequences: [
-//         { id: '1', trigger: 0, data: [0x90, 50, 90] },
-//         { id: '2', trigger: 1, data: [0x80, 50, 0] },
-//         { id: '3', trigger: 6, data: [0x90, 60, 90] },
-//         { id: '4', trigger: 8, data: [0x80, 60, 0] },
-//         { id: '5', trigger: 14, data: [0x90, 70, 90] },
-//         { id: '6', trigger: 15, data: [0x80, 70, 0] },
-//     ],
-// };
-// worker.postMessage(msg);
+}, false);
 
-function activateSequence(sequence) {
-  console.log('activateSequence', sequence); // ToDo: here need to activate sequence in track... but for the moment just push to midi
+function sendActionToWorker(action, sequence) {
+  console.log('sendActionToWorker', sequence); // ToDo: here need to activate sequence in track... but for the moment just push to midi
 
-  var notes = sequence.notes.flatMap(function (_a) {
+  var notes = sequence.notes.map(function (_a) {
     var velocity = _a.velocity,
         note = _a.midi,
         duration = _a.duration,
@@ -6153,6 +6143,7 @@ function activateSequence(sequence) {
         slide = _a.slide;
     return {
       id: "midi-" + sequence.id + "-" + note + "-" + time,
+      // ToDo: we could actually skip all the following for stop note
       outputId: 'td3',
       trigger: time * _interface.MAX_STEPS_PER_BEAT,
       duration: duration * _interface.MAX_STEPS_PER_BEAT,
@@ -6166,10 +6157,18 @@ function activateSequence(sequence) {
     };
   });
   var msg = {
-    action: _interface.ActionWorker.save,
+    action: action,
     notes: notes
   };
   worker.postMessage(msg);
+}
+
+function stopSequence(sequence) {
+  sendActionToWorker(_interface.ActionWorker.remove, sequence);
+}
+
+function activateSequence(sequence) {
+  sendActionToWorker(_interface.ActionWorker.save, sequence);
 } // export const defaultTracks = [{ sequences: [] }];
 
 
@@ -6638,7 +6637,20 @@ exports.Sequence = Sequence;
 },{"async-jsx-html":"../node_modules/async-jsx-html/nodejs/mod.js"}],"view/Tracks/tracks.ts":[function(require,module,exports) {
 "use strict";
 
-var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.initTracks = initTracks;
+
+var _track = require("../../Zic/track");
+
+var _dom = require("../../utils/dom");
+
+var _Zic = require("../../Zic");
+
+var _Sequence = require("./Sequence");
+
+var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function (resolve) {
       resolve(value);
@@ -6670,7 +6682,7 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
   });
 };
 
-var __generator = this && this.__generator || function (thisArg, body) {
+var __generator = void 0 && (void 0).__generator || function (thisArg, body) {
   var _ = {
     label: 0,
     sent: function sent() {
@@ -6781,29 +6793,15 @@ var __generator = this && this.__generator || function (thisArg, body) {
   }
 };
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.initTracks = void 0;
-
-var track_1 = require("../../Zic/track");
-
-var dom_1 = require("../../utils/dom");
-
-var Zic_1 = require("../../Zic");
-
-var Sequence_1 = require("./Sequence");
-
 function initTracks() {
-  Zic_1.onSequencesChange(displaySequences);
-  Zic_1.onSequenceAdd(addSequence);
+  (0, _Zic.onSequencesChange)(displaySequences);
+  (0, _Zic.onSequenceAdd)(addSequence);
 }
 
-exports.initTracks = initTracks;
-
 function displaySequences(sequences) {
-  dom_1.elById('track').innerHTML = '';
-  track_1.tracks[track_1.activeTrack].sequences.forEach(function (_a) {
+  (0, _dom.elById)('track').innerHTML = '';
+
+  _track.tracks[_track.activeTrack].sequences.forEach(function (_a) {
     var id = _a.id; // ToDo: here should find by id!
 
     addSequence(sequences[id]);
@@ -6818,18 +6816,20 @@ function addSequence(sequence) {
         case 0:
           return [4
           /*yield*/
-          , Sequence_1.Sequence(sequence).render()];
+          , (0, _Sequence.Sequence)(sequence).render()];
 
         case 1:
           html = _a.sent();
-          el = dom_1.elFromHtml(html); // ToDo: should first check if sequence is already in, else replace
+          el = (0, _dom.elFromHtml)(html); // ToDo: should first check if sequence is already in, else replace
 
-          dom_1.elById('track').append(el);
+          (0, _dom.elById)('track').append(el);
           el.addEventListener('click', function () {
             var active = el.classList.toggle('active');
 
             if (active) {
-              track_1.activateSequence(sequence);
+              (0, _track.activateSequence)(sequence);
+            } else {
+              (0, _track.stopSequence)(sequence);
             }
           });
           return [2
