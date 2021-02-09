@@ -107,10 +107,7 @@ export function setDisplayNote(id: number) {
 }
 
 export function setSequences(newSequences: SequenceData[]) {
-    // sequences = newSequences;
-    // the time uuid is not set, ensure it
-    // to be remove
-    sequences = newSequences.map((s) => ({ id: uuid(), ...s }));
+    sequences = newSequences;
     emitSequencesChange(sequences);
 }
 

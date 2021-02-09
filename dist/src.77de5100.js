@@ -5582,105 +5582,85 @@ exports.emitSequenceAdd = emitSequenceAdd;
 },{"eventemitter3":"../node_modules/eventemitter3/index.js"}],"Zic/sequence.ts":[function(require,module,exports) {
 "use strict";
 
-var __assign = this && this.__assign || function () {
-  __assign = Object.assign || function (t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-      s = arguments[i];
-
-      for (var p in s) {
-        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-      }
-    }
-
-    return t;
-  };
-
-  return __assign.apply(this, arguments);
-};
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.initSequences = exports.sequences = exports.addNew = exports.setSequences = exports.setDisplayNote = exports.setNote = exports.setName = exports.setStepsPerBeat = exports.setBeatCount = exports.setOutputChannel = exports.setOutputId = exports.findIndexNote = exports.isNoteOff = exports.isNoteOn = exports.getCurrentNotes = void 0;
+exports.getCurrentNotes = getCurrentNotes;
+exports.isNoteOn = isNoteOn;
+exports.isNoteOff = isNoteOff;
+exports.findIndexNote = findIndexNote;
+exports.setOutputId = setOutputId;
+exports.setOutputChannel = setOutputChannel;
+exports.setBeatCount = setBeatCount;
+exports.setStepsPerBeat = setStepsPerBeat;
+exports.setName = setName;
+exports.setNote = setNote;
+exports.setDisplayNote = setDisplayNote;
+exports.setSequences = setSequences;
+exports.addNew = addNew;
+exports.initSequences = initSequences;
+exports.sequences = void 0;
 
-var utils_1 = require("../utils/utils");
+var _utils = require("../utils/utils");
 
-var event_1 = require("./event");
+var _event = require("./event");
 
 function getCurrentNotes(id) {
-  return exports.sequences[id].notes.filter(function (note) {
+  return sequences[id].notes.filter(function (note) {
     return isNoteOn(id, note) || isNoteOff(id, note);
   }).sort(function (_, note) {
     return isNoteOff(id, note) && note.slide ? -1 : 1;
   });
 }
 
-exports.getCurrentNotes = getCurrentNotes;
-
 function isNoteOn(id, _a) {
   var time = _a.time;
-  return exports.sequences[id].currentStep === time;
+  return sequences[id].currentStep === time;
 }
-
-exports.isNoteOn = isNoteOn;
 
 function isNoteOff(id, _a) {
   var time = _a.time,
       duration = _a.duration;
-  return time + duration === exports.sequences[id].currentStep || exports.sequences[id].currentStep === 0 && time + duration === exports.sequences[id].beatCount;
+  return time + duration === sequences[id].currentStep || sequences[id].currentStep === 0 && time + duration === sequences[id].beatCount;
 }
 
-exports.isNoteOff = isNoteOff;
-
 function findIndexNote(id, note) {
-  return exports.sequences[id].notes.findIndex(function (_a) {
+  return sequences[id].notes.findIndex(function (_a) {
     var time = _a.time,
         midi = _a.midi;
     return note.time === time && note.midi === midi;
   });
 }
 
-exports.findIndexNote = findIndexNote;
-
 function setOutputId(id) {
   return function (outputId) {
-    exports.sequences[id].outputId = outputId; // event.emit(eventKey.onSeqChange, sequences);
+    sequences[id].outputId = outputId; // event.emit(eventKey.onSeqChange, sequences);
   };
 }
-
-exports.setOutputId = setOutputId;
 
 function setOutputChannel(id) {
   return function (channel) {
-    exports.sequences[id].outputChannel = channel; // event.emit(eventKey.onSeqChange, sequences);
+    sequences[id].outputChannel = channel; // event.emit(eventKey.onSeqChange, sequences);
   };
 }
-
-exports.setOutputChannel = setOutputChannel;
 
 function setBeatCount(id) {
   return function (count) {
-    exports.sequences[id].beatCount = count; // event.emit(eventKey.onSeqChange, sequences);
+    sequences[id].beatCount = count; // event.emit(eventKey.onSeqChange, sequences);
   };
 }
-
-exports.setBeatCount = setBeatCount;
 
 function setStepsPerBeat(id) {
   return function (count) {
-    exports.sequences[id].stepsPerBeat = count; // event.emit(eventKey.onSeqChange, sequences);
+    sequences[id].stepsPerBeat = count; // event.emit(eventKey.onSeqChange, sequences);
   };
 }
-
-exports.setStepsPerBeat = setStepsPerBeat;
 
 function setName(id) {
   return function (name) {
-    exports.sequences[id].name = name; // event.emit(eventKey.onSeqChange, sequences);
+    sequences[id].name = name; // event.emit(eventKey.onSeqChange, sequences);
   };
 }
-
-exports.setName = setName;
 
 function setNote(id) {
   return function (note) {
@@ -5688,15 +5668,15 @@ function setNote(id) {
     var index = findIndexNote(id, note);
 
     if (index === -1) {
-      exports.sequences[id].notes.push(note);
+      sequences[id].notes.push(note);
     } else if (!note.duration) {
       // console.log('delete', sequences[id].notes[index]);
-      exports.sequences[id].notes.splice(index, 1);
+      sequences[id].notes.splice(index, 1);
     } else {
-      exports.sequences[id].notes[index] = note;
+      sequences[id].notes[index] = note;
     }
 
-    exports.sequences[id].notes.sort(function (a, b) {
+    sequences[id].notes.sort(function (a, b) {
       return a.time - b.time;
     }); // console.log('note', note);
     // console.log('sequences', sequences);
@@ -5704,34 +5684,21 @@ function setNote(id) {
   };
 }
 
-exports.setNote = setNote;
-
 function setDisplayNote(id) {
   return function (midi) {
-    exports.sequences[id].displayedNotes.push(midi);
-    exports.sequences[id].displayedNotes.sort();
+    sequences[id].displayedNotes.push(midi);
+    sequences[id].displayedNotes.sort();
   };
 }
 
-exports.setDisplayNote = setDisplayNote;
-
 function setSequences(newSequences) {
-  // sequences = newSequences;
-  // the time uuid is not set, ensure it
-  // to be remove
-  exports.sequences = newSequences.map(function (s) {
-    return __assign({
-      id: utils_1.uuid()
-    }, s);
-  });
-  event_1.emitSequencesChange(exports.sequences);
+  exports.sequences = sequences = newSequences;
+  (0, _event.emitSequencesChange)(sequences);
 }
-
-exports.setSequences = setSequences;
 
 function addNew() {
   var sequence = {
-    id: utils_1.uuid(),
+    id: (0, _utils.uuid)(),
     name: new Date().toLocaleString([], {
       hour: '2-digit',
       minute: '2-digit',
@@ -5748,18 +5715,16 @@ function addNew() {
     displayedNotes: [],
     notes: []
   };
-  exports.sequences.push(sequence);
-  event_1.emitSequenceAdd(sequence);
+  sequences.push(sequence);
+  (0, _event.emitSequenceAdd)(sequence);
 }
 
-exports.addNew = addNew;
-exports.sequences = [];
+var sequences = [];
+exports.sequences = sequences;
 
 function initSequences() {
-  !exports.sequences.length && addNew();
+  !sequences.length && addNew();
 }
-
-exports.initSequences = initSequences;
 },{"../utils/utils":"utils/utils.ts","./event":"Zic/event.ts"}],"git.ts":[function(require,module,exports) {
 "use strict";
 
@@ -6145,17 +6110,18 @@ exports.initMIDI = initMIDI;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.activeTrack = exports.tracks = exports.defaultTracks = exports.activateSequence = void 0;
+exports.activateSequence = activateSequence;
+exports.activeTrack = exports.tracks = exports.defaultTracks = void 0;
 
-var interface_1 = require("../interface");
+var _interface = require("../interface");
 
-var midi_1 = require("./midi");
+var _midi = require("./midi");
 
 var worker = new Worker("/sequencerWorker.cf97582d.js");
 worker.addEventListener('message', function (_a) {
   var data = _a.data; // console.log('data', data);
 
-  midi_1.midi.outputs.forEach(function (midiOutput) {
+  _midi.midi.outputs.forEach(function (midiOutput) {
     midiOutput.send(data.data);
   });
 }, false); // const msg: MsgWorker = {
@@ -6198,15 +6164,14 @@ function activateSequence(sequence) {
     return [noteOn, noteOff];
   });
   var msg = {
-    action: interface_1.ActionWorker.save,
+    action: _interface.ActionWorker.save,
     sequences: msgSequences
   };
   worker.postMessage(msg);
-}
+} // export const defaultTracks = [{ sequences: [] }];
 
-exports.activateSequence = activateSequence; // export const defaultTracks = [{ sequences: [] }];
 
-exports.defaultTracks = [{
+var defaultTracks = [{
   sequences: [// ToDo: here put real id -> string uuid
   {
     id: 0,
@@ -6225,8 +6190,10 @@ exports.defaultTracks = [{
     outputId: 'yoyo'
   }]
 }];
-exports.tracks = exports.defaultTracks;
-exports.activeTrack = 0; // export function addListenerTrackschange(fn: (tracks: Track[]) => void) {
+exports.defaultTracks = defaultTracks;
+var tracks = defaultTracks;
+exports.tracks = tracks;
+var activeTrack = 0; // export function addListenerTrackschange(fn: (tracks: Track[]) => void) {
 //     event.addListener(eventKey.onTrackChange, fn);
 // }
 // export function getSequenceInTrack(trackId: number, sequenceId: number) {
@@ -6241,6 +6208,8 @@ exports.activeTrack = 0; // export function addListenerTrackschange(fn: (tracks:
 //     }
 //     event.emit(eventKey.onTrackChange, tracks);
 // }
+
+exports.activeTrack = activeTrack;
 },{"../interface":"interface.ts","./midi":"Zic/midi.ts","./sequencerWorker.ts":[["sequencerWorker.cf97582d.js","Zic/sequencerWorker.ts"],"sequencerWorker.cf97582d.js.map","Zic/sequencerWorker.ts"]}],"Zic/utils.ts":[function(require,module,exports) {
 "use strict";
 
@@ -7107,28 +7076,24 @@ exports.App = App;
 },{"async-jsx-html":"../node_modules/async-jsx-html/nodejs/mod.js","./Settings/Settings":"view/Settings/Settings.tsx","./Tracks/Tracks":"view/Tracks/Tracks.tsx"}],"index.ts":[function(require,module,exports) {
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+var _git = require("./git");
 
-var git_1 = require("./git");
+var _app = require("./view/app");
 
-var app_1 = require("./view/app");
+var _App = require("./view/App");
 
-var App_1 = require("./view/App");
+var _Zic = require("./Zic");
 
-var Zic_1 = require("./Zic");
+var _sequence = require("./Zic/sequence");
 
-var sequence_1 = require("./Zic/sequence"); // init html
-
-
-App_1.App().render().then(function (html) {
+// init html
+(0, _App.App)().render().then(function (html) {
   document.getElementById('app').innerHTML = html;
-  app_1.initApp();
-  sequence_1.initSequences();
+  (0, _app.initApp)();
+  (0, _sequence.initSequences)();
 });
-Zic_1.init();
-git_1.loadSequences();
+(0, _Zic.init)();
+(0, _git.loadSequences)();
 },{"./git":"git.ts","./view/app":"view/app.ts","./view/App":"view/App.tsx","./Zic":"Zic/index.ts","./Zic/sequence":"Zic/sequence.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -7157,7 +7122,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "42767" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "35279" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

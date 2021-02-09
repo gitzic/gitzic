@@ -1,5 +1,4 @@
 import { loadSequences } from './git';
-import { ActionWorker, MsgWorker } from './interface';
 import { initApp } from './view/app';
 import { App } from './view/App';
 import { init } from './Zic';
