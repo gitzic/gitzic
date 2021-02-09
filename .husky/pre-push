@@ -7,5 +7,5 @@ if git commit -m "build app" ; then
     echo "app built"
     git push --no-verify
     echo "push done"
-    exit 1
+    exit 127
 fi
