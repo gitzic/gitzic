@@ -1,0 +1,7 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+#./pre-push.sh
+npm run build
+git add ./app
+git commit -m "build app"
