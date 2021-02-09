@@ -2247,17 +2247,23 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.ERR = void 0;
 var ERR;
+exports.ERR = ERR;
 
 (function (ERR) {
   ERR["missingGitHubConfig"] = "Please authenticate to use GitHub api";
-})(ERR = exports.ERR || (exports.ERR = {}));
+})(ERR || (exports.ERR = ERR = {}));
 },{}],"storage/localStorage.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.storeGithubToken = exports.storeGithubRepo = exports.storeGithubUser = exports.getGithubToken = exports.getGithubRepo = exports.getGithubUser = void 0;
+exports.getGithubUser = getGithubUser;
+exports.getGithubRepo = getGithubRepo;
+exports.getGithubToken = getGithubToken;
+exports.storeGithubUser = storeGithubUser;
+exports.storeGithubRepo = storeGithubRepo;
+exports.storeGithubToken = storeGithubToken;
 var githubStorageKeys;
 
 (function (githubStorageKeys) {
@@ -2278,37 +2284,25 @@ function getGithubUser() {
   return get(githubStorageKeys.githubUser) || '';
 }
 
-exports.getGithubUser = getGithubUser;
-
 function getGithubRepo() {
   return get(githubStorageKeys.githubRepo) || '';
 }
-
-exports.getGithubRepo = getGithubRepo;
 
 function getGithubToken() {
   return get(githubStorageKeys.githubToken) || '';
 }
 
-exports.getGithubToken = getGithubToken;
-
 function storeGithubUser(val) {
   store(githubStorageKeys.githubUser, val);
 }
-
-exports.storeGithubUser = storeGithubUser;
 
 function storeGithubRepo(val) {
   store(githubStorageKeys.githubRepo, val);
 }
 
-exports.storeGithubRepo = storeGithubRepo;
-
 function storeGithubToken(val) {
   store(githubStorageKeys.githubToken, val);
 }
-
-exports.storeGithubToken = storeGithubToken;
 },{}],"../node_modules/base64-js/index.js":[function(require,module,exports) {
 'use strict'
 
@@ -4352,7 +4346,24 @@ function isnan (val) {
 var Buffer = require("buffer").Buffer;
 "use strict";
 
-var __extends = this && this.__extends || function () {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.GitHubStorage = void 0;
+
+var _path = require("path");
+
+var _axios = _interopRequireDefault(require("axios"));
+
+var _Storage = require("./Storage");
+
+var _error = require("../error");
+
+var _localStorage = require("./localStorage");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var __extends = void 0 && (void 0).__extends || function () {
   var _extendStatics = function extendStatics(d, b) {
     _extendStatics = Object.setPrototypeOf || {
       __proto__: []
@@ -4378,7 +4389,7 @@ var __extends = this && this.__extends || function () {
   };
 }();
 
-var __assign = this && this.__assign || function () {
+var __assign = void 0 && (void 0).__assign || function () {
   __assign = Object.assign || function (t) {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
       s = arguments[i];
@@ -4394,7 +4405,7 @@ var __assign = this && this.__assign || function () {
   return __assign.apply(this, arguments);
 };
 
-var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
+var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function (resolve) {
       resolve(value);
@@ -4426,7 +4437,7 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
   });
 };
 
-var __generator = this && this.__generator || function (thisArg, body) {
+var __generator = void 0 && (void 0).__generator || function (thisArg, body) {
   var _ = {
     label: 0,
     sent: function sent() {
@@ -4537,27 +4548,32 @@ var __generator = this && this.__generator || function (thisArg, body) {
   }
 };
 
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
+var __read = void 0 && (void 0).__read || function (o, n) {
+  var m = typeof Symbol === "function" && o[Symbol.iterator];
+  if (!m) return o;
+  var i = m.call(o),
+      r,
+      ar = [],
+      e;
+
+  try {
+    while ((n === void 0 || n-- > 0) && !(r = i.next()).done) {
+      ar.push(r.value);
+    }
+  } catch (error) {
+    e = {
+      error: error
+    };
+  } finally {
+    try {
+      if (r && !r.done && (m = i["return"])) m.call(i);
+    } finally {
+      if (e) throw e.error;
+    }
+  }
+
+  return ar;
 };
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.GitHubStorage = void 0;
-
-var path_1 = require("path"); // should we use fetch over axios?
-
-
-var axios_1 = __importDefault(require("axios"));
-
-var Storage_1 = require("./Storage");
-
-var error_1 = require("../error");
-
-var localStorage_1 = require("./localStorage");
 
 var BASE_URL = 'https://api.github.com';
 var COMMIT_PREFIX = '[GitZic]';
@@ -4575,7 +4591,7 @@ function (_super) {
     var _a;
 
     return __awaiter(this, void 0, void 0, function () {
-      var data, error_2;
+      var data, error_1;
       return __generator(this, function (_b) {
         switch (_b.label) {
           case 0:
@@ -4596,15 +4612,15 @@ function (_super) {
           // type is also available so we could filter for type === 'file'
 
           case 2:
-            error_2 = _b.sent();
+            error_1 = _b.sent();
 
-            if (((_a = error_2 === null || error_2 === void 0 ? void 0 : error_2.response) === null || _a === void 0 ? void 0 : _a.status) === 404) {
+            if (((_a = error_1 === null || error_1 === void 0 ? void 0 : error_1.response) === null || _a === void 0 ? void 0 : _a.status) === 404) {
               return [2
               /*return*/
               , []];
             }
 
-            throw error_2;
+            throw error_1;
 
           case 3:
             return [2
@@ -4650,11 +4666,11 @@ function (_super) {
           case 0:
             return [4
             /*yield*/
-            , this.getContents(path_1.dirname(path))];
+            , this.getContents((0, _path.dirname)(path))];
 
           case 1:
             data = _a.sent().data;
-            filename = path_1.basename(path);
+            filename = (0, _path.basename)(path);
             filedata = data.find(function (item) {
               return item.name === filename;
             });
@@ -4683,17 +4699,17 @@ function (_super) {
 
   GitHubStorage.prototype.saveBlob = function (file, content) {
     return __awaiter(this, void 0, void 0, function () {
-      var _a, latestCommitSha, base_tree, newBlobSha, newTreeSha, shaCommit;
+      var _a, _b, latestCommitSha, base_tree, newBlobSha, newTreeSha, shaCommit;
 
-      return __generator(this, function (_b) {
-        switch (_b.label) {
+      return __generator(this, function (_c) {
+        switch (_c.label) {
           case 0:
             return [4
             /*yield*/
             , this.remove(file)];
 
           case 1:
-            _b.sent();
+            _c.sent();
 
             return [4
             /*yield*/
@@ -4702,7 +4718,7 @@ function (_super) {
             })];
 
           case 2:
-            _a = _b.sent().data[0], latestCommitSha = _a.sha, base_tree = _a.commit.tree.sha;
+            _a = __read.apply(void 0, [_c.sent().data, 1]), _b = _a[0], latestCommitSha = _b.sha, base_tree = _b.commit.tree.sha;
             return [4
             /*yield*/
             , this.call({
@@ -4715,7 +4731,7 @@ function (_super) {
             })];
 
           case 3:
-            newBlobSha = _b.sent().data.sha;
+            newBlobSha = _c.sent().data.sha;
             return [4
             /*yield*/
             , this.call({
@@ -4732,7 +4748,7 @@ function (_super) {
             })];
 
           case 4:
-            newTreeSha = _b.sent().data.sha;
+            newTreeSha = _c.sent().data.sha;
             return [4
             /*yield*/
             , this.call({
@@ -4746,7 +4762,7 @@ function (_super) {
             })];
 
           case 5:
-            shaCommit = _b.sent().data.sha;
+            shaCommit = _c.sent().data.sha;
             return [4
             /*yield*/
             , this.call({
@@ -4758,7 +4774,7 @@ function (_super) {
             })];
 
           case 6:
-            _b.sent();
+            _c.sent();
 
             return [2
             /*return*/
@@ -4790,13 +4806,13 @@ function (_super) {
 
   GitHubStorage.prototype.readJSON = function (path) {
     return __awaiter(this, void 0, void 0, function () {
-      var _a, _b, error_3;
+      var _a, _b, error_2;
 
       return __generator(this, function (_c) {
         switch (_c.label) {
           case 0:
             if (!this.token || !this.user) {
-              throw new Error(error_1.ERR.missingGitHubConfig);
+              throw new Error(_error.ERR.missingGitHubConfig);
             }
 
             _c.label = 1;
@@ -4815,7 +4831,7 @@ function (_super) {
             , _b.apply(_a, [_c.sent().toString()])];
 
           case 3:
-            error_3 = _c.sent();
+            error_2 = _c.sent();
             return [2
             /*return*/
             , undefined];
@@ -4909,7 +4925,7 @@ function (_super) {
     var _a;
 
     return __awaiter(this, void 0, void 0, function () {
-      var data, error_4;
+      var data, error_3;
       return __generator(this, function (_b) {
         switch (_b.label) {
           case 0:
@@ -4933,10 +4949,10 @@ function (_super) {
             , 3];
 
           case 2:
-            error_4 = _b.sent();
+            error_3 = _b.sent();
 
-            if (((_a = error_4 === null || error_4 === void 0 ? void 0 : error_4.response) === null || _a === void 0 ? void 0 : _a.status) !== 404) {
-              throw error_4;
+            if (((_a = error_3 === null || error_3 === void 0 ? void 0 : error_3.response) === null || _a === void 0 ? void 0 : _a.status) !== 404) {
+              throw error_3;
             }
 
             return [3
@@ -5080,10 +5096,10 @@ function (_super) {
 
   GitHubStorage.prototype.call = function (config) {
     if (!this.token || !this.user) {
-      throw new Error(error_1.ERR.missingGitHubConfig);
+      throw new Error(_error.ERR.missingGitHubConfig);
     }
 
-    return axios_1.default(__assign(__assign({}, config), {
+    return (0, _axios.default)(__assign(__assign({}, config), {
       headers: __assign(__assign({}, config === null || config === void 0 ? void 0 : config.headers), {
         Authorization: "token " + this.token
       })
@@ -5140,56 +5156,75 @@ function (_super) {
   });
   Object.defineProperty(GitHubStorage.prototype, "user", {
     get: function get() {
-      return localStorage_1.getGithubUser();
+      return (0, _localStorage.getGithubUser)();
     },
     enumerable: false,
     configurable: true
   });
   Object.defineProperty(GitHubStorage.prototype, "token", {
     get: function get() {
-      return localStorage_1.getGithubToken();
+      return (0, _localStorage.getGithubToken)();
     },
     enumerable: false,
     configurable: true
   });
   Object.defineProperty(GitHubStorage.prototype, "repo", {
     get: function get() {
-      return localStorage_1.getGithubRepo();
+      return (0, _localStorage.getGithubRepo)();
     },
     enumerable: false,
     configurable: true
   });
   return GitHubStorage;
-}(Storage_1.Storage);
+}(_Storage.Storage);
 
 exports.GitHubStorage = GitHubStorage;
 },{"path":"../node_modules/path-browserify/index.js","axios":"../node_modules/axios/index.js","./Storage":"storage/Storage.ts","../error":"error.ts","./localStorage":"storage/localStorage.ts","buffer":"../node_modules/buffer/index.js"}],"utils/utils.ts":[function(require,module,exports) {
 "use strict";
 
-var __spreadArrays = this && this.__spreadArrays || function () {
-  for (var s = 0, i = 0, il = arguments.length; i < il; i++) {
-    s += arguments[i].length;
-  }
-
-  for (var r = Array(s), k = 0, i = 0; i < il; i++) {
-    for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++) {
-      r[k] = a[j];
-    }
-  }
-
-  return r;
-};
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.uuid = void 0;
+exports.uuid = uuid;
+
+var __read = void 0 && (void 0).__read || function (o, n) {
+  var m = typeof Symbol === "function" && o[Symbol.iterator];
+  if (!m) return o;
+  var i = m.call(o),
+      r,
+      ar = [],
+      e;
+
+  try {
+    while ((n === void 0 || n-- > 0) && !(r = i.next()).done) {
+      ar.push(r.value);
+    }
+  } catch (error) {
+    e = {
+      error: error
+    };
+  } finally {
+    try {
+      if (r && !r.done && (m = i["return"])) m.call(i);
+    } finally {
+      if (e) throw e.error;
+    }
+  }
+
+  return ar;
+};
+
+var __spread = void 0 && (void 0).__spread || function () {
+  for (var ar = [], i = 0; i < arguments.length; i++) {
+    ar = ar.concat(__read(arguments[i]));
+  }
+
+  return ar;
+};
 
 function uuid() {
-  return __spreadArrays([new Date().getTime()], window.crypto.getRandomValues(new Uint32Array(2))).join('-');
+  return __spread([new Date().getTime()], window.crypto.getRandomValues(new Uint32Array(2))).join('-');
 }
-
-exports.uuid = uuid;
 },{}],"../node_modules/eventemitter3/index.js":[function(require,module,exports) {
 'use strict';
 
@@ -5531,21 +5566,23 @@ if ('undefined' !== typeof module) {
 },{}],"Zic/event.ts":[function(require,module,exports) {
 "use strict";
 
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.emitSequenceAdd = exports.onSequenceAdd = exports.emitSequencesChange = exports.onSequencesChange = exports.eventKey = exports.event = void 0;
+exports.onSequencesChange = onSequencesChange;
+exports.emitSequencesChange = emitSequencesChange;
+exports.onSequenceAdd = onSequenceAdd;
+exports.emitSequenceAdd = emitSequenceAdd;
+exports.eventKey = exports.event = void 0;
 
-var eventemitter3_1 = __importDefault(require("eventemitter3"));
+var _eventemitter = _interopRequireDefault(require("eventemitter3"));
 
-exports.event = new eventemitter3_1.default();
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var event = new _eventemitter.default();
+exports.event = event;
 var eventKey;
+exports.eventKey = eventKey;
 
 (function (eventKey) {
   eventKey["onMIDISuccess"] = "onMIDISuccess";
@@ -5554,31 +5591,23 @@ var eventKey;
   eventKey["onSequencesChange"] = "onSequencesChange";
   eventKey["onSequenceAdd"] = "onSequenceAdd";
   eventKey["onTrackChange"] = "onTrackChange";
-})(eventKey = exports.eventKey || (exports.eventKey = {}));
+})(eventKey || (exports.eventKey = eventKey = {}));
 
 function onSequencesChange(fn) {
-  exports.event.addListener(eventKey.onSequencesChange, fn);
+  event.addListener(eventKey.onSequencesChange, fn);
 }
-
-exports.onSequencesChange = onSequencesChange;
 
 function emitSequencesChange(sequences) {
-  exports.event.emit(eventKey.onSequencesChange, sequences);
+  event.emit(eventKey.onSequencesChange, sequences);
 }
-
-exports.emitSequencesChange = emitSequencesChange;
 
 function onSequenceAdd(fn) {
-  exports.event.addListener(eventKey.onSequenceAdd, fn);
+  event.addListener(eventKey.onSequenceAdd, fn);
 }
-
-exports.onSequenceAdd = onSequenceAdd;
 
 function emitSequenceAdd(sequence) {
-  exports.event.emit(eventKey.onSequenceAdd, sequence);
+  event.emit(eventKey.onSequenceAdd, sequence);
 }
-
-exports.emitSequenceAdd = emitSequenceAdd;
 },{"eventemitter3":"../node_modules/eventemitter3/index.js"}],"Zic/sequence.ts":[function(require,module,exports) {
 "use strict";
 
@@ -5728,7 +5757,19 @@ function initSequences() {
 },{"../utils/utils":"utils/utils.ts","./event":"Zic/event.ts"}],"git.ts":[function(require,module,exports) {
 "use strict";
 
-var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.loadSequences = loadSequences;
+exports.saveSequences = saveSequences;
+
+var _GitHubStorage = require("./storage/GitHubStorage");
+
+var _path = require("path");
+
+var _sequence = require("./Zic/sequence");
+
+var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function (resolve) {
       resolve(value);
@@ -5760,7 +5801,7 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
   });
 };
 
-var __generator = this && this.__generator || function (thisArg, body) {
+var __generator = void 0 && (void 0).__generator || function (thisArg, body) {
   var _ = {
     label: 0,
     sent: function sent() {
@@ -5871,18 +5912,7 @@ var __generator = this && this.__generator || function (thisArg, body) {
   }
 };
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.saveSequences = exports.loadSequences = void 0;
-
-var GitHubStorage_1 = require("./storage/GitHubStorage");
-
-var path_1 = require("path");
-
-var sequence_1 = require("./Zic/sequence");
-
-var gitHubStorage = new GitHubStorage_1.GitHubStorage();
+var gitHubStorage = new _GitHubStorage.GitHubStorage();
 
 function loadSequences() {
   return __awaiter(this, void 0, void 0, function () {
@@ -5892,13 +5922,13 @@ function loadSequences() {
         case 0:
           return [4
           /*yield*/
-          , gitHubStorage.readJSON(path_1.join('sequences', 'sequences.json'))];
+          , gitHubStorage.readJSON((0, _path.join)('sequences', 'sequences.json'))];
 
         case 1:
           sequences = _a.sent();
 
           if (sequences && Array.isArray(sequences)) {
-            sequence_1.setSequences(sequences);
+            (0, _sequence.setSequences)(sequences);
           }
 
           return [2
@@ -5909,29 +5939,35 @@ function loadSequences() {
   });
 }
 
-exports.loadSequences = loadSequences;
-
 function saveSequences() {
-  return gitHubStorage.saveJSON(path_1.join('sequences', 'sequences.json'), sequence_1.sequences);
+  return gitHubStorage.saveJSON((0, _path.join)('sequences', 'sequences.json'), _sequence.sequences);
 }
-
-exports.saveSequences = saveSequences;
 },{"./storage/GitHubStorage":"storage/GitHubStorage.ts","path":"../node_modules/path-browserify/index.js","./Zic/sequence":"Zic/sequence.ts"}],"utils/dom.ts":[function(require,module,exports) {
-"use strict"; // export function evNumVal(fn: (nb: number) => void) {
-//     return ({ target: { value } }: Event) => {
-//         fn(Number(value));
-//     };
-// }
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.elFromHtml = exports.elById = exports.toggleAttr = exports.toggleSiblingClass = exports.removeChildClass = exports.addChildClass = exports.toggleChildClass = exports.applyToChild = exports.evStrVal = void 0; // export function evStrVal(fn: (val: string) => void) {
+exports.evStrVal = evStrVal;
+exports.applyToChild = applyToChild;
+exports.toggleChildClass = toggleChildClass;
+exports.addChildClass = addChildClass;
+exports.removeChildClass = removeChildClass;
+exports.toggleSiblingClass = toggleSiblingClass;
+exports.toggleAttr = toggleAttr;
+exports.elById = elById;
+exports.elFromHtml = elFromHtml;
+
+// export function evNumVal(fn: (nb: number) => void) {
+//     return ({ target: { value } }: Event) => {
+//         fn(Number(value));
+//     };
+// }
+// export function evStrVal(fn: (val: string) => void) {
 //     return ({ target: { value } }: ChangeEvent<HTMLSelectElement>) => {
 //         fn(value);
 //     };
 // }
-
 function evStrVal(fn) {
   return function (_a) {
     var target = _a.target;
@@ -5939,15 +5975,11 @@ function evStrVal(fn) {
   };
 }
 
-exports.evStrVal = evStrVal;
-
 function applyToChild(parent, fn) {
   return parent.childNodes.forEach(function (el, index) {
     return fn(el, index);
   });
 }
-
-exports.applyToChild = applyToChild;
 
 function toggleChildClass(parent, classname) {
   return applyToChild(parent, function (el) {
@@ -5955,23 +5987,17 @@ function toggleChildClass(parent, classname) {
   });
 }
 
-exports.toggleChildClass = toggleChildClass;
-
 function addChildClass(parent, classname) {
   return applyToChild(parent, function (el) {
     return el.classList.add(classname);
   });
 }
 
-exports.addChildClass = addChildClass;
-
 function removeChildClass(parent, classname) {
   return applyToChild(parent, function (el) {
     return el.classList.remove(classname);
   });
 }
-
-exports.removeChildClass = removeChildClass;
 
 function toggleSiblingClass(el, classname) {
   if (el.classList.contains(classname)) {
@@ -5983,8 +6009,6 @@ function toggleSiblingClass(el, classname) {
   }
 }
 
-exports.toggleSiblingClass = toggleSiblingClass;
-
 function toggleAttr(el, name, val1, val2) {
   if (el.getAttribute(name) === val1) {
     el.setAttribute(name, val2);
@@ -5993,32 +6017,26 @@ function toggleAttr(el, name, val1, val2) {
   }
 }
 
-exports.toggleAttr = toggleAttr;
-
 function elById(id) {
   return document.getElementById(id);
 }
-
-exports.elById = elById;
 
 function elFromHtml(html) {
   var template = document.createElement('template');
   template.innerHTML = html.trim();
   return template.content.firstChild;
 }
-
-exports.elFromHtml = elFromHtml;
 },{}],"view/Settings/settings.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.initSettings = void 0;
+exports.initSettings = initSettings;
 
-var localStorage_1 = require("../../storage/localStorage");
+var _localStorage = require("../../storage/localStorage");
 
-var dom_1 = require("../../utils/dom");
+var _dom = require("../../utils/dom");
 
 var elGithubToken;
 var elGithubTokenToggle;
@@ -6026,19 +6044,17 @@ var elGithubTokenToggle;
 function initSettings() {
   // use addEventListener to have multiple subscriber
   //elById('githubUser').addEventListener('change', evStrVal(storeGithubUser));
-  dom_1.elById('githubUser').onchange = dom_1.evStrVal(localStorage_1.storeGithubUser);
-  dom_1.elById('githubRepo').onchange = dom_1.evStrVal(localStorage_1.storeGithubRepo);
-  elGithubToken = dom_1.elById('githubToken');
-  elGithubTokenToggle = dom_1.elById('githubTokenToggle');
-  elGithubToken.onchange = dom_1.evStrVal(localStorage_1.storeGithubToken);
+  (0, _dom.elById)('githubUser').onchange = (0, _dom.evStrVal)(_localStorage.storeGithubUser);
+  (0, _dom.elById)('githubRepo').onchange = (0, _dom.evStrVal)(_localStorage.storeGithubRepo);
+  elGithubToken = (0, _dom.elById)('githubToken');
+  elGithubTokenToggle = (0, _dom.elById)('githubTokenToggle');
+  elGithubToken.onchange = (0, _dom.evStrVal)(_localStorage.storeGithubToken);
   elGithubTokenToggle.onclick = showToken;
 }
 
-exports.initSettings = initSettings;
-
 function showToken() {
-  dom_1.toggleAttr(elGithubToken, 'type', 'password', 'text');
-  dom_1.toggleChildClass(elGithubTokenToggle, 'hide');
+  (0, _dom.toggleAttr)(elGithubToken, 'type', 'password', 'text');
+  (0, _dom.toggleChildClass)(elGithubTokenToggle, 'hide');
 }
 },{"../../storage/localStorage":"storage/localStorage.ts","../../utils/dom":"utils/dom.ts"}],"interface.ts":[function(require,module,exports) {
 "use strict";
@@ -6064,33 +6080,38 @@ exports.ActionWorker = ActionWorker;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.initMIDI = exports.addListenerMidiError = exports.addListenerMidiSuccess = exports.midi = void 0;
+exports.addListenerMidiSuccess = addListenerMidiSuccess;
+exports.addListenerMidiError = addListenerMidiError;
+exports.initMIDI = initMIDI;
+exports.midi = void 0;
 
-var event_1 = require("./event");
+var _event = require("./event");
+
+var midi;
+exports.midi = midi;
 
 function addListenerMidiSuccess(fn) {
-  event_1.event.addListener(event_1.eventKey.onMIDISuccess, fn);
+  _event.event.addListener(_event.eventKey.onMIDISuccess, fn);
 }
 
-exports.addListenerMidiSuccess = addListenerMidiSuccess;
-
 function onMIDISuccess(midiAccess) {
-  exports.midi = midiAccess;
-  event_1.event.emit(event_1.eventKey.onMIDISuccess, exports.midi);
-  exports.midi.inputs.forEach(function (midiInput) {
+  exports.midi = midi = midiAccess;
+
+  _event.event.emit(_event.eventKey.onMIDISuccess, midi);
+
+  midi.inputs.forEach(function (midiInput) {
     console.log('midiInput', midiInput.name, midiInput);
     midiInput.onmidimessage = onMIDIMessage;
   });
 }
 
 function addListenerMidiError(fn) {
-  event_1.event.addListener(event_1.eventKey.onMIDIError, fn);
+  _event.event.addListener(_event.eventKey.onMIDIError, fn);
 }
 
-exports.addListenerMidiError = addListenerMidiError;
-
 function onMIDIError(error) {
-  event_1.event.emit(event_1.eventKey.onMIDIError, error);
+  _event.event.emit(_event.eventKey.onMIDIError, error);
+
   console.error("No access to MIDI devices or your browser doesn't support WebMIDI API.", error);
 }
 
@@ -6107,8 +6128,6 @@ function initMIDI() {
     }).then(onMIDISuccess, onMIDIError);
   }
 }
-
-exports.initMIDI = initMIDI;
 },{"./event":"Zic/event.ts"}],"Zic/track.ts":[function(require,module,exports) {
 "use strict";
 
@@ -6217,13 +6236,11 @@ exports.activeTrack = activeTrack;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.between = void 0;
+exports.between = between;
 
 function between(val, minVal, maxVal) {
   return Math.min(Math.max(val, minVal), maxVal);
 }
-
-exports.between = between;
 },{}],"Zic/sequencer.ts":[function(require,module,exports) {
 "use strict";
 
@@ -6291,46 +6308,60 @@ function setBpm(newBpm) {
 },{"./event":"Zic/event.ts","./utils":"Zic/utils.ts"}],"Zic/index.ts":[function(require,module,exports) {
 "use strict";
 
-var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
-  if (k2 === undefined) k2 = k;
-  Object.defineProperty(o, k2, {
-    enumerable: true,
-    get: function get() {
-      return m[k];
-    }
-  });
-} : function (o, m, k, k2) {
-  if (k2 === undefined) k2 = k;
-  o[k2] = m[k];
-});
-
-var __exportStar = this && this.__exportStar || function (m, exports) {
-  for (var p in m) {
-    if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-  }
-};
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.init = void 0;
+var _exportNames = {
+  init: true
+};
+exports.init = init;
 
-var midi_1 = require("./midi");
+var _midi = require("./midi");
 
-var sequencer_1 = require("./sequencer");
+Object.keys(_midi).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _midi[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _midi[key];
+    }
+  });
+});
 
-__exportStar(require("./midi"), exports);
+var _sequencer = require("./sequencer");
 
-__exportStar(require("./event"), exports);
+Object.keys(_sequencer).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _sequencer[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _sequencer[key];
+    }
+  });
+});
 
-__exportStar(require("./sequencer"), exports);
+var _event = require("./event");
+
+Object.keys(_event).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _event[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _event[key];
+    }
+  });
+});
 
 function init() {
-  midi_1.initMIDI();
-  sequencer_1.initSequencer();
+  (0, _midi.initMIDI)();
+  (0, _sequencer.initSequencer)();
 }
-
-exports.init = init;
 },{"./midi":"Zic/midi.ts","./sequencer":"Zic/sequencer.ts","./event":"Zic/event.ts"}],"../node_modules/async-jsx-html/nodejs/constants.js":[function(require,module,exports) {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -6620,20 +6651,18 @@ exports.default = exports.React;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Sequence = void 0;
+exports.Sequence = Sequence;
 
-var async_jsx_html_1 = require("async-jsx-html");
+var _asyncJsxHtml = require("async-jsx-html");
 
-var React = async_jsx_html_1.React;
+var React = _asyncJsxHtml.React;
 
 function Sequence(_a) {
   var name = _a.name;
-  return /*#__PURE__*/React.createElement("div", {
+  return React.createElement("div", {
     class: "sequence"
   }, name);
 }
-
-exports.Sequence = Sequence;
 },{"async-jsx-html":"../node_modules/async-jsx-html/nodejs/mod.js"}],"view/Tracks/tracks.ts":[function(require,module,exports) {
 "use strict";
 
@@ -6845,16 +6874,16 @@ function addSequence(sequence) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.initApp = void 0;
+exports.initApp = initApp;
 
-var dom_1 = require("../utils/dom");
+var _dom = require("../utils/dom");
 
-var settings_1 = require("./Settings/settings");
+var _settings = require("./Settings/settings");
 
-var tracks_1 = require("./Tracks/tracks");
+var _tracks = require("./Tracks/tracks");
 
 function showTab(btnIndex) {
-  dom_1.applyToChild(dom_1.elById('tabs-views'), function (tab, tabIndex) {
+  (0, _dom.applyToChild)((0, _dom.elById)('tabs-views'), function (tab, tabIndex) {
     if (btnIndex === tabIndex) {
       tab.classList.add('active');
     } else {
@@ -6864,79 +6893,75 @@ function showTab(btnIndex) {
 }
 
 function initApp() {
-  dom_1.elById('tabs-menu').children[0].classList.add('active');
+  (0, _dom.elById)('tabs-menu').children[0].classList.add('active');
   showTab(0);
-  dom_1.applyToChild(dom_1.elById('tabs-menu'), function (btn, btnIndex) {
+  (0, _dom.applyToChild)((0, _dom.elById)('tabs-menu'), function (btn, btnIndex) {
     btn.onclick = function () {
-      dom_1.toggleSiblingClass(btn, 'active');
+      (0, _dom.toggleSiblingClass)(btn, 'active');
       showTab(btnIndex);
     };
   });
-  settings_1.initSettings();
-  tracks_1.initTracks();
+  (0, _settings.initSettings)();
+  (0, _tracks.initTracks)();
 }
-
-exports.initApp = initApp;
 },{"../utils/dom":"utils/dom.ts","./Settings/settings":"view/Settings/settings.ts","./Tracks/tracks":"view/Tracks/tracks.ts"}],"icons/eye-off-outline.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.EyeOffOutline = void 0;
+exports.EyeOffOutline = EyeOffOutline;
 
-var async_jsx_html_1 = require("async-jsx-html");
+var _asyncJsxHtml = require("async-jsx-html");
 
-var React = async_jsx_html_1.React;
+var React = _asyncJsxHtml.React;
 
 function EyeOffOutline(_a) {
   var style = _a.style,
       id = _a.id,
       classnames = _a.class;
-  return /*#__PURE__*/React.createElement("svg", {
+  return React.createElement("svg", {
     xmlns: "http://www.w3.org/2000/svg",
     viewBox: "0 0 512 512",
     style: style,
     id: id,
     class: classnames
-  }, /*#__PURE__*/React.createElement("title", null, "Eye Off yoyo"), /*#__PURE__*/React.createElement("path", {
+  }, React.createElement("title", null, "Eye Off yoyo"), React.createElement("path", {
     d: "M432 448a15.92 15.92 0 01-11.31-4.69l-352-352a16 16 0 0122.62-22.62l352 352A16 16 0 01432 448zM255.66 384c-41.49 0-81.5-12.28-118.92-36.5-34.07-22-64.74-53.51-88.7-91v-.08c19.94-28.57 41.78-52.73 65.24-72.21a2 2 0 00.14-2.94L93.5 161.38a2 2 0 00-2.71-.12c-24.92 21-48.05 46.76-69.08 76.92a31.92 31.92 0 00-.64 35.54c26.41 41.33 60.4 76.14 98.28 100.65C162 402 207.9 416 255.66 416a239.13 239.13 0 0075.8-12.58 2 2 0 00.77-3.31l-21.58-21.58a4 4 0 00-3.83-1 204.8 204.8 0 01-51.16 6.47zM490.84 238.6c-26.46-40.92-60.79-75.68-99.27-100.53C349 110.55 302 96 255.66 96a227.34 227.34 0 00-74.89 12.83 2 2 0 00-.75 3.31l21.55 21.55a4 4 0 003.88 1 192.82 192.82 0 0150.21-6.69c40.69 0 80.58 12.43 118.55 37 34.71 22.4 65.74 53.88 89.76 91a.13.13 0 010 .16 310.72 310.72 0 01-64.12 72.73 2 2 0 00-.15 2.95l19.9 19.89a2 2 0 002.7.13 343.49 343.49 0 0068.64-78.48 32.2 32.2 0 00-.1-34.78z"
-  }), /*#__PURE__*/React.createElement("path", {
+  }), React.createElement("path", {
     d: "M256 160a95.88 95.88 0 00-21.37 2.4 2 2 0 00-1 3.38l112.59 112.56a2 2 0 003.38-1A96 96 0 00256 160zM165.78 233.66a2 2 0 00-3.38 1 96 96 0 00115 115 2 2 0 001-3.38z"
   }));
 }
-
-exports.EyeOffOutline = EyeOffOutline;
 },{"async-jsx-html":"../node_modules/async-jsx-html/nodejs/mod.js"}],"icons/eye-outline.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.EyeOutline = void 0;
+exports.EyeOutline = EyeOutline;
 
-var async_jsx_html_1 = require("async-jsx-html");
+var _asyncJsxHtml = require("async-jsx-html");
 
-var React = async_jsx_html_1.React;
+var React = _asyncJsxHtml.React;
 
 function EyeOutline(_a) {
   var style = _a.style,
       id = _a.id,
       classnames = _a.class;
-  return /*#__PURE__*/React.createElement("svg", {
+  return React.createElement("svg", {
     xmlns: "http://www.w3.org/2000/svg",
     viewBox: "0 0 512 512",
     style: style,
     id: id,
     class: classnames
-  }, /*#__PURE__*/React.createElement("title", null, "Eye"), /*#__PURE__*/React.createElement("path", {
+  }, React.createElement("title", null, "Eye"), React.createElement("path", {
     d: "M255.66 112c-77.94 0-157.89 45.11-220.83 135.33a16 16 0 00-.27 17.77C82.92 340.8 161.8 400 255.66 400c92.84 0 173.34-59.38 221.79-135.25a16.14 16.14 0 000-17.47C428.89 172.28 347.8 112 255.66 112z",
     fill: "none",
     stroke: "currentColor",
     "stroke-linecap": "round",
     "stroke-linejoin": "round",
     "stroke-width": "32"
-  }), /*#__PURE__*/React.createElement("circle", {
+  }), React.createElement("circle", {
     cx: "256",
     cy: "256",
     r: "80",
@@ -6946,8 +6971,6 @@ function EyeOutline(_a) {
     "stroke-width": "32"
   }));
 }
-
-exports.EyeOutline = EyeOutline;
 },{"async-jsx-html":"../node_modules/async-jsx-html/nodejs/mod.js"}],"view/Settings/GithubTokenInfo.tsx":[function(require,module,exports) {
 "use strict";
 
@@ -6956,22 +6979,22 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.GithubTokenInfo = void 0;
 
-var async_jsx_html_1 = require("async-jsx-html");
+var _asyncJsxHtml = require("async-jsx-html");
 
-var React = async_jsx_html_1.React;
+var React = _asyncJsxHtml.React;
 
 var GithubTokenInfo = function GithubTokenInfo() {
-  return /*#__PURE__*/React.createElement("div", {
+  return React.createElement("div", {
     class: "info"
-  }, /*#__PURE__*/React.createElement("p", null, "To save data in your GitHub repository, we need to provide a", ' ', /*#__PURE__*/React.createElement("a", {
+  }, React.createElement("p", null, "To save data in your GitHub repository, we need to provide a", ' ', React.createElement("a", {
     href: "https://developer.github.com/v3/auth/#via-oauth-and-personal-access-tokens",
     target: "_blank",
     rel: "noopener noreferrer"
-  }, "personal access tokens"), ' ', "to the", ' ', /*#__PURE__*/React.createElement("a", {
+  }, "personal access tokens"), ' ', "to the", ' ', React.createElement("a", {
     href: "https://developer.github.com/v3/",
     target: "_blank",
     rel: "noopener noreferrer"
-  }, "GitHub API"), ". To", ' ', /*#__PURE__*/React.createElement("a", {
+  }, "GitHub API"), ". To", ' ', React.createElement("a", {
     href: "https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line",
     target: "_blank",
     rel: "noopener noreferrer"
@@ -6985,46 +7008,44 @@ exports.GithubTokenInfo = GithubTokenInfo;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Settings = void 0;
+exports.Settings = Settings;
 
-var async_jsx_html_1 = require("async-jsx-html");
+var _asyncJsxHtml = require("async-jsx-html");
 
-var eye_off_outline_1 = require("../../icons/eye-off-outline");
+var _eyeOffOutline = require("../../icons/eye-off-outline");
 
-var eye_outline_1 = require("../../icons/eye-outline");
+var _eyeOutline = require("../../icons/eye-outline");
 
-var GithubTokenInfo_1 = require("./GithubTokenInfo");
+var _GithubTokenInfo = require("./GithubTokenInfo");
 
-var localStorage_1 = require("../../storage/localStorage");
+var _localStorage = require("../../storage/localStorage");
 
-var React = async_jsx_html_1.React;
+var React = _asyncJsxHtml.React;
 
 function Settings() {
-  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Github user"), /*#__PURE__*/React.createElement("input", {
+  return React.createElement("div", null, React.createElement("div", null, React.createElement("label", null, "Github user"), React.createElement("input", {
     id: "githubUser",
-    value: localStorage_1.getGithubUser(),
+    value: (0, _localStorage.getGithubUser)(),
     placeholder: "Enter github user"
-  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Github repo"), /*#__PURE__*/React.createElement("input", {
+  })), React.createElement("div", null, React.createElement("label", null, "Github repo"), React.createElement("input", {
     id: "githubRepo",
-    value: localStorage_1.getGithubRepo(),
+    value: (0, _localStorage.getGithubRepo)(),
     placeholder: "Enter github repo"
-  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Github token"), /*#__PURE__*/React.createElement("input", {
+  })), React.createElement("div", null, React.createElement("label", null, "Github token"), React.createElement("input", {
     id: "githubToken",
     type: "password",
-    value: localStorage_1.getGithubToken(),
+    value: (0, _localStorage.getGithubToken)(),
     placeholder: "Enter github token"
-  }), /*#__PURE__*/React.createElement("button", {
+  }), React.createElement("button", {
     id: "githubTokenToggle"
-  }, /*#__PURE__*/React.createElement(eye_off_outline_1.EyeOffOutline, {
+  }, React.createElement(_eyeOffOutline.EyeOffOutline, {
     class: "icon",
     id: "eye-off"
-  }), /*#__PURE__*/React.createElement(eye_outline_1.EyeOutline, {
+  }), React.createElement(_eyeOutline.EyeOutline, {
     class: "icon hide",
     id: "eye-on"
-  }))), /*#__PURE__*/React.createElement(GithubTokenInfo_1.GithubTokenInfo, null));
+  }))), React.createElement(_GithubTokenInfo.GithubTokenInfo, null));
 }
-
-exports.Settings = Settings;
 },{"async-jsx-html":"../node_modules/async-jsx-html/nodejs/mod.js","../../icons/eye-off-outline":"icons/eye-off-outline.tsx","../../icons/eye-outline":"icons/eye-outline.tsx","./GithubTokenInfo":"view/Settings/GithubTokenInfo.tsx","../../storage/localStorage":"storage/localStorage.ts"}],"view/Tracks/Tracks.tsx":[function(require,module,exports) {
 "use strict";
 
@@ -7050,25 +7071,23 @@ function Tracks() {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.App = void 0;
+exports.App = App;
 
-var async_jsx_html_1 = require("async-jsx-html");
+var _asyncJsxHtml = require("async-jsx-html");
 
-var Settings_1 = require("./Settings/Settings");
+var _Settings = require("./Settings/Settings");
 
-var Tracks_1 = require("./Tracks/Tracks");
+var _Tracks = require("./Tracks/Tracks");
 
-var React = async_jsx_html_1.React;
+var React = _asyncJsxHtml.React;
 
 function App() {
-  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+  return React.createElement(React.Fragment, null, React.createElement("div", {
     id: "tabs-views"
-  }, /*#__PURE__*/React.createElement(Tracks_1.Tracks, null), /*#__PURE__*/React.createElement("div", null, "sequences"), /*#__PURE__*/React.createElement(Settings_1.Settings, null)), /*#__PURE__*/React.createElement("div", {
+  }, React.createElement(_Tracks.Tracks, null), React.createElement("div", null, "sequences"), React.createElement(_Settings.Settings, null)), React.createElement("div", {
     id: "tabs-menu"
-  }, /*#__PURE__*/React.createElement("button", null, "Tracks"), /*#__PURE__*/React.createElement("button", null, "Sequences"), /*#__PURE__*/React.createElement("button", null, "Settings")));
+  }, React.createElement("button", null, "Tracks"), React.createElement("button", null, "Sequences"), React.createElement("button", null, "Settings")));
 }
-
-exports.App = App;
 },{"async-jsx-html":"../node_modules/async-jsx-html/nodejs/mod.js","./Settings/Settings":"view/Settings/Settings.tsx","./Tracks/Tracks":"view/Tracks/Tracks.tsx"}],"index.ts":[function(require,module,exports) {
 "use strict";
 
@@ -7118,7 +7137,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "43829" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "35863" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
