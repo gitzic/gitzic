@@ -63,9 +63,9 @@ function post(msg: DataOutWorker) {
 setInterval(() => {
     counter = (counter + 1) % stepsCount;
     list[counter].forEach(({ on, off, duration, slide, ...msg }) => {
-        post({ ...msg, data: on });
+        post({ ...msg, data: on, type: 'on' });
         setTimeout(
-            () => post({ ...msg, data: off }),
+            () => post({ ...msg, data: off, type: 'off' }),
             ms * (duration + (slide ? 5 : 0)),
         );
     });

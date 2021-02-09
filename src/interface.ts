@@ -25,5 +25,6 @@ export interface NoteInWorker {
 export interface DataOutWorker {
     id: string;
     outputId: string;
+    type: 'on' | 'off';
     data: any;
 }

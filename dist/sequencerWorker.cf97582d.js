@@ -243,11 +243,13 @@ setInterval(function () {
         msg = __rest(_a, ["on", "off", "duration", "slide"]);
 
     post(__assign(__assign({}, msg), {
-      data: on
+      data: on,
+      type: 'on'
     }));
     setTimeout(function () {
       return post(__assign(__assign({}, msg), {
-        data: off
+        data: off,
+        type: 'off'
       }));
     }, ms * (duration + (slide ? 5 : 0)));
   });
