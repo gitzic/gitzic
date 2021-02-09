@@ -4,4 +4,4 @@
 #./pre-push.sh
 npm run build
 git add ./app
-git commit -m "build app"
+git commit -m "build app" || true
