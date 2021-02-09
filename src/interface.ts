@@ -8,10 +8,10 @@ export enum ActionWorker {
 
 export interface MsgWorker {
     action: ActionWorker;
-    data: DataInWorker[];
+    notes: NoteInWorker[];
 }
 
-export interface DataInWorker {
+export interface NoteInWorker {
     id: string;
     outputId: string;
     trigger: number;
@@ -21,6 +21,7 @@ export interface DataInWorker {
     off: any;
 }
 
+// NoteOutWorker?
 export interface DataOutWorker {
     id: string;
     outputId: string;

@@ -1,7 +1,7 @@
 import {
     ActionWorker,
     MsgWorker,
-    DataInWorker,
+    NoteInWorker,
     MAX_STEPS_PER_BEAT,
     DataOutWorker,
 } from '../interface';
@@ -38,7 +38,7 @@ export function activateSequence(sequence: SequenceData) {
     console.log('activateSequence', sequence);
     // ToDo: here need to activate sequence in track... but for the moment just push to midi
 
-    const data: DataInWorker[] = sequence.notes.flatMap(
+    const notes: NoteInWorker[] = sequence.notes.flatMap(
         ({ velocity, midi: note, duration, time, slide }) => {
             return {
                 id: `midi-${sequence.id}-${note}-${time}`,
@@ -54,7 +54,7 @@ export function activateSequence(sequence: SequenceData) {
 
     const msg: MsgWorker = {
         action: ActionWorker.save,
-        data,
+        notes,
     };
     worker.postMessage(msg);
 }

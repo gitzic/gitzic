@@ -179,20 +179,22 @@ for (var n = 0; n < stepsCount; n++) {
 }
 
 self.addEventListener('message', function (_a) {
-  var data = _a.data;
+  var _b = _a.data,
+      action = _b.action,
+      notes = _b.notes;
 
-  if (data.action === _interface.ActionWorker.save) {
-    saveSequences(data.data);
-  } else if (data.action === _interface.ActionWorker.remove) {
-    removeSequences(data.data);
+  if (action === _interface.ActionWorker.save) {
+    saveSequence(notes);
+  } else if (action === _interface.ActionWorker.remove) {
+    removeSequences(notes);
   }
 }, false);
 
-function findSequence(sequence) {
+function findSequence(note) {
   for (var trigger = 0; trigger < list.length; trigger++) {
     var index = list[trigger].findIndex(function (_a) {
       var id = _a.id;
-      return id === sequence.id;
+      return id === note.id;
     });
 
     if (index !== -1) {
@@ -204,18 +206,18 @@ function findSequence(sequence) {
   }
 }
 
-function saveSequences(sequences) {
-  sequences.forEach(function (sequence) {
-    var pos = findSequence(sequence);
+function saveSequence(notes) {
+  notes.forEach(function (note) {
+    var pos = findSequence(note);
 
     if (pos) {
-      if (pos.trigger !== sequence.trigger) {
+      if (pos.trigger !== note.trigger) {
         list[pos.trigger].splice(pos.index, 1);
       }
 
-      list[sequence.trigger][pos.index] = sequence;
+      list[note.trigger][pos.index] = note;
     } else {
-      list[sequence.trigger].push(sequence);
+      list[note.trigger].push(note);
     }
   });
 }
