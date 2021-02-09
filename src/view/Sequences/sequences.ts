@@ -7,6 +7,7 @@ export function initSequences() {
     onSequencesChange(displaySequences);
     onSequenceAdd(addSequenceItem);
     elById('sequences-reload').onclick = btnLoading(loadSequences);
+    // ToDo: in a later point we might save a single sequence
     elById('sequence-save').onclick = btnLoading(saveSequences, 'Saving');
 }
 

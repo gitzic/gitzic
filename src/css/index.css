@@ -1,0 +1,30 @@
+:root {
+    --light-border: #eee;
+    --grey-text: #666;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+}
+
+@import "./modal.css";
+@import "./tabs.css";
+@import "./tracks.css";
+
+.info {
+    line-height: 1.2;
+    border-left: 8px solid var(--light-border);
+    padding-left: 15;
+    color: var(--grey-text);
+    text-align: justify;
+    margin: 5;
+}
+
+button .icon {
+    height: 10px;
+}
+
+.hide {
+    display: none;
+}

@@ -11,6 +11,82 @@ export function Sequences(): ElementNode {
                 <button id="sequence-edit">Edit</button>
                 <button id="sequence-save">Save</button>
             </div>
+            <div class="modal hide">
+                <div class="modal-body">
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                    Helo
+                    <br />
+                </div>
+            </div>
         </div>
     );
 }
