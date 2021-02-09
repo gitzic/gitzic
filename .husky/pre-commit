@@ -6,6 +6,3 @@ npm run build
 echo "build app from hook"
 git add ./app
 echo "add app to repo"
-if git commit -m "build app" --no-verify ; then
-    echo "app built"
-fi
