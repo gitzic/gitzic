@@ -3,6 +3,6 @@
 
 npm run build
 git add ./app
-if git commit -m "build app" ; then
+if git commit -m "build app" --no-verify ; then
     echo "app built"
 fi
