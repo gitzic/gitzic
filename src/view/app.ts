@@ -1,4 +1,5 @@
 import { applyToChild, elById, toggleSiblingClass } from '../utils/dom';
+import { initSequences } from './Sequences/sequences';
 import { initSettings } from './Settings/settings';
 import { initTracks } from './Tracks/tracks';
 
@@ -27,4 +28,5 @@ export function initApp() {
     
     initSettings();
     initTracks();
+    initSequences();
 }
