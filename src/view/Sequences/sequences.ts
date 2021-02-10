@@ -2,6 +2,9 @@ import { loadSequences, saveSequences } from '../../git';
 import { elByClass, elById, elFromHtml, evEach } from '../../utils/dom';
 import { onSequenceAdd, onSequencesChange } from '../../Zic';
 import { SequenceData } from '../../Zic/sequence';
+import { Sequence } from '../Components/Sequence';
+
+let activeSequence: SequenceData;
 
 export function initSequences() {
     onSequencesChange(displaySequences);
@@ -25,9 +28,19 @@ function btnLoading(fn: () => Promise<void>, text = 'Loading') {
     };
 }
 
-function displaySequences(sequences: SequenceData[]) {
+async function displaySequences(sequences: SequenceData[]) {
     elById('sequence-selector').innerHTML = '';
     sequences.forEach(addSequenceItem);
+    const [sequence] = sequences;
+    if (sequence) {
+        activeSequence = sequence;
+        const html = await Sequence({
+            sequence,
+            noteMargin: 4,
+            noteWidth: 30,
+        }).render();
+        elById('sequence-edit-notes').innerHTML = html as string;
+    }
 }
 
 async function addSequenceItem({ id, name }: SequenceData) {

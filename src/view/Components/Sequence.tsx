@@ -1,18 +1,22 @@
 import { React as fix, ElementNode } from 'async-jsx-html';
-import { MAX_STEPS_PER_BEAT, STEP_TICK } from '../../interface';
 import { noteMidi } from '../../utils/noteMidi';
 import { SequenceData } from '../../Zic/sequence';
 
 const React = fix;
 
+interface Props {
+    noteWidth: number;
+    noteMargin: number;
+    sequence: SequenceData;
+}
+
 export function Sequence({
-    name,
-    notes,
-    beatCount,
-    stepsPerBeat,
-}: SequenceData): ElementNode {
+    noteWidth,
+    noteMargin,
+    sequence: { name, notes, beatCount, stepsPerBeat },
+}: Props): ElementNode {
     return (
-        <div class="sequence">
+        <div class="sequence card">
             <div class="title">{name}</div>
             <div class="notes">
                 {[...new Array(beatCount * stepsPerBeat)].map((_, key) => {
@@ -30,8 +34,10 @@ export function Sequence({
                     const duration = note ? note.duration * stepsPerBeat : 1;
                     return (
                         <div
+                        class={`${note?.slide && 'slide'}`}
                             style={`width: ${
-                                16 * duration + 4 * (duration - 1)
+                                noteWidth * duration +
+                                noteMargin * (duration - 1)
                             }px`}
                         >
                             {note && noteMidi[note.midi]}

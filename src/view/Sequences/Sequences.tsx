@@ -12,6 +12,7 @@ export function Sequences(): ElementNode {
                 <button class="sequence-edit">Edit</button>
                 <button id="sequence-save">Save</button>
             </div>
+            <div id="sequence-edit-notes"></div>
             <SequenceEdit />
         </div>
     );

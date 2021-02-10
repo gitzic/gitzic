@@ -7,7 +7,7 @@ import {
 import { elById, elFromHtml } from '../../utils/dom';
 import { onSequenceAdd, onSequencesChange } from '../../Zic';
 import { SequenceData } from '../../Zic/sequence';
-import { Sequence } from './Sequence';
+import { Sequence } from '../Components/Sequence';
 
 export function initTracks() {
     onSequencesChange(displaySequences);
@@ -23,7 +23,11 @@ function displaySequences(sequences: SequenceData[]) {
 }
 
 async function addSequence(sequence: SequenceData) {
-    const html = await Sequence(sequence).render();
+    const html = await Sequence({
+        sequence,
+        noteMargin: 4,
+        noteWidth: 16,
+    }).render();
     const el = elFromHtml(html as string);
     // ToDo: should first check if sequence is already in, else replace
     elById('track').append(el);
