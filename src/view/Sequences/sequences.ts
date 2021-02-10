@@ -1,7 +1,7 @@
 import { loadSequences, saveSequences } from '../../git';
-import { elByClass, elById, elFromHtml, evEach } from '../../utils/dom';
+import { elByClass, elById, elFromHtml, evEach, evStrVal } from '../../utils/dom';
 import { onSequenceAdd, onSequencesChange } from '../../Zic';
-import { SequenceData } from '../../Zic/sequence';
+import { SequenceData, sequences } from '../../Zic/sequence';
 import { Sequence } from '../Components/Sequence';
 
 let activeSequence: SequenceData;
@@ -28,19 +28,27 @@ function btnLoading(fn: () => Promise<void>, text = 'Loading') {
     };
 }
 
-async function displaySequences(sequences: SequenceData[]) {
+function displaySequences(sequenceList: SequenceData[]) {
     elById('sequence-selector').innerHTML = '';
-    sequences.forEach(addSequenceItem);
-    const [sequence] = sequences;
+    sequenceList.forEach(addSequenceItem);
+    const [sequence] = sequenceList;
     if (sequence) {
         activeSequence = sequence;
-        const html = await Sequence({
-            sequence,
-            noteMargin: 4,
-            noteWidth: 30,
-        }).render();
-        elById('sequence-edit-notes').innerHTML = html as string;
+        displaySequence(sequence);
     }
+    elById('sequence-selector').onchange = evStrVal((id) => {
+        const sequence = sequences.find((seq) => seq.id === id);
+        sequence && displaySequence(sequence);
+    });
+}
+
+async function displaySequence(sequence: SequenceData) {
+    const html = await Sequence({
+        sequence,
+        noteMargin: 4,
+        noteWidth: 30,
+    }).render();
+    elById('sequence-edit-notes').innerHTML = html as string;
 }
 
 async function addSequenceItem({ id, name }: SequenceData) {
