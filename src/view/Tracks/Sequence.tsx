@@ -13,9 +13,7 @@ export function Sequence({
 }: SequenceData): ElementNode {
     return (
         <div class="sequence">
-            <div>
-                <b>{name}</b>
-            </div>
+            <div class="title">{name}</div>
             <div class="notes">
                 {[...new Array(beatCount * stepsPerBeat)].map((_, key) => {
                     const longNote = notes.find(
