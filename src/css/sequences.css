@@ -17,6 +17,7 @@
 
 #sequence-edit-notes .notes .slide {
     border-right: 4px solid #bbb;
+    margin-right: 0px;
 }
 
 #sequence-edit-notes .time {
