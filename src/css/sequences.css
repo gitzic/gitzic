@@ -10,9 +10,15 @@
     text-align: center;
     background: #eee;
     border-radius: 10px;
+    border: 2px dashed #aaa;
     float: left;
     margin: 2px 4px 2px 0;
     padding: 1px;
+}
+
+#sequence-edit-notes .notes .slide {
+    border-right: 6px solid #bbb;
+    margin-right: 0px;
 }
 
 #sequence-edit-notes .notes .step {
@@ -20,11 +26,6 @@
     font-size: 7px;
     margin-top: 10px;
     margin-left: 5px;
-}
-
-#sequence-edit-notes .notes .slide {
-    border-right: 4px solid #bbb;
-    margin-right: 0px;
 }
 
 #sequence-edit-notes .time {

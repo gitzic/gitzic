@@ -46,6 +46,7 @@ async function displaySequence(sequence: SequenceData) {
     const html = await Sequence({
         sequence,
         noteMargin: 4,
+        noteBorder: 2,
         noteWidth: 30,
     }).render();
     elById('sequence-edit-notes').innerHTML = html as string;

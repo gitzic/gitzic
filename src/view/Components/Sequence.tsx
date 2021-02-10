@@ -7,12 +7,14 @@ const React = fix;
 interface Props {
     noteWidth: number;
     noteMargin: number;
+    noteBorder?: number;
     sequence: SequenceData;
 }
 
 export function Sequence({
     noteWidth,
     noteMargin,
+    noteBorder = 0,
     sequence: { name, notes, beatCount, stepsPerBeat },
 }: Props): ElementNode {
     return (
@@ -37,11 +39,13 @@ export function Sequence({
                             class={`${note?.slide && 'slide'}`}
                             style={`width: ${
                                 noteWidth * duration +
-                                noteMargin * (duration - 1)
+                                (2+ noteMargin + noteBorder * 2) * (duration - 1)
                             }px`}
                         >
-                            <div class="step">{key+1}</div>
-                            <div class="note-name">{note && noteMidi[note.midi]}</div>
+                            <div class="step">{key + 1}</div>
+                            <div class="note-name">
+                                {note && noteMidi[note.midi]}
+                            </div>
                         </div>
                     );
                 })}
