@@ -1,17 +1,52 @@
+:root {
+    --track-sequence-width: 170px;
+    --track-sequence-fullwidth: calc(
+        var(--track-sequence-width) + 30px
+    );
+}
+
 #track {
-    display: flex;
-    align-content: stretch;
+    margin: 0 auto;
+    padding-left: 0;
+}
+@media screen and (min-width: 431px) and (max-width: 630px) {
+    #track {
+        width: calc(var(--track-sequence-fullwidth) * 2);
+    }
+}
+@media screen and (min-width: 631px) and (max-width: 830px) {
+    #track {
+        width: calc(var(--track-sequence-fullwidth) * 3);
+    }
+}
+@media screen and (min-width: 831px) and (max-width: 1030px) {
+    #track {
+        width: calc(var(--track-sequence-fullwidth) * 4);
+    }
 }
 
 #track .sequence {
+    display: inline-block;
     cursor: pointer;
     border-radius: 5px;
-    padding: 10px;
+    width: var(--track-sequence-width);
     margin: 5px;
+    padding: 10px;
     box-shadow: rgb(0 0 0 / 20%) 0px 3px 1px -2px,
         rgb(0 0 0 / 14%) 0px 2px 2px 0px, rgb(0 0 0 / 12%) 0px 1px 5px 0px;
 }
 
 #track .sequence.active {
     background-color: rgb(255 236 236);
+}
+
+#track .notes > div {
+    font-size: 8px;
+    width: 16px;
+    text-align: center;
+    background: #eee;
+    border-radius: 5px;
+    float: left;
+    margin: 2px 4px 2px 0;
+    padding: 1px;
 }
