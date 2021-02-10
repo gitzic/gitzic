@@ -1,5 +1,5 @@
 :root {
-    --track-sequence-width: 170px;
+    --track-sequence-width: 140px;
     --track-sequence-fullwidth: calc(
         var(--track-sequence-width) + 30px
     );
