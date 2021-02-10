@@ -15,6 +15,13 @@
     padding: 1px;
 }
 
+#sequence-edit-notes .notes .step {
+    position: absolute;
+    font-size: 7px;
+    margin-top: 10px;
+    margin-left: 5px;
+}
+
 #sequence-edit-notes .notes .slide {
     border-right: 4px solid #bbb;
     margin-right: 0px;

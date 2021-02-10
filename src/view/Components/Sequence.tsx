@@ -34,13 +34,14 @@ export function Sequence({
                     const duration = note ? note.duration * stepsPerBeat : 1;
                     return (
                         <div
-                        class={`${note?.slide && 'slide'}`}
+                            class={`${note?.slide && 'slide'}`}
                             style={`width: ${
                                 noteWidth * duration +
                                 noteMargin * (duration - 1)
                             }px`}
                         >
-                            {note && noteMidi[note.midi]}
+                            <div class="step">{key+1}</div>
+                            <div class="note-name">{note && noteMidi[note.midi]}</div>
                         </div>
                     );
                 })}

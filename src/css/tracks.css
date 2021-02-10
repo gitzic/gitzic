@@ -53,6 +53,10 @@
     padding: 1px;
 }
 
+#track .notes .step {
+    display: none;
+}
+
 #track .time {
     clear: both;
     font-size: 10px;
