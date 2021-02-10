@@ -18,12 +18,12 @@ export function Sequence({
             </div>
             <div class="notes">
                 {[...new Array(beatCount * stepsPerBeat)].map((_, key) => {
-                    const slide = notes.find(
+                    const longNote = notes.find(
                         ({ time, duration }) =>
                             key > time * stepsPerBeat &&
                             key < (time + duration) * stepsPerBeat,
                     );
-                    if (slide) {
+                    if (longNote) {
                         return;
                     }
                     const note = notes.find(
@@ -32,15 +32,17 @@ export function Sequence({
                     const duration = note ? note.duration * stepsPerBeat : 1;
                     return (
                         <div
-                            className={`step ${note && 'active'} ${
-                                note?.slide && 'slide'
-                            }`}
-                            style={{
-                                width: 30 * duration + 4 * (duration - 1),
-                            }}
-                        >{note && noteMidi[note.midi]}</div>
+                            style={`width: ${
+                                16 * duration + 4 * (duration - 1)
+                            }px`}
+                        >
+                            {note && noteMidi[note.midi]}
+                        </div>
                     );
                 })}
+            </div>
+            <div class="time">
+                <b>{beatCount * stepsPerBeat}</b> steps / {beatCount} beats
             </div>
         </div>
     );
