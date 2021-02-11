@@ -4,13 +4,14 @@ import {
     elById,
     elFromHtml,
     evEach,
+    evNumVal,
     evStrVal,
     removeChildClass,
     setClass,
 } from '../../utils/dom';
 import { fill, on } from '../../utils/utils';
 import { onSequenceAdd, onSequencesChange, onSequenceChange } from '../../Zic';
-import { addNote, Note, SequenceData, sequences } from '../../Zic/sequence';
+import { addNote, Note, SequenceData, sequences, setNote } from '../../Zic/sequence';
 import { Sequence } from '../Components/Sequence';
 
 let activeSequence: SequenceData;
@@ -35,6 +36,11 @@ export function initSequences() {
     evEach(elByClass('sequence-edit'), 'click', () =>
         elById('sequence-edit-modal').classList.toggle('hide'),
     );
+
+    elById('sequence-edit-note').onchange = evNumVal((midi) => {
+        selectedNote.midi = midi;
+        setNote(activeSequence, selectedNote);
+    })
 }
 
 function btnLoading(fn: () => Promise<void>, text = 'Loading') {

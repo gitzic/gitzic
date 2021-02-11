@@ -42,6 +42,24 @@ export interface Note {
 //     // event.emit(eventKey.onSeqChange, sequences);
 // }
 
+function findNote(sequence: SequenceData, note: Note) {
+    const sequenceIndex = sequences.findIndex(({ id }) => sequence.id === id);
+    if (sequenceIndex !== -1) {
+        const noteIndex = sequences[sequenceIndex].notes.findIndex(
+            ({ time }) => time === note.time,
+        );
+        return noteIndex !== 1 && { note: noteIndex, seq: sequenceIndex };
+    }
+}
+
+export function setNote(sequence: SequenceData, note: Note) {
+    const index = findNote(sequence, note);
+    if (index) {
+        sequences[index.seq].notes[index.note] = note;
+        emitSequenceChange(sequences[index.seq]);
+    }
+}
+
 export function addNote(sequence: SequenceData, note: Note) {
     const sequenceIndex = sequences.findIndex(({ id }) => sequence.id === id);
     sequences[sequenceIndex].notes.push(note);

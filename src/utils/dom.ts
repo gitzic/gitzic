@@ -1,14 +1,6 @@
-// export function evNumVal(fn: (nb: number) => void) {
-//     return ({ target: { value } }: Event) => {
-//         fn(Number(value));
-//     };
-// }
-
-// export function evStrVal(fn: (val: string) => void) {
-//     return ({ target: { value } }: ChangeEvent<HTMLSelectElement>) => {
-//         fn(value);
-//     };
-// }
+export function evNumVal(fn: (val: number) => void) {
+    return evStrVal((val) => fn(Number(val)));
+}
 
 export function evStrVal(fn: (val: string) => void) {
     return ({ target }: Event) => {
