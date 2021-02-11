@@ -11,7 +11,14 @@ import {
 } from '../../utils/dom';
 import { fill, on } from '../../utils/utils';
 import { onSequenceAdd, onSequencesChange, onSequenceChange } from '../../Zic';
-import { addNote, Note, SequenceData, sequences, setNote } from '../../Zic/sequence';
+import {
+    addNote,
+    Note,
+    SequenceData,
+    sequences,
+    setNote,
+    removeNote,
+} from '../../Zic/sequence';
 import { Sequence } from '../Components/Sequence';
 
 let activeSequence: SequenceData;
@@ -37,10 +44,24 @@ export function initSequences() {
         elById('sequence-edit-modal').classList.toggle('hide'),
     );
 
-    elById('sequence-edit-note').onchange = evNumVal((midi) => {
+    elById('sequence-edit-note-midi').onchange = evNumVal((midi) => {
         selectedNote.midi = midi;
         setNote(activeSequence, selectedNote);
-    })
+    });
+
+    elById('sequence-edit-note-velocity').onchange = evNumVal((velocity) => {
+        selectedNote.velocity = velocity;
+        setNote(activeSequence, selectedNote);
+    });
+
+    elById('sequence-edit-note-length').onchange = evNumVal((len) => {
+        selectedNote.duration = len / activeSequence.stepsPerBeat;
+        if (selectedNote.duration) {
+            setNote(activeSequence, selectedNote);
+        } else {
+            removeNote(activeSequence, selectedNote);
+        }
+    });
 }
 
 function btnLoading(fn: () => Promise<void>, text = 'Loading') {

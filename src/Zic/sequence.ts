@@ -25,23 +25,6 @@ export interface Note {
     slide?: boolean;
 }
 
-// export function setNote(id: number, note: Note) {
-//     // when note change if duration reduce, need to check if it is not currently on, if yes need to off
-//     const index = findIndexNote(id, note);
-//     if (index === -1) {
-//         sequences[id].notes.push(note);
-//     } else if (!note.duration) {
-//         // console.log('delete', sequences[id].notes[index]);
-//         sequences[id].notes.splice(index, 1);
-//     } else {
-//         sequences[id].notes[index] = note;
-//     }
-//     sequences[id].notes.sort((a, b) => a.time - b.time);
-//     // console.log('note', note);
-//     // console.log('sequences', sequences);
-//     // event.emit(eventKey.onSeqChange, sequences);
-// }
-
 function findNote(sequence: SequenceData, note: Note) {
     const sequenceIndex = sequences.findIndex(({ id }) => sequence.id === id);
     if (sequenceIndex !== -1) {
@@ -49,6 +32,14 @@ function findNote(sequence: SequenceData, note: Note) {
             ({ time }) => time === note.time,
         );
         return noteIndex !== 1 && { note: noteIndex, seq: sequenceIndex };
+    }
+}
+
+export function removeNote(sequence: SequenceData, note: Note) {
+    const index = findNote(sequence, note);
+    if (index) {
+        sequences[index.seq].notes.splice(index.note, 1);
+        emitSequenceChange(sequences[index.seq]);
     }
 }
 
