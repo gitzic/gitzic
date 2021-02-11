@@ -55,6 +55,14 @@ export function toggleSiblingClass(el: HTMLElement, classname: string) {
     }
 }
 
+export function setClass(el: HTMLElement, classname: string, value: boolean) {
+    if (value) {
+        el.classList.add(classname);
+    } else {
+        el.classList.remove(classname);
+    }
+}
+
 export function toggleAttr(
     el: HTMLElement,
     name: string,
@@ -83,5 +91,5 @@ export function elFromHtml(html: string) {
 }
 
 export function join(classnames: string[]) {
-    return classnames.filter(f => f).join(' ');
+    return classnames.filter((f) => f).join(' ');
 }

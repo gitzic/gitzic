@@ -38,3 +38,7 @@
     font-size: 10px;
     padding-top: 4px;
 }
+
+#sequence-edit-note-slide.active {
+    background: rgb(111, 163, 187);
+}

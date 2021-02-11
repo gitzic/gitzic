@@ -6,6 +6,7 @@ import {
     evEach,
     evStrVal,
     removeChildClass,
+    setClass,
 } from '../../utils/dom';
 import { onSequenceAdd, onSequencesChange, onSequenceChange } from '../../Zic';
 import { addNote, Note, SequenceData, sequences } from '../../Zic/sequence';
@@ -60,8 +61,6 @@ function displaySequences(sequenceList: SequenceData[]) {
 }
 
 async function displaySequence(sequence: SequenceData) {
-    console.log('displaySequence', sequence);
-    console.log('selectNote', selectedNote);
     const html = await Sequence({
         sequence,
         noteMargin: 4,
@@ -91,6 +90,14 @@ function selectNote(el: HTMLElement) {
         };
         addNote(activeSequence, selectedNote);
     }
+    elById('sequence-edit-note').classList.remove('hide');
+    (elById(
+        'sequence-edit-note-midi',
+    ) as HTMLInputElement).value = selectedNote.midi.toString();
+    setClass(elById('sequence-edit-note-slide'), 'active', selectedNote.slide);
+    (elById(
+        'sequence-edit-note-velocity',
+    ) as HTMLInputElement).value = selectedNote.velocity.toString();
 }
 
 async function addSequenceItem({ id, name }: SequenceData) {
