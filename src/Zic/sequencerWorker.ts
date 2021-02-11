@@ -16,11 +16,15 @@ for (let n = 0; n < stepsCount; n++) {
 
 self.addEventListener(
     'message',
-    ({ data: { action, notes } }: { data: MsgWorker }) => {
-        if (action === ActionWorker.save) {
-            saveSequence(notes);
-        } else if (action === ActionWorker.remove) {
-            removeSequences(notes);
+    ({ data }: { data: MsgWorker }) => {
+        if (data.type === ActionWorker.save) {
+            saveSequence(data.notes);
+        } else if (data.type === ActionWorker.remove) {
+            removeSequences(data.notes);
+        } else if (data.type === ActionWorker.saveNote) {
+            saveNote(data.note);
+        } else if (data.type === ActionWorker.removeNote) {
+            removeNote(data.note);
         }
     },
     false,
@@ -35,25 +39,29 @@ function findSequence(note: NoteInWorker) {
     }
 }
 
-function saveSequence(notes: NoteInWorker[]) {
-    notes.forEach((note) => {
-        const pos = findSequence(note);
-        if (pos) {
-            if (pos.trigger !== note.trigger) {
-                list[pos.trigger].splice(pos.index, 1);
-            }
-            list[note.trigger][pos.index] = note;
-        } else {
-            list[note.trigger].push(note);
+function saveNote(note: NoteInWorker) {
+    const pos = findSequence(note);
+    if (pos) {
+        if (pos.trigger !== note.trigger) {
+            list[pos.trigger].splice(pos.index, 1);
         }
-    });
+        list[note.trigger][pos.index] = note;
+    } else {
+        list[note.trigger].push(note);
+    }
+}
+
+function saveSequence(notes: NoteInWorker[]) {
+    notes.forEach(saveNote);
+}
+
+function removeNote(note: NoteInWorker) {
+    const pos = findSequence(note);
+    pos && list[pos.trigger].splice(pos.index, 1);
 }
 
 function removeSequences(notes: NoteInWorker[]) {
-    notes.forEach((note) => {
-        const pos = findSequence(note);
-        pos && list[pos.trigger].splice(pos.index, 1);
-    });
+    notes.forEach(removeNote);
 }
 
 function post(msg: DataOutWorker) {
@@ -66,7 +74,7 @@ setInterval(() => {
         post({ ...msg, data: on, type: 'on' });
         setTimeout(
             () => post({ ...msg, data: off, type: 'off' }),
-            ms * (duration + (slide ? 5 : 0)),
+            ms * (duration + (slide ? 5 : -1)),
         );
     });
 }, ms);

@@ -1,4 +1,6 @@
+import { ActionWorker, MsgWorker } from '../interface';
 import { uuid } from '../utils/utils';
+import { sendNoteActionToWorker, worker } from './clientWorker';
 import {
     emitSequencesChange,
     emitSequenceAdd,
@@ -31,7 +33,7 @@ function findNote(sequence: SequenceData, note: Note) {
         const noteIndex = sequences[sequenceIndex].notes.findIndex(
             ({ time }) => time === note.time,
         );
-        return noteIndex !== 1 && { note: noteIndex, seq: sequenceIndex };
+        return noteIndex !== -1 && { note: noteIndex, seq: sequenceIndex };
     }
 }
 
@@ -40,6 +42,7 @@ export function removeNote(sequence: SequenceData, note: Note) {
     if (index) {
         sequences[index.seq].notes.splice(index.note, 1);
         emitSequenceChange(sequences[index.seq]);
+        sendNoteActionToWorker(ActionWorker.removeNote, sequence, note);
     }
 }
 
@@ -48,6 +51,7 @@ export function setNote(sequence: SequenceData, note: Note) {
     if (index) {
         sequences[index.seq].notes[index.note] = note;
         emitSequenceChange(sequences[index.seq]);
+        sendNoteActionToWorker(ActionWorker.saveNote, sequence, note);
     }
 }
 
@@ -56,6 +60,7 @@ export function addNote(sequence: SequenceData, note: Note) {
     sequences[sequenceIndex].notes.push(note);
     sequences[sequenceIndex].notes.sort((a, b) => a.time - b.time);
     emitSequenceChange(sequences[sequenceIndex]);
+    sendNoteActionToWorker(ActionWorker.saveNote, sequence, note);
 }
 
 export function setSequences(newSequences: SequenceData[]) {

@@ -4,11 +4,27 @@ export const STEP_TICK = 1 / MAX_STEPS_PER_BEAT;
 export enum ActionWorker {
     save,
     remove,
+    saveNote,
+    removeNote,
 }
 
-export interface MsgWorker {
-    action: ActionWorker;
+export type ActionWorkerNote = ActionWorker.saveNote | ActionWorker.removeNote;
+export type ActionWorkerSequence = ActionWorker.save | ActionWorker.remove;
+
+export type MsgWorker = MsgWorkerSequence | MsgWorkerNote;
+
+interface MsgWorkerBase {
+    type: ActionWorker;
+}
+
+interface MsgWorkerSequence extends MsgWorkerBase {
+    type: ActionWorkerSequence;
     notes: NoteInWorker[];
+}
+
+interface MsgWorkerNote extends MsgWorkerBase {
+    type: ActionWorkerNote;
+    note: NoteInWorker;
 }
 
 export interface NoteInWorker {
