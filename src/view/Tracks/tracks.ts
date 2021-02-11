@@ -5,13 +5,23 @@ import {
     stopSequence,
 } from '../../Zic/track';
 import { elById, elFromHtml } from '../../utils/dom';
-import { onSequenceAdd, onSequencesChange } from '../../Zic';
+import { onSequenceAdd, onSequenceChange, onSequencesChange } from '../../Zic';
 import { SequenceData } from '../../Zic/sequence';
 import { Sequence } from '../Components/Sequence';
 
 export function initTracks() {
     onSequencesChange(displaySequences);
     onSequenceAdd(addSequence);
+    onSequenceChange(
+        (sequence) => {
+            // ToDo, we should do something here with the sequence,
+            // either give an id or a class to each sequence
+            // we could actually globally replace sequence for both track and sequences view
+            // or search from the active track...
+
+            // tracks[activeTrack].sequences.findIndex(({id}) => id === sequence.id);
+        }
+    );
 }
 
 function displaySequences(sequences: SequenceData[]) {

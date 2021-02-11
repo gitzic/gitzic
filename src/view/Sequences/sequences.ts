@@ -8,7 +8,7 @@ import {
     removeChildClass,
 } from '../../utils/dom';
 import { onSequenceAdd, onSequencesChange, onSequenceChange } from '../../Zic';
-import { addNewNote, Note, SequenceData, sequences } from '../../Zic/sequence';
+import { addNote, Note, SequenceData, sequences } from '../../Zic/sequence';
 import { Sequence } from '../Components/Sequence';
 
 let activeSequence: SequenceData;
@@ -60,6 +60,8 @@ function displaySequences(sequenceList: SequenceData[]) {
 }
 
 async function displaySequence(sequence: SequenceData) {
+    console.log('displaySequence', sequence);
+    console.log('selectNote', selectedNote);
     const html = await Sequence({
         sequence,
         noteMargin: 4,
@@ -81,7 +83,13 @@ function selectNote(el: HTMLElement) {
     const key = Number(el.dataset.key);
     selectedNote = findNote(activeSequence, key);
     if (!selectedNote) {
-        addNewNote(activeSequence, key / activeSequence.stepsPerBeat);
+        selectedNote = {
+            midi: 60,
+            duration: 1 / activeSequence.stepsPerBeat,
+            time: key / activeSequence.stepsPerBeat,
+            velocity: 90,
+        };
+        addNote(activeSequence, selectedNote);
     }
 }
 

@@ -25,65 +25,6 @@ export interface Note {
     slide?: boolean;
 }
 
-// export function getCurrentNotes(id: number) {
-//     return sequences[id].notes
-//         .filter((note) => isNoteOn(id, note) || isNoteOff(id, note))
-//         .sort((_, note) => (isNoteOff(id, note) && note.slide ? -1 : 1));
-// }
-
-// export function isNoteOn(id: number, { time }: Note) {
-//     return sequences[id].currentStep === time;
-// }
-
-// export function isNoteOff(id: number, { time, duration }: Note) {
-//     return (
-//         time + duration === sequences[id].currentStep ||
-//         (sequences[id].currentStep === 0 &&
-//             time + duration === sequences[id].beatCount)
-//     );
-// }
-
-// export function setOutputId(id: number) {
-//     return (outputId: string) => {
-//         sequences[id].outputId = outputId;
-//         // event.emit(eventKey.onSeqChange, sequences);
-//     };
-// }
-
-// export function setOutputChannel(id: number) {
-//     return (channel: number) => {
-//         sequences[id].outputChannel = channel;
-//         // event.emit(eventKey.onSeqChange, sequences);
-//     };
-// }
-
-// export function setBeatCount(id: number) {
-//     return (count: number) => {
-//         sequences[id].beatCount = count;
-//         // event.emit(eventKey.onSeqChange, sequences);
-//     };
-// }
-
-// export function setStepsPerBeat(id: number) {
-//     return (count: number) => {
-//         sequences[id].stepsPerBeat = count;
-//         // event.emit(eventKey.onSeqChange, sequences);
-//     };
-// }
-
-// export function setName(id: number) {
-//     return (name: string) => {
-//         sequences[id].name = name;
-//         // event.emit(eventKey.onSeqChange, sequences);
-//     };
-// }
-
-export function findIndexNote(id: number, note: Note) {
-    return sequences[id].notes.findIndex(
-        ({ time, midi }) => note.time === time && note.midi === midi,
-    );
-}
-
 // export function setNote(id: number, note: Note) {
 //     // when note change if duration reduce, need to check if it is not currently on, if yes need to off
 //     const index = findIndexNote(id, note);
@@ -101,24 +42,12 @@ export function findIndexNote(id: number, note: Note) {
 //     // event.emit(eventKey.onSeqChange, sequences);
 // }
 
-export function addNewNote(sequence: SequenceData, time: number) {
+export function addNote(sequence: SequenceData, note: Note) {
     const sequenceIndex = sequences.findIndex(({ id }) => sequence.id === id);
-    sequences[sequenceIndex].notes.push({
-        midi: 60,
-        duration: 1 / sequence.stepsPerBeat,
-        time,
-        velocity: 90,
-    });
+    sequences[sequenceIndex].notes.push(note);
     sequences[sequenceIndex].notes.sort((a, b) => a.time - b.time);
     emitSequenceChange(sequences[sequenceIndex]);
 }
-
-// export function setDisplayNote(id: number) {
-//     return (midi: number) => {
-//         sequences[id].displayedNotes.push(midi);
-//         sequences[id].displayedNotes.sort();
-//     };
-// }
 
 export function setSequences(newSequences: SequenceData[]) {
     sequences = newSequences;
