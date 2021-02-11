@@ -8,6 +8,7 @@ import {
     removeChildClass,
     setClass,
 } from '../../utils/dom';
+import { fill, on } from '../../utils/utils';
 import { onSequenceAdd, onSequencesChange, onSequenceChange } from '../../Zic';
 import { addNote, Note, SequenceData, sequences } from '../../Zic/sequence';
 import { Sequence } from '../Components/Sequence';
@@ -55,8 +56,8 @@ function displaySequences(sequenceList: SequenceData[]) {
         displaySequence(sequence);
     }
     elById('sequence-selector').onchange = evStrVal((id) => {
-        const sequence = sequences.find((seq) => seq.id === id);
-        sequence && displaySequence(sequence);
+        activeSequence = sequences.find((seq) => seq.id === id);
+        activeSequence && displaySequence(activeSequence);
     });
 }
 
@@ -98,6 +99,16 @@ function selectNote(el: HTMLElement) {
     (elById(
         'sequence-edit-note-velocity',
     ) as HTMLInputElement).value = selectedNote.velocity.toString();
+
+    const next =
+        activeSequence.notes.find(({ time }) => time > selectedNote.time)
+            ?.time || activeSequence.beatCount;
+    const len = (next - selectedNote.time) * activeSequence.stepsPerBeat + 1;
+    const duration = selectedNote.duration * activeSequence.stepsPerBeat;
+    elById('sequence-edit-note-length').innerHTML = fill(
+        len,
+        (key) => `<option ${on(key === duration, 'selected')}>${key}</option>`,
+    ).join('');
 }
 
 async function addSequenceItem({ id, name }: SequenceData) {
