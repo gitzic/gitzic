@@ -24,7 +24,7 @@ worker.addEventListener(
 function getNote(sequence: SequenceData) {
     return ({ velocity, midi: note, duration, time, slide }: Note) => {
         return {
-            id: `midi-${sequence.id}-${note}-${time}`,
+            id: `midi-${sequence.id}-${time}`,
             // ToDo: we could actually skip all the following for stop note
             outputId: 'td3', // ToDo: to be defined
             trigger: time * MAX_STEPS_PER_BEAT,
