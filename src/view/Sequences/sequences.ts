@@ -62,6 +62,16 @@ export function initSequences() {
             removeNote(activeSequence, selectedNote);
         }
     });
+
+    elById('sequence-edit-note-slide').onclick = () => {
+        selectedNote.slide = !selectedNote.slide;
+        setNote(activeSequence, selectedNote);
+        setClass(
+            elById('sequence-edit-note-slide'),
+            'active',
+            selectedNote.slide,
+        );
+    };
 }
 
 function btnLoading(fn: () => Promise<void>, text = 'Loading') {
