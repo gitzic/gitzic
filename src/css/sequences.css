@@ -10,10 +10,15 @@
     text-align: center;
     background: #eee;
     border-radius: 10px;
-    border: 2px dashed #aaa;
+    border: 2px dashed transparent;
     float: left;
     margin: 2px 4px 2px 0;
     padding: 1px;
+    cursor: pointer;
+}
+
+#sequence-edit-notes .notes .selected {
+    border-color: #aaa;;
 }
 
 #sequence-edit-notes .notes .slide {

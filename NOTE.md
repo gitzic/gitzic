@@ -6,6 +6,8 @@
 
 - try to fix properly jsx-html `const React = fix;`
 
+- should sequence tab be called pattern?
+
 ## URL
 
 - https://github.com/Theodeus/tuna

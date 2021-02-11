@@ -1,6 +1,8 @@
 import { React as fix, ElementNode } from 'async-jsx-html';
+import { join } from '../../utils/dom';
 import { noteMidi } from '../../utils/noteMidi';
-import { SequenceData } from '../../Zic/sequence';
+import { Note, SequenceData } from '../../Zic/sequence';
+import { findNote } from '../Sequences/sequences';
 
 const React = fix;
 
@@ -9,14 +11,17 @@ interface Props {
     noteMargin: number;
     noteBorder?: number;
     sequence: SequenceData;
+    selectedNote?: Note;
 }
 
 export function Sequence({
     noteWidth,
     noteMargin,
     noteBorder = 0,
-    sequence: { name, notes, beatCount, stepsPerBeat },
+    sequence,
+    selectedNote,
 }: Props): ElementNode {
+    const { name, notes, beatCount, stepsPerBeat } = sequence;
     return (
         <div class="sequence card">
             <div class="title">{name}</div>
@@ -30,16 +35,22 @@ export function Sequence({
                     if (longNote) {
                         return;
                     }
-                    const note = notes.find(
-                        ({ time }) => time * stepsPerBeat === key,
-                    );
+                    const note = findNote(sequence, key);
                     const duration = note ? note.duration * stepsPerBeat : 1;
                     return (
                         <div
-                            class={`${note?.slide && 'slide'}`}
+                            data-key={key}
+                            class={join([
+                                'note',
+                                note?.slide && 'slide',
+                                selectedNote &&
+                                    selectedNote === note &&
+                                    'selected',
+                            ])}
                             style={`width: ${
                                 noteWidth * duration +
-                                (2+ noteMargin + noteBorder * 2) * (duration - 1)
+                                (2 + noteMargin + noteBorder * 2) *
+                                    (duration - 1)
                             }px`}
                         >
                             <div class="step">{key + 1}</div>

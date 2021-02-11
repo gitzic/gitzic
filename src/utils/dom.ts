@@ -17,11 +17,11 @@ export function evStrVal(fn: (val: string) => void) {
 }
 
 export function evEach(
-    elements: HTMLElement[],
+    elements: HTMLCollectionOf<Element>,
     type: string,
     listener: EventListenerOrEventListenerObject,
 ) {
-    elements.forEach((el) => el.addEventListener(type, listener));
+    Array.from(elements).forEach((el) => el.addEventListener(type, listener));
 }
 
 export function applyToChild(
@@ -73,13 +73,15 @@ export function elById(id: string) {
 }
 
 export function elByClass(classname: string) {
-    return Array.from(
-        document.getElementsByClassName(classname),
-    ) as HTMLElement[];
+    return document.getElementsByClassName(classname);
 }
 
 export function elFromHtml(html: string) {
     var template = document.createElement('template');
     template.innerHTML = html.trim();
     return template.content.firstChild as HTMLElement;
+}
+
+export function join(classnames: string[]) {
+    return classnames.filter(f => f).join(' ');
 }

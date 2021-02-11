@@ -8,8 +8,17 @@ export enum eventKey {
     onMIDIError = 'onMIDIError',
     onBPMchange = 'onBPMchange',
     onSequencesChange = 'onSequencesChange',
+    onSequenceChange = 'onSequenceChange',
     onSequenceAdd = 'onSequenceAdd',
     onTrackChange = 'onTrackChange',
+}
+
+export function onSequenceChange(fn: (sequence: SequenceData) => void) {
+    event.addListener(eventKey.onSequenceChange, fn);
+}
+
+export function emitSequenceChange(sequence: SequenceData) {
+    event.emit(eventKey.onSequenceChange, sequence);
 }
 
 export function onSequencesChange(fn: (sequences: SequenceData[]) => void) {

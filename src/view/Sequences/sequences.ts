@@ -1,14 +1,31 @@
 import { loadSequences, saveSequences } from '../../git';
-import { elByClass, elById, elFromHtml, evEach, evStrVal } from '../../utils/dom';
-import { onSequenceAdd, onSequencesChange } from '../../Zic';
-import { SequenceData, sequences } from '../../Zic/sequence';
+import {
+    elByClass,
+    elById,
+    elFromHtml,
+    evEach,
+    evStrVal,
+    removeChildClass,
+} from '../../utils/dom';
+import { onSequenceAdd, onSequencesChange, onSequenceChange } from '../../Zic';
+import { addNewNote, Note, SequenceData, sequences } from '../../Zic/sequence';
 import { Sequence } from '../Components/Sequence';
 
 let activeSequence: SequenceData;
+let selectedNote: Note;
+
+export function findNote({ notes, stepsPerBeat }: SequenceData, key: number) {
+    return notes.find(({ time }) => time * stepsPerBeat === key);
+}
 
 export function initSequences() {
     onSequencesChange(displaySequences);
     onSequenceAdd(addSequenceItem);
+    onSequenceChange(
+        (sequence) =>
+            sequence.id === activeSequence?.id && displaySequence(sequence),
+    );
+
     elById('sequences-reload').onclick = btnLoading(loadSequences);
     // ToDo: in a later point we might save a single sequence
     elById('sequence-save').onclick = btnLoading(saveSequences, 'Saving');
@@ -48,8 +65,24 @@ async function displaySequence(sequence: SequenceData) {
         noteMargin: 4,
         noteBorder: 2,
         noteWidth: 30,
+        selectedNote,
     }).render();
     elById('sequence-edit-notes').innerHTML = html as string;
+    evEach(
+        elById('sequence-edit-notes').getElementsByClassName('note'),
+        'click',
+        ({ currentTarget }) => selectNote(currentTarget as HTMLElement),
+    );
+}
+
+function selectNote(el: HTMLElement) {
+    removeChildClass(el.parentElement, 'selected');
+    el.classList.add('selected');
+    const key = Number(el.dataset.key);
+    selectedNote = findNote(activeSequence, key);
+    if (!selectedNote) {
+        addNewNote(activeSequence, key / activeSequence.stepsPerBeat);
+    }
 }
 
 async function addSequenceItem({ id, name }: SequenceData) {
