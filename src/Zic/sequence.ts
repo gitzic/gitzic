@@ -1,6 +1,6 @@
-import { ActionWorker, MsgWorker } from '../interface';
+import { ActionWorker } from '../interface';
 import { uuid } from '../utils/utils';
-import { sendNoteActionToWorker, worker } from './clientWorker';
+import { sendNoteActionToWorker } from './clientWorker';
 import {
     emitSequencesChange,
     emitSequenceAdd,
@@ -11,7 +11,6 @@ export interface SequenceData {
     id: string;
     name: string;
     outputId: string;
-    outputChannel: number;
     beatCount: number;
     stepsPerBeat: number;
     displayedNotes: number[];
@@ -80,7 +79,6 @@ export function addNew() {
             day: '2-digit',
         }),
         outputId: '',
-        outputChannel: 0,
         currentStep: 0,
         beatCount: 4,
         stepsPerBeat: 4,

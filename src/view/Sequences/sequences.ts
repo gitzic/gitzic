@@ -10,7 +10,12 @@ import {
     setClass,
 } from '../../utils/dom';
 import { fill, on } from '../../utils/utils';
-import { onSequenceAdd, onSequencesChange, onSequenceChange } from '../../Zic';
+import {
+    onSequenceAdd,
+    onSequencesChange,
+    onSequenceChange,
+} from '../../Zic';
+import { getOutput } from '../../Zic/output';
 import {
     addNote,
     Note,
@@ -41,9 +46,14 @@ export function initSequences() {
     // ToDo: in a later point we might save a single sequence
     elById('sequence-save').onclick = btnLoading(saveSequences, 'Saving');
 
-    evEach(elByClass('sequence-edit'), 'click', () =>
-        toggleModal('sequence-edit-modal'),
-    );
+    evEach(elByClass('sequence-edit'), 'click', () => {
+        if (toggleModal('sequence-edit-modal')) {
+            const outputs = Object.keys(getOutput());
+            elById('sequence-edit-modal-output').innerHTML = outputs
+                .map((id) => `<option value="${id}">${id}</option>`)
+                .join('');
+        }
+    });
 
     elById('sequence-edit-note-midi').onchange = evNumVal((midi) => {
         selectedNote.midi = midi;

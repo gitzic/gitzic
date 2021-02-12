@@ -26,6 +26,9 @@ export function SequenceEdit(): ElementNode {
                     </select>
                     steps.
                 </div>
+                <div>
+                    Output: <select id="sequence-edit-modal-output"></select>
+                </div>
             </div>
             <div class="tabs">
                 <button class="sequence-edit">Ok</button>

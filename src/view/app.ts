@@ -1,9 +1,4 @@
-import {
-    applyToChild,
-    elByClass,
-    elById,
-    toggleSiblingClass,
-} from '../utils/dom';
+import { applyToChild, elByClass, elById } from '../utils/dom';
 import { initSequences } from './Sequences/sequences';
 import { initSettings } from './Settings/settings';
 import { initTracks } from './Tracks/tracks';
@@ -21,21 +16,25 @@ function showTab(btnIndex: number) {
 }
 
 function getTab() {
-    return window.history.state?.tabId || Number(sessionStorage.getItem('activeTab')) || 0;
+    return (
+        window.history.state?.tabId ||
+        Number(sessionStorage.getItem('activeTab')) ||
+        0
+    );
 }
 
-function getModal() {
-    return window.history.state?.modal || sessionStorage.getItem('modal');
-}
+// function getModal() {
+//     return window.history.state?.modal || sessionStorage.getItem('modal');
+// }
 
 function showSessionTab() {
     showTab(getTab());
     // hide all modal
     Array.from(elByClass('modal')).forEach((el) => el.classList.add('hide'));
-    const modal = getModal();
-    if (modal) {
-        elById(modal).classList.remove('hide');
-    }
+    // const modal = getModal();
+    // if (modal) {
+    //     elById(modal).classList.remove('hide');
+    // }
 }
 
 export function initApp() {
@@ -56,12 +55,13 @@ export function initApp() {
 export function toggleModal(modal: string) {
     // toggle return false when hide is removed
     if (!elById(modal).classList.toggle('hide')) {
-        window.history.pushState({ tabId: getTab(), modal }, '');
-        sessionStorage.setItem('modal', modal);
-    } else {
-        window.history.pushState({ tabId: getTab() }, '');
-        sessionStorage.removeItem('modal');
+        // window.history.pushState({ tabId: getTab(), modal }, '');
+        // sessionStorage.setItem('modal', modal);
+        return true;
     }
+    // window.history.pushState({ tabId: getTab() }, '');
+    // sessionStorage.removeItem('modal');
+    return false;
 }
 
 window.addEventListener('popstate', showSessionTab);

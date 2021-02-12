@@ -5,7 +5,7 @@ import {
     MsgWorker,
     NoteInWorker,
 } from '../interface';
-import { midi } from './midi';
+import { getOutput } from './output';
 import { Note, SequenceData } from './sequence';
 
 export const worker = new Worker('sequencerWorker.ts');
@@ -14,9 +14,10 @@ worker.addEventListener(
     'message',
     function ({ data }) {
         // const {  } = data as DataOutWorker;
-        midi.outputs.forEach((midiOutput) => {
-            midiOutput.send(data.data);
-        });
+        const output = getOutput()[data.outputId];
+        if (output) {
+            output.send(data.data);
+        }
     },
     false,
 );
