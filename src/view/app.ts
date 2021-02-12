@@ -20,11 +20,22 @@ function showTab(btnIndex: number) {
     applyToChild(elById('tabs-views'), fn);
 }
 
-function showSessionTab(ev?: PopStateEvent) {
-    const tab = ev?.state?.tabId || Number(sessionStorage.getItem('activeTab')) || 0;
-    showTab(tab);
+function getTab() {
+    return window.history.state?.tabId || Number(sessionStorage.getItem('activeTab')) || 0;
+}
+
+function getModal() {
+    return window.history.state?.modal || sessionStorage.getItem('modal');
+}
+
+function showSessionTab() {
+    showTab(getTab());
     // hide all modal
     Array.from(elByClass('modal')).forEach((el) => el.classList.add('hide'));
+    const modal = getModal();
+    if (modal) {
+        elById(modal).classList.remove('hide');
+    }
 }
 
 export function initApp() {
@@ -40,6 +51,17 @@ export function initApp() {
     initSettings();
     initTracks();
     initSequences();
+}
+
+export function toggleModal(modal: string) {
+    // toggle return false when hide is removed
+    if (!elById(modal).classList.toggle('hide')) {
+        window.history.pushState({ tabId: getTab(), modal }, '');
+        sessionStorage.setItem('modal', modal);
+    } else {
+        window.history.pushState({ tabId: getTab() }, '');
+        sessionStorage.removeItem('modal');
+    }
 }
 
 window.addEventListener('popstate', showSessionTab);

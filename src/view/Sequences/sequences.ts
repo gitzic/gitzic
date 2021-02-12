@@ -19,6 +19,7 @@ import {
     setNote,
     removeNote,
 } from '../../Zic/sequence';
+import { toggleModal } from '../app';
 import { Sequence } from '../Components/Sequence';
 
 let activeSequence: SequenceData;
@@ -40,10 +41,9 @@ export function initSequences() {
     // ToDo: in a later point we might save a single sequence
     elById('sequence-save').onclick = btnLoading(saveSequences, 'Saving');
 
-    evEach(elByClass('sequence-edit'), 'click', () => {
-        elById('sequence-edit-modal').classList.toggle('hide');
-        window.history.pushState({}, '');
-    });
+    evEach(elByClass('sequence-edit'), 'click', () =>
+        toggleModal('sequence-edit-modal'),
+    );
 
     elById('sequence-edit-note-midi').onchange = evNumVal((midi) => {
         selectedNote.midi = midi;
