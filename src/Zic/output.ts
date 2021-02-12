@@ -12,11 +12,14 @@ const samples = {
 
 for (const key in samples) {
     console.log('load sample', key);
-    loadSample(samples[key].url).then((sample) => {
-        samples[key].send = (msg: MidiMsg, duration: number) =>
-            playSample(sample)(msg, duration);
-        console.log('sample loaded', samples[key].url);
-    });
+    // loadSample(samples[key].url).then((sample) => {
+    //     samples[key].send = (msg: MidiMsg, duration: number) =>
+    //         playSample(sample)(msg, duration);
+    //     console.log('sample loaded', samples[key].url);
+    // });
+    const sampler = loadSample(samples[key].url);
+    samples[key].send = (msg: MidiMsg, duration: number) =>
+        playSample(sampler)(msg, duration);
 }
 
 export function getOutput() {
