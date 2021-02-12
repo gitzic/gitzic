@@ -16,7 +16,12 @@ export function loadSample(file: string) {
 export function playSample(sampler: Sampler) {
     return ([cmd, note, velocity]: MidiMsg, duration: number) => {
         if (cmd === 0x90) {
-            sampler.triggerAttackRelease([Frequency(note, 'midi').toFrequency()], duration);
+            sampler.triggerAttackRelease(
+                [Frequency(note, 'midi').toFrequency()],
+                duration,
+                undefined,
+                velocity / 127,
+            );
         }
     };
 }
