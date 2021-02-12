@@ -1,7 +1,9 @@
 import {
     ActionWorkerNote,
     ActionWorkerSequence,
+    DataOutWorker,
     MAX_STEPS_PER_BEAT,
+    MidiMsg,
     MsgWorker,
     NoteInWorker,
 } from '../interface';
@@ -12,11 +14,10 @@ export const worker = new Worker('sequencerWorker.ts');
 
 worker.addEventListener(
     'message',
-    function ({ data }) {
-        // const {  } = data as DataOutWorker;
-        const output = getOutput()[data.outputId];
+    function ({ data: {msg, outputId, duration} }: { data: DataOutWorker }) {
+        const output = getOutput()[outputId];
         if (output) {
-            output.send(data.data);
+            output.send(msg, duration);
         }
     },
     false,
@@ -31,8 +32,8 @@ function getNote({id, outputId}: SequenceData) {
             trigger: time * MAX_STEPS_PER_BEAT,
             duration: duration * MAX_STEPS_PER_BEAT,
             slide,
-            on: [0x90 /* ToDo channel */, note, velocity],
-            off: [0x80 /* ToDo channel */, note, 0],
+            on: [0x90, note, velocity] as MidiMsg,
+            off: [0x80, note, 0] as MidiMsg,
         };
     };
 }

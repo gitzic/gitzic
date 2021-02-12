@@ -49,6 +49,7 @@ export function setNote(sequence: SequenceData, note: Note) {
     if (index) {
         sequences[index.seq].notes[index.note] = note;
         emitSequenceChange(sequences[index.seq]);
+        // ToDo: do only if sequence is played
         sendNoteActionToWorker(ActionWorker.saveNote, sequence, note);
     }
 }

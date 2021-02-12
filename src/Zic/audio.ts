@@ -1,3 +1,5 @@
+import { MidiMsg } from "../interface";
+
 const audioContext = new AudioContext();
 
 export const DEFAULT_SAMPLE_NOTE = 60; // C4
@@ -8,12 +10,13 @@ export function loadSample(url: string) {
         .then((buffer) => audioContext.decodeAudioData(buffer));
 }
 
+// should use https://tonejs.github.io/docs/14.7.77/Sampler.html instead
 export function playSample(sample: AudioBuffer) {
     return (
-        [cmd, note, velocity]: [number, number, number],
+        [cmd, note, velocity]: MidiMsg,
+        duration: number,
         sampleNote = DEFAULT_SAMPLE_NOTE,
     ) => {
-        console.log('cmd sample', cmd);
         if (cmd === 0x90) {
             const source = audioContext.createBufferSource();
             source.buffer = sample;
@@ -23,6 +26,7 @@ export function playSample(sample: AudioBuffer) {
             // this.gainNode.gain.value = velocity² / 127²
             source.connect(audioContext.destination);
             source.start(0);
+            source.stop(duration);
             // could schedule the stop
         }
     };

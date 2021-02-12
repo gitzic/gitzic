@@ -1,15 +1,13 @@
 ## Fix
 
+- when selecting the note, it is played
+    - for this need to improve ActionWorker with adding updateNote, addNote instead of saveNote
+
 ## Todo
 
-- next: eidt output
-
 - think about cache
-
 - toggle class sibling
-
 - try to fix properly jsx-html `const React = fix;`
-
 - should sequence tab be called pattern?
 
 ## URL
@@ -21,3 +19,8 @@
 
 wav
 - https://zpl.fi/pitch-shifting-in-web-audio-api/
+- https://tonejs.github.io/docs/14.7.77/Sampler.html
+
+ui
+- https://input-knob.glitch.me/
+- https://www.webcomponents.org/element/input-knob

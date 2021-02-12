@@ -1,22 +1,22 @@
-import { loadSample, playSample } from './autio';
+import { MidiMsg } from '../interface';
+import { loadSample, playSample } from './audio';
 import { midi } from './midi';
 
 const samples = {
     psykick1: {
         url:
             'https://raw.githubusercontent.com/apiel/zic/main/samples/psykick-01.wav',
-        send: (data: any) => console.log('sample not loaded:', data),
+        send: (msg: MidiMsg) => console.log('sample not loaded:', msg),
     },
 };
 
 for (const key in samples) {
     console.log('load sample', key);
-    loadSample(samples[key].url).then(
-        (sample) => {
-            samples[key].send = (data: any) => playSample(sample)(data);
-            console.log('sample loaded', samples[key].url);
-        }
-    );
+    loadSample(samples[key].url).then((sample) => {
+        samples[key].send = (msg: MidiMsg, duration: number) =>
+            playSample(sample)(msg, duration);
+        console.log('sample loaded', samples[key].url);
+    });
 }
 
 export function getOutput() {
@@ -26,9 +26,10 @@ export function getOutput() {
         td3: {
             channel: 0,
             send: td3
-                ? (data: any) => td3.send(data)
-                : (data: any) =>
-                      console.log('td3 not available to send:', data),
+                ? /* ToDo apply channel to Midi msg */
+                  (msg: MidiMsg) => td3.send(msg)
+                : (msg: MidiMsg) =>
+                      console.log('td3 not available to send:', msg),
         },
         ...samples,
     };

@@ -27,14 +27,16 @@ interface MsgWorkerNote extends MsgWorkerBase {
     note: NoteInWorker;
 }
 
+export type MidiMsg = [number, number, number];
+
 export interface NoteInWorker {
     id: string;
     outputId: string;
     trigger: number;
     duration: number;
     slide?: boolean;
-    on: any;
-    off: any;
+    on: MidiMsg;
+    off: MidiMsg;
 }
 
 // NoteOutWorker?
@@ -42,5 +44,6 @@ export interface DataOutWorker {
     id: string;
     outputId: string;
     type: 'on' | 'off';
-    data: any;
+    msg: MidiMsg;
+    duration?: number;
 }
