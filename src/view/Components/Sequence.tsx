@@ -21,10 +21,12 @@ export function Sequence({
     sequence,
     selectedNote,
 }: Props): ElementNode {
-    const { name, notes, beatCount, stepsPerBeat } = sequence;
+    const { name, notes, beatCount, stepsPerBeat, outputId } = sequence;
     return (
         <div class="sequence card">
-            <div class="title">{name}</div>
+            <div class="title">
+                {name} <i>{outputId}</i>
+            </div>
             <div class="notes">
                 {[...new Array(beatCount * stepsPerBeat)].map((_, key) => {
                     const longNote = notes.find(

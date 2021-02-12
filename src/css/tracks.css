@@ -37,6 +37,12 @@
     color: #333;
 }
 
+#track .sequence .title i {
+    font-weight: normal;
+    font-size: 9px;
+    color: #666;
+}
+
 #track .sequence.active {
     background-color: rgb(255 236 236);
 }

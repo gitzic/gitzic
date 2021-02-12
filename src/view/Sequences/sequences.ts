@@ -6,15 +6,12 @@ import {
     evEach,
     evNumVal,
     evStrVal,
+    inputById,
     removeChildClass,
     setClass,
 } from '../../utils/dom';
 import { fill, on } from '../../utils/utils';
-import {
-    onSequenceAdd,
-    onSequencesChange,
-    onSequenceChange,
-} from '../../Zic';
+import { onSequenceAdd, onSequencesChange, onSequenceChange } from '../../Zic';
 import { getOutput } from '../../Zic/output';
 import {
     addNote,
@@ -52,6 +49,16 @@ export function initSequences() {
             elById('sequence-edit-modal-output').innerHTML = outputs
                 .map((id) => `<option value="${id}">${id}</option>`)
                 .join('');
+
+            inputById('sequence-edit-modal-name').value = activeSequence.name;
+            inputById(
+                'sequence-edit-modal-beat',
+            ).value = activeSequence.beatCount.toString();
+            inputById(
+                'sequence-edit-modal-steps',
+            ).value = activeSequence.stepsPerBeat.toString();
+
+            // here we should save changes
         }
     });
 
@@ -140,13 +147,11 @@ function selectNote(el: HTMLElement) {
         addNote(activeSequence, selectedNote);
     }
     elById('sequence-edit-note').classList.remove('hide');
-    (elById(
-        'sequence-edit-note-midi',
-    ) as HTMLInputElement).value = selectedNote.midi.toString();
+    inputById('sequence-edit-note-midi').value = selectedNote.midi.toString();
     setClass(elById('sequence-edit-note-slide'), 'active', selectedNote.slide);
-    (elById(
+    inputById(
         'sequence-edit-note-velocity',
-    ) as HTMLInputElement).value = selectedNote.velocity.toString();
+    ).value = selectedNote.velocity.toString();
 
     const next =
         activeSequence.notes.find(({ time }) => time > selectedNote.time)

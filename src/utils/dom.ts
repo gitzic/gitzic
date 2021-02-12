@@ -68,6 +68,10 @@ export function toggleAttr(
     }
 }
 
+export function inputById(id: string) {
+    return elById(id) as HTMLInputElement;
+}
+
 export function elById(id: string) {
     return document.getElementById(id);
 }
