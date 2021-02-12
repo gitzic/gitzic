@@ -4,20 +4,14 @@ import { midi } from './midi';
 
 const samples = {
     psykick1: {
-        url:
-            'https://raw.githubusercontent.com/apiel/zic/main/samples/psykick-01.wav',
+        file: 'psykick-01.wav',
         send: (msg: MidiMsg) => console.log('sample not loaded:', msg),
     },
 };
 
 for (const key in samples) {
     console.log('load sample', key);
-    // loadSample(samples[key].url).then((sample) => {
-    //     samples[key].send = (msg: MidiMsg, duration: number) =>
-    //         playSample(sample)(msg, duration);
-    //     console.log('sample loaded', samples[key].url);
-    // });
-    const sampler = loadSample(samples[key].url);
+    const sampler = loadSample(samples[key].file);
     samples[key].send = (msg: MidiMsg, duration: number) =>
         playSample(sampler)(msg, duration);
 }
