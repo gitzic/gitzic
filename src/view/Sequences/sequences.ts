@@ -40,9 +40,10 @@ export function initSequences() {
     // ToDo: in a later point we might save a single sequence
     elById('sequence-save').onclick = btnLoading(saveSequences, 'Saving');
 
-    evEach(elByClass('sequence-edit'), 'click', () =>
-        elById('sequence-edit-modal').classList.toggle('hide'),
-    );
+    evEach(elByClass('sequence-edit'), 'click', () => {
+        elById('sequence-edit-modal').classList.toggle('hide');
+        window.history.pushState({}, '');
+    });
 
     elById('sequence-edit-note-midi').onchange = evNumVal((midi) => {
         selectedNote.midi = midi;
