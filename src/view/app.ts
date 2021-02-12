@@ -1,6 +1,7 @@
 import { applyToChild, elByClass, elById } from '../utils/dom';
 import { onSequenceChangeValue } from '../Zic';
 import { getDataId } from './Components/Sequence';
+import { initOutputs } from './Outputs/outputs';
 import { initSequences } from './Sequences/sequences';
 import { initSettings } from './Settings/settings';
 import { initTracks } from './Tracks/tracks';
@@ -44,6 +45,7 @@ export function initApp() {
     initSettings();
     initTracks();
     initSequences();
+    initOutputs();
 }
 
 window.addEventListener('popstate', showSessionTab);

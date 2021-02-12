@@ -1,33 +1,23 @@
-import { MidiMsg } from "../interface";
+import { Sampler, loaded, Frequency } from 'tone';
 
-const audioContext = new AudioContext();
+import { MidiMsg } from '../interface';
 
-export const DEFAULT_SAMPLE_NOTE = 60; // C4
+export const DEFAULT_SAMPLE_NOTE = 'C4'; //60; // C4
 
-export function loadSample(url: string) {
-    return fetch(url)
-        .then((response) => response.arrayBuffer())
-        .then((buffer) => audioContext.decodeAudioData(buffer));
+export function loadSample(file: string) {
+    const sampler = new Sampler({
+        urls: {
+            [DEFAULT_SAMPLE_NOTE]: file,
+        },
+        baseUrl: 'https://raw.githubusercontent.com/apiel/zic/main/samples/',
+    }).toDestination();
+    return sampler;
 }
 
-// should use https://tonejs.github.io/docs/14.7.77/Sampler.html instead
-export function playSample(sample: AudioBuffer) {
-    return (
-        [cmd, note, velocity]: MidiMsg,
-        duration: number,
-        sampleNote = DEFAULT_SAMPLE_NOTE,
-    ) => {
+export function playSample(sampler: Sampler) {
+    return ([cmd, note, velocity]: MidiMsg, duration: number) => {
         if (cmd === 0x90) {
-            const source = audioContext.createBufferSource();
-            source.buffer = sample;
-            if (note !== sampleNote) {
-                source.playbackRate.value = 2 ** ((note - sampleNote) / 12);
-            }
-            // this.gainNode.gain.value = velocity² / 127²
-            source.connect(audioContext.destination);
-            source.start(0);
-            source.stop(duration);
-            // could schedule the stop
+            sampler.triggerAttackRelease([note], duration);
         }
     };
 }
