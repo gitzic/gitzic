@@ -10,6 +10,8 @@
 - try to fix properly jsx-html `const React = fix;`
 - should sequence tab be called pattern?
 
+- git token should be optional and use https://raw.githubusercontent.com/apiel/zic/main/ for loading file when repo is public
+
 ## URL
 
 - https://github.com/Theodeus/tuna

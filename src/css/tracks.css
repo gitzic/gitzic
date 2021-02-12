@@ -9,17 +9,17 @@
     margin: 0 auto;
     padding-left: 0;
 }
-@media screen and (min-width: 431px) and (max-width: 630px) {
+@media screen and (min-width: 380px) and (max-width: 540px) {
     #track {
         width: calc(var(--track-sequence-fullwidth) * 2);
     }
 }
-@media screen and (min-width: 631px) and (max-width: 830px) {
+@media screen and (min-width: 540px) and (max-width: 700px) {
     #track {
         width: calc(var(--track-sequence-fullwidth) * 3);
     }
 }
-@media screen and (min-width: 831px) and (max-width: 1030px) {
+@media screen and (min-width: 700px) and (max-width: 860px) {
     #track {
         width: calc(var(--track-sequence-fullwidth) * 4);
     }
