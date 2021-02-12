@@ -1,18 +1,13 @@
 import { React as fix, ElementNode } from 'async-jsx-html';
 import { SequenceEditModal } from './SequenceEditModal';
 import { noteMidi } from '../../utils/noteMidi';
+import { SequencesActions } from './SequencesActions';
 const React = fix;
 
 export function Sequences(): ElementNode {
     return (
         <div>
-            <div>
-                <button id="sequences-reload">Reload</button>
-                <button id="sequence-new">New</button>
-                <select id="sequence-selector"></select>
-                <button class="sequence-edit">Edit</button>
-                <button id="sequence-save">Save</button>
-            </div>
+            <SequencesActions />
             <div id="sequence-edit-notes"></div>
             <div id="sequence-edit-note" class="hide">
                 note:

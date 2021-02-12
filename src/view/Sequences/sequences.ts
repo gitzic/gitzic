@@ -1,4 +1,3 @@
-import { loadSequences, saveSequences } from '../../git';
 import {
     elById,
     elFromHtml,
@@ -10,7 +9,6 @@ import {
     setClass,
 } from '../../utils/dom';
 import { fill, on } from '../../utils/utils';
-import { onSequenceAdd, onSequencesChange, onSequenceChange } from '../../Zic';
 import {
     addNote,
     Note,
@@ -21,6 +19,7 @@ import {
 } from '../../Zic/sequence';
 import { Sequence } from '../Components/Sequence';
 import { initSequenceEditModal } from './sequenceEditModal';
+import { initSequencesActions } from './sequencesActions';
 
 export let activeSequence: SequenceData;
 let selectedNote: Note;
@@ -31,17 +30,7 @@ export function findNote({ notes, stepsPerBeat }: SequenceData, key: number) {
 
 export function initSequences() {
     initSequenceEditModal();
-
-    onSequencesChange(displaySequences);
-    onSequenceAdd(addSequenceItem);
-    onSequenceChange(
-        (sequence) =>
-            sequence.id === activeSequence?.id && displaySequence(sequence),
-    );
-
-    elById('sequences-reload').onclick = btnLoading(loadSequences);
-    // ToDo: in a later point we might save a single sequence
-    elById('sequence-save').onclick = btnLoading(saveSequences, 'Saving');
+    initSequencesActions();
 
     elById('sequence-edit-note-midi').onchange = evNumVal((midi) => {
         selectedNote.midi = midi;
@@ -73,17 +62,7 @@ export function initSequences() {
     };
 }
 
-function btnLoading(fn: () => Promise<void>, text = 'Loading') {
-    return async (ev: Event) => {
-        const el = ev.target as HTMLElement;
-        const current = el.innerText;
-        el.innerText = text;
-        await fn();
-        el.innerText = current;
-    };
-}
-
-function displaySequences(sequenceList: SequenceData[]) {
+export function displaySequences(sequenceList: SequenceData[]) {
     elById('sequence-selector').innerHTML = '';
     sequenceList.forEach(addSequenceItem);
     const [sequence] = sequenceList;
@@ -97,7 +76,7 @@ function displaySequences(sequenceList: SequenceData[]) {
     });
 }
 
-async function displaySequence(sequence: SequenceData) {
+export async function displaySequence(sequence: SequenceData) {
     const html = await Sequence({
         sequence,
         noteMargin: 4,
@@ -145,7 +124,7 @@ function selectNote(el: HTMLElement) {
     ).join('');
 }
 
-async function addSequenceItem({ id, name }: SequenceData) {
+export async function addSequenceItem({ id, name }: SequenceData) {
     elById('sequence-selector').append(
         elFromHtml(`<option value="${id}">${name}</option>`),
     );
