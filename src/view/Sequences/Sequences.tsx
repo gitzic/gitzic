@@ -1,5 +1,5 @@
 import { React as fix, ElementNode } from 'async-jsx-html';
-import { SequenceEdit } from './SequenceEdit';
+import { SequenceEditModal } from './SequenceEditModal';
 import { noteMidi } from '../../utils/noteMidi';
 const React = fix;
 
@@ -31,7 +31,7 @@ export function Sequences(): ElementNode {
                     ))}
                 </select>
             </div>
-            <SequenceEdit />
+            <SequenceEditModal />
         </div>
     );
 }

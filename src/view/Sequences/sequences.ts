@@ -1,6 +1,5 @@
 import { loadSequences, saveSequences } from '../../git';
 import {
-    elByClass,
     elById,
     elFromHtml,
     evEach,
@@ -12,7 +11,6 @@ import {
 } from '../../utils/dom';
 import { fill, on } from '../../utils/utils';
 import { onSequenceAdd, onSequencesChange, onSequenceChange } from '../../Zic';
-import { getOutput } from '../../Zic/output';
 import {
     addNote,
     Note,
@@ -21,10 +19,10 @@ import {
     setNote,
     removeNote,
 } from '../../Zic/sequence';
-import { toggleModal } from '../app';
 import { Sequence } from '../Components/Sequence';
+import { initSequenceEditModal } from './sequenceEditModal';
 
-let activeSequence: SequenceData;
+export let activeSequence: SequenceData;
 let selectedNote: Note;
 
 export function findNote({ notes, stepsPerBeat }: SequenceData, key: number) {
@@ -32,6 +30,8 @@ export function findNote({ notes, stepsPerBeat }: SequenceData, key: number) {
 }
 
 export function initSequences() {
+    initSequenceEditModal();
+
     onSequencesChange(displaySequences);
     onSequenceAdd(addSequenceItem);
     onSequenceChange(
@@ -42,25 +42,6 @@ export function initSequences() {
     elById('sequences-reload').onclick = btnLoading(loadSequences);
     // ToDo: in a later point we might save a single sequence
     elById('sequence-save').onclick = btnLoading(saveSequences, 'Saving');
-
-    evEach(elByClass('sequence-edit'), 'click', () => {
-        if (toggleModal('sequence-edit-modal')) {
-            const outputs = Object.keys(getOutput());
-            elById('sequence-edit-modal-output').innerHTML = outputs
-                .map((id) => `<option value="${id}">${id}</option>`)
-                .join('');
-
-            inputById('sequence-edit-modal-name').value = activeSequence.name;
-            inputById(
-                'sequence-edit-modal-beat',
-            ).value = activeSequence.beatCount.toString();
-            inputById(
-                'sequence-edit-modal-steps',
-            ).value = activeSequence.stepsPerBeat.toString();
-
-            // here we should save changes
-        }
-    });
 
     elById('sequence-edit-note-midi').onchange = evNumVal((midi) => {
         selectedNote.midi = midi;

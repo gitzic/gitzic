@@ -1,4 +1,6 @@
 import { applyToChild, elByClass, elById } from '../utils/dom';
+import { onSequenceChangeValue } from '../Zic';
+import { getDataId } from './Components/Sequence';
 import { initSequences } from './Sequences/sequences';
 import { initSettings } from './Settings/settings';
 import { initTracks } from './Tracks/tracks';
@@ -23,18 +25,10 @@ function getTab() {
     );
 }
 
-// function getModal() {
-//     return window.history.state?.modal || sessionStorage.getItem('modal');
-// }
-
 function showSessionTab() {
     showTab(getTab());
     // hide all modal
     Array.from(elByClass('modal')).forEach((el) => el.classList.add('hide'));
-    // const modal = getModal();
-    // if (modal) {
-    //     elById(modal).classList.remove('hide');
-    // }
 }
 
 export function initApp() {
@@ -52,17 +46,11 @@ export function initApp() {
     initSequences();
 }
 
-export function toggleModal(modal: string) {
-    // toggle return false when hide is removed
-    if (!elById(modal).classList.toggle('hide')) {
-        // window.history.pushState({ tabId: getTab(), modal }, '');
-        // sessionStorage.setItem('modal', modal);
-        return true;
-    }
-    // window.history.pushState({ tabId: getTab() }, '');
-    // sessionStorage.removeItem('modal');
-    return false;
-}
-
 window.addEventListener('popstate', showSessionTab);
 // window.history.pushState({ tabId: btnIndex }, `tab ${btnIndex}`, '/url/hello');
+
+onSequenceChangeValue(({ sequence, key }) => {
+    const selector = `[data-id="${getDataId(sequence.id)}"] .${key}`;
+    const elements = document.querySelectorAll(selector);
+    Array.from(elements).forEach((el) => (el.textContent = sequence[key]));
+});

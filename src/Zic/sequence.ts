@@ -5,6 +5,7 @@ import {
     emitSequencesChange,
     emitSequenceAdd,
     emitSequenceChange,
+    emitSequenceChangeValue,
 } from './event';
 
 export interface SequenceData {
@@ -51,6 +52,24 @@ export function setNote(sequence: SequenceData, note: Note) {
         emitSequenceChange(sequences[index.seq]);
         // ToDo: do only if sequence is played
         sendNoteActionToWorker(ActionWorker.saveNote, sequence, note);
+    }
+}
+
+export function setOutput(sequence: SequenceData, outputId: string) {
+    const sequenceIndex = sequences.findIndex(({ id }) => sequence.id === id);
+    if (sequenceIndex !== -1) {
+        sequences[sequenceIndex].outputId = outputId;
+        emitSequenceChangeValue(sequences[sequenceIndex], 'outputId');
+        // ToDo: like we do for note update, we need to change the output of each notes
+        // sendNoteActionToWorker(ActionWorker.saveNote, sequence, note);
+    }
+}
+
+export function setName(sequence: SequenceData, name: string) {
+    const sequenceIndex = sequences.findIndex(({ id }) => sequence.id === id);
+    if (sequenceIndex !== -1) {
+        sequences[sequenceIndex].name = name;
+        emitSequenceChangeValue(sequences[sequenceIndex], 'name');
     }
 }
 

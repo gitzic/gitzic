@@ -12,7 +12,7 @@ function getListStepsPerbeat(val = MAX_STEPS_PER_BEAT) {
     return list.sort();
 }
 
-export function SequenceEdit(): ElementNode {
+export function SequenceEditModal(): ElementNode {
     return (
         <div id="sequence-edit-modal" class="modal hide">
             <div class="modal-body">

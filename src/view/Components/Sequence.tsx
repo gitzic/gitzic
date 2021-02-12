@@ -6,6 +6,10 @@ import { findNote } from '../Sequences/sequences';
 
 const React = fix;
 
+export function getDataId(id: string) {
+    return `sequence-${id}`;
+}
+
 interface Props {
     noteWidth: number;
     noteMargin: number;
@@ -21,11 +25,12 @@ export function Sequence({
     sequence,
     selectedNote,
 }: Props): ElementNode {
-    const { name, notes, beatCount, stepsPerBeat, outputId } = sequence;
+    const { name, notes, beatCount, stepsPerBeat, outputId, id } = sequence;
     return (
-        <div class="sequence card">
+        <div class="sequence card" data-id={getDataId(id)}>
             <div class="title">
-                {name} <i>{outputId}</i>
+                <span class="name">{name}</span>{' '}
+                <i class="outputId">{outputId}</i>
             </div>
             <div class="notes">
                 {[...new Array(beatCount * stepsPerBeat)].map((_, key) => {

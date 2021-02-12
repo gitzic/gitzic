@@ -9,8 +9,19 @@ export enum eventKey {
     onBPMchange = 'onBPMchange',
     onSequencesChange = 'onSequencesChange',
     onSequenceChange = 'onSequenceChange',
+    onSequenceChangeValue = 'onSequenceChangeValue',
     onSequenceAdd = 'onSequenceAdd',
     onTrackChange = 'onTrackChange',
+}
+
+export function onSequenceChangeValue(
+    fn: ({ sequence: SequenceData, key: string }) => void,
+) {
+    event.addListener(eventKey.onSequenceChangeValue, fn);
+}
+
+export function emitSequenceChangeValue(sequence: SequenceData, key: string) {
+    event.emit(eventKey.onSequenceChangeValue, { sequence, key });
 }
 
 export function onSequenceChange(fn: (sequence: SequenceData) => void) {
