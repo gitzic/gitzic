@@ -18,8 +18,8 @@ import {
     removeNote,
 } from '../../Zic/sequence';
 import { Sequence } from '../Components/Sequence';
-import { initSequenceEditModal } from './sequenceEditModal';
-import { initSequencesActions } from './sequencesActions';
+import { initSequenceEditModal } from './SequenceEditModal';
+import { initSequencesActions } from './SequencesActions';
 
 export let activeSequence: SequenceData;
 let selectedNote: Note;
