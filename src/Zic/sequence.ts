@@ -13,7 +13,6 @@ export interface SequenceData {
     outputId: string;
     beatCount: number;
     stepsPerBeat: number;
-    displayedNotes: number[];
     notes: Note[];
     currentStep: number;
 }
@@ -82,7 +81,6 @@ export function addNew() {
         currentStep: 0,
         beatCount: 4,
         stepsPerBeat: 4,
-        displayedNotes: [],
         notes: [],
     };
     sequences.push(sequence);

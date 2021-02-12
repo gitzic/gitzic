@@ -22,12 +22,12 @@ worker.addEventListener(
     false,
 );
 
-function getNote(sequence: SequenceData) {
+function getNote({id, outputId}: SequenceData) {
     return ({ velocity, midi: note, duration, time, slide }: Note) => {
         return {
-            id: `midi-${sequence.id}-${time}`,
+            id: `midi-${id}-${time}`,
             // ToDo: we could actually skip all the following for stop note
-            outputId: 'td3', // ToDo: to be defined
+            outputId,
             trigger: time * MAX_STEPS_PER_BEAT,
             duration: duration * MAX_STEPS_PER_BEAT,
             slide,
