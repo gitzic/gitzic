@@ -68,6 +68,8 @@ export function initSequenceEditModal() {
     elById('sequence-edit-modal-name').onchange = evStrVal((name) => {
         setName(activeSequence, name);
     });
+
+    // ToDo: setBeat and setSteps this might have impact on sequence layout
 }
 
 function toggleModalEdit() {
