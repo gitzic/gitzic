@@ -1,20 +1,26 @@
 import { MidiMsg } from '../interface';
+import { GitHubStorage } from '../storage/GitHubStorage';
 import { loadSample, playSample } from './audio';
 import { midi } from './midi';
 
-const samples = {
-    psykick1: {
-        file: 'psykick-01.wav',
-        send: (msg: MidiMsg) => console.log('sample not loaded:', msg),
-    },
-};
+const gitHubStorage = new GitHubStorage();
 
-for (const key in samples) {
-    console.log('load sample', key);
-    const sampler = loadSample(samples[key].file);
-    samples[key].send = (msg: MidiMsg, duration: number) =>
-        playSample(sampler)(msg, duration);
+let samples = {};
+
+async function loadSamples() {
+    const dir = await gitHubStorage.readdir('samples');
+    dir.forEach((file) => {
+        console.log('load sample', file);
+        const sampler = loadSample(file);
+        const key = file.replace(/\.[^/.]+$/, '');
+        samples[key] = {
+            send: (msg: MidiMsg, duration: number) =>
+                playSample(sampler)(msg, duration),
+        };
+    });
+    // ToDo: emit there for output view
 }
+loadSamples();
 
 export function getOutput() {
     const outputs = Array.from(midi?.outputs.values() || []);

@@ -5,6 +5,9 @@
 
 ## Todo
 
+- use https://tonejs.github.io/examples/stepSequencer
+      https://github.com/Tonejs/ui/blob/master/src/components/input/step-sequencer.ts
+
 - think about cache
 - toggle class sibling
 - try to fix properly jsx-html `const React = fix;`
