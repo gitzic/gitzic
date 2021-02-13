@@ -1,5 +1,8 @@
-import { Sampler, Frequency } from 'tone';
+import * as Tone from 'tone';
+import { Sampler, Frequency, Transport } from 'tone';
 import { MidiMsg } from '../interface';
+import { getGithubRepo, getGithubUser } from '../storage/localStorage';
+import { getOutput } from './output';
 
 export const DEFAULT_SAMPLE_NOTE = 'C4'; //60; // C4
 
@@ -8,20 +11,52 @@ export function loadSample(file: string) {
         urls: {
             [DEFAULT_SAMPLE_NOTE]: file,
         },
-        baseUrl: 'https://raw.githubusercontent.com/apiel/zic/main/samples/',
+        baseUrl: `https://raw.githubusercontent.com/${getGithubUser()}/${getGithubRepo()}/main/samples/`,
     }).toDestination();
     return sampler;
 }
 
 export function playSample(sampler: Sampler) {
-    return ([cmd, note, velocity]: MidiMsg, duration: number) => {
+    return (
+        [cmd, note, velocity]: MidiMsg,
+        duration: number,
+        time?: number,
+    ) => {
         if (cmd === 0x90) {
             sampler.triggerAttackRelease(
                 [Frequency(note, 'midi').toFrequency()],
-                duration,
-                undefined,
+                duration / 1000,
+                time,
                 velocity / 127,
             );
         }
     };
 }
+
+// Transport.scheduleRepeat(function (time) {
+//     // getOutput()['td3'].send([0x90, 60, 100]);
+//     // var timingOffset = 0;
+//     // var timingOffset = 100;
+//     var timingOffset = (Tone.now()- time) * 1000;
+//     console.log(time);
+//     setTimeout(() => getOutput()['td3'].send([0x90, 60, 100]), timingOffset);
+//     setTimeout(
+//         () => getOutput()['td3'].send([0x80, 60, 0]),
+//         timingOffset + 200,
+//     );
+//     getOutput()['psykick1'].send([0x90, 60, 100], '2n', Tone.now());
+//     // getOutput()['psykick1'].send([0x90, 60, 100], "2n", Tone.immediate());
+// }, '1n');
+
+// Transport.scheduleRepeat(function(time){
+//     getOutput()['td3'].send([0x90, 60, 100]);
+//     setTimeout(() => getOutput()['td3'].send([0x80, 60, 100]), 500);
+//     // getOutput()['psykick1'].send([0x90, 60, 100]);
+// }, "1n");
+
+// Transport.scheduleRepeat(function(time){
+// 	//do something with the time
+//     console.log('scheduleRepeat2', time);
+// }, "2n");
+
+Transport.start();

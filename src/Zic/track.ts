@@ -30,6 +30,7 @@ export const defaultTracks = [
             { id: 2, outputId: 'yoyo' },
             { id: 3, outputId: 'yoyo' },
             { id: 4, outputId: 'yoyo' },
+            { id: 5, outputId: 'yoyo' },
         ],
     },
 ];
