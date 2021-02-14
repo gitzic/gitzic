@@ -30,7 +30,7 @@ export function getOutput() {
             channel: 0,
             send: td3
                 ? /* ToDo apply channel to Midi msg */
-                  (msg: MidiMsg) => td3.send(msg)
+                  (msg: MidiMsg, duration?: number, time?: number) => td3.send(msg, time)
                 : (msg: MidiMsg) =>
                       console.log('td3 not available to send:', msg),
         },

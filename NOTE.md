@@ -7,7 +7,7 @@
 
 - move select output in sequence
 
-- use https://tonejs.github.io/examples/stepSequencer
+- --> USE https://tonejs.github.io/examples/stepSequencer
       https://github.com/Tonejs/ui/blob/master/src/components/input/step-sequencer.ts
 
 - think about cache
@@ -27,6 +27,9 @@
 wav
 - https://zpl.fi/pitch-shifting-in-web-audio-api/
 - https://tonejs.github.io/docs/14.7.77/Sampler.html
+
+midi sync
+- https://cartoonbeats.com/how-to-sync-web-audio-api-and-web-midi/
 
 ui
 - https://input-knob.glitch.me/

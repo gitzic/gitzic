@@ -33,6 +33,25 @@ export function playSample(sampler: Sampler) {
     };
 }
 
+
+Transport.scheduleRepeat(function (time) {
+    // getOutput()['td3'].send([0x90, 60, 100]);
+    // var timingOffset = 0;
+    // var timingOffset = 100;
+    // console.log(`perf ${(performance.now()/1000)} tonenow ${Tone.now()} calc ${(performance.now()/1000) - Tone.now()} time ${time} all ${performance.now() - Tone.now() - time}`);
+    var timingOffset = (performance.now()/1000) - Tone.now();
+    // var timingOffset = (Tone.now()- time) * 1000;
+    console.log(time);
+    getOutput()['td3'].send([0x90, 60, 100], timingOffset);
+    getOutput()['td3'].send([0x80, 60, 0], timingOffset + 200);
+    getOutput()['psykick1'].send([0x90, 60, 100], '2n', time);
+    // getOutput()['psykick1'].send([0x90, 60, 100], '2n', Tone.now());
+    // getOutput()['psykick1'].send([0x90, 60, 100], "2n", Tone.immediate());
+}, '1n');
+
+Transport.start();
+Tone.start();
+
 // Transport.scheduleRepeat(function (time) {
 //     // getOutput()['td3'].send([0x90, 60, 100]);
 //     // var timingOffset = 0;
@@ -58,5 +77,3 @@ export function playSample(sampler: Sampler) {
 // 	//do something with the time
 //     console.log('scheduleRepeat2', time);
 // }, "2n");
-
-Transport.start();
