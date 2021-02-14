@@ -30,6 +30,7 @@ wav
 
 midi sync
 - https://cartoonbeats.com/how-to-sync-web-audio-api-and-web-midi/
+- NOTE: midi.send support time params https://webaudio.github.io/web-midi-api/#dom-midioutput-send
 
 ui
 - https://input-knob.glitch.me/
