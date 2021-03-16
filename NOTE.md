@@ -42,7 +42,7 @@ tonejs
 
 
 
-td3 coool
+td3 coool with td3 https://codesandbox.io/s/webmidi-tests-forked-t01ck
 https://codesandbox.io/s/webmidi-tests-vzw67?file=/src/index.js
 MIDI data {"0":144,"1":76,"2":64} 
 MIDI data {"0":144,"1":40,"2":64} 

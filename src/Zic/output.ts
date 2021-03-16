@@ -25,6 +25,7 @@ loadSamples();
 export function getOutput() {
     const outputs = Array.from(midi?.outputs.values() || []);
     const td3 = outputs.find(({ name }) => name.startsWith('TD-3'));
+    const neutron = outputs.find(({ name }) => name.startsWith('Neutron'));
     return {
         td3: {
             channel: 0,
@@ -33,6 +34,14 @@ export function getOutput() {
                   (msg: MidiMsg, duration?: number, time?: number) => td3.send(msg, time)
                 : (msg: MidiMsg) =>
                       console.log('td3 not available to send:', msg),
+        },
+        neutron: {
+            channel: 0,
+            send: neutron
+                ? /* ToDo apply channel to Midi msg */
+                  (msg: MidiMsg, duration?: number, time?: number) => neutron.send(msg, time)
+                : (msg: MidiMsg) =>
+                      console.log('neutron not available to send:', msg),
         },
         ...samples,
     };
